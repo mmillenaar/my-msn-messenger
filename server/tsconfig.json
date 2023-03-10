@@ -7,5 +7,5 @@
     "sourceMap": true,
     "outDir": "dist",
   },
-  "include": ["server/src/**/*", "environment.d.ts"],
+  "include": ["src/**/*", "environment.d.ts"],
 }

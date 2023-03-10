@@ -1,12 +1,13 @@
 import mongoose, { Schema } from 'mongoose'
 import { dbConfig } from '../config/db.config'
+import logger from '../config/logger.config'
 
 let isDbConnected: boolean = false
 
 const connect = async () => {
     try {
         await mongoose.connect(dbConfig.URL, dbConfig.options)
-        console.log('MongoDb connected')
+        logger.info('MongoDb connected')
         isDbConnected = true
     }
     catch (err) {
@@ -39,7 +40,7 @@ export default class MongoDbContainer {
                 throw new Error('Error accessing database')
             }
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
     async getById(id: string) {
@@ -53,7 +54,7 @@ export default class MongoDbContainer {
                 throw new Error(`Element with id: ${id} not found`)
             }
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
     async getElementByValue(field: string, value: any) {
@@ -67,7 +68,7 @@ export default class MongoDbContainer {
                 throw new Error(`${value} not found in ${field}`)
             }
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
     async save(object: {}) {
@@ -82,14 +83,14 @@ export default class MongoDbContainer {
                 throw new Error(`Error saving element: ${object}`)
             }
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }
     async update(object: {}, id: string) {
         await ensureDbConnection()
         try {
             const updatedElement = await this.collection.replaceOne({ _id: id }, object)
-            console.log(updatedElement); // TODO: check what is the return
+            logger.info(updatedElement); // TODO: check what is the return
             return this.getById(id)
         } catch (err) {
             throw err
@@ -99,7 +100,7 @@ export default class MongoDbContainer {
         await ensureDbConnection()
         try {
             const deletedElement = await this.collection.deleteOne({ _id: id })
-            console.log(deletedElement); // TODO: check what is the return
+            logger.info(deletedElement); // TODO: check what is the return
             return this.getAll()
         } catch (err) {
             err.status = 404
@@ -128,7 +129,7 @@ export default class MongoDbContainer {
             }
         }
         catch (err) {
-            console.error(err)
+            logger.error(err)
             throw err
         }
     }

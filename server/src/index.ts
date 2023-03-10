@@ -4,6 +4,7 @@ import cors from 'cors'
 import { Server as HttpServer } from 'http'
 import { Server as Socket } from 'socket.io'
 import socketMessagesConfiguration from "./routes/sockets/messages.ws";
+import logger from "./config/logger.config";
 
 dotenv.config()
 const app = express()
@@ -18,18 +19,18 @@ const io = new Socket(httpServer, {
 
 io.on('connection', async socket => {
     try {
-        console.log(`New client ${socket.id} connected`);
+        logger.info(`New client ${socket.id} connected`);
         socketMessagesConfiguration(socket, io.sockets)
     }
     catch(err) {
-        console.log(err);
+        logger.info(err);
     }
 
-    socket.on('disconnect', () => console.log(`Client ${socket.id} disconnected`))
+    socket.on('disconnect', () => logger.info(`Client ${socket.id} disconnected`))
 })
 
 const PORT: string | number = process.env.PORT || 3030
 const server = httpServer.listen(PORT, () => {
-    console.log(`Server listening at port: ${PORT}`);
+    logger.info(`Server listening at port: ${PORT}`);
 })
-server.on("error", error  => console.error(`Error in server: ${error}`))
+server.on("error", error  => logger.error(`Error in server: ${error}`))

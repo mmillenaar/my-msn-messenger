@@ -1,3 +1,4 @@
+import logger from "../../config/logger.config"
 import { messagesContainer } from "../../controllers/messages.controller"
 
 export default async function socketMessagesConfiguration(socket, sockets) {
@@ -11,7 +12,7 @@ export default async function socketMessagesConfiguration(socket, sockets) {
             sockets.emit('new-chat-message', newChatData)
         }
         catch (err) {
-            console.error(err)
+            logger.error(err)
         }
     })
 }
