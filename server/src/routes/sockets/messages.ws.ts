@@ -1,7 +1,7 @@
 import logger from "../../config/logger.config"
 import { messagesContainer } from "../../controllers/messages.controller"
 
-export default async function socketMessagesConfiguration(socket, sockets) {
+export default async function handleSocketChat(socket, sockets) {
     const chatData: [] = await messagesContainer.getAll()
     socket.emit('first-chat-render', chatData)
 

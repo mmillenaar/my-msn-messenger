@@ -2,35 +2,35 @@ import mongoose, { Schema } from 'mongoose'
 import { dbConfig } from '../config/db.config'
 import logger from '../config/logger.config'
 
-let isDbConnected: boolean = false
+// let isDbConnected: boolean = false
 
 const connect = async () => {
     try {
         await mongoose.connect(dbConfig.URL, dbConfig.options)
+        // isDbConnected = true
         logger.info('MongoDb connected')
-        isDbConnected = true
     }
     catch (err) {
         throw new Error(`Db connection error: ${err}`)
     }
 }
+connect()
 
-const ensureDbConnection = async () => {
-    if (!isDbConnected) {
-        await connect()
-    }
-}
+// const ensureDbConnection = async () => {
+//     if (!isDbConnected) {
+//         await connect()
+//     }
+// }
+// ensureDbConnection()
 
 export default class MongoDbContainer {
     private collection
     constructor(collectionName: string, schema: Schema) {
-        ensureDbConnection().then(() => {
-            this.collection = mongoose.model(collectionName, schema)
-        })
+        this.collection = mongoose.model(collectionName, schema)
     }
 
     async getAll() {
-        await ensureDbConnection()
+        // ensureDbConnection()
         try {
             const allContent = await this.collection.find().select('-__v').lean()
             if (allContent) {
@@ -41,10 +41,11 @@ export default class MongoDbContainer {
             }
         } catch (err) {
             logger.error(err);
+            throw err
         }
     }
     async getById(id: string) {
-        await ensureDbConnection()
+        // ensureDbConnection()
         try {
             const foundElement = await this.collection.findById(id).select('-__v').lean()
             if (foundElement) {
@@ -55,24 +56,23 @@ export default class MongoDbContainer {
             }
         } catch (err) {
             logger.error(err);
+            throw err
         }
     }
     async getElementByValue(field: string, value: any) {
-        await ensureDbConnection()
+        // ensureDbConnection()
         try {
             const foundElement = await this.collection.findOne({ [field] : value}).select('-__v').lean()
             if (foundElement) {
                 return foundElement
             }
-            else {
-                throw new Error(`${value} not found in ${field}`)
-            }
         } catch (err) {
             logger.error(err);
+            throw err
         }
     }
     async save(object: {}) {
-        await ensureDbConnection()
+        // ensureDbConnection()
         try {
             const newObjectSchema = new this.collection(object)
             const savedElement = await newObjectSchema.save()
@@ -84,10 +84,11 @@ export default class MongoDbContainer {
             }
         } catch (err) {
             logger.error(err);
+            throw err
         }
     }
     async update(object: {}, id: string) {
-        await ensureDbConnection()
+        // ensureDbConnection()
         try {
             const updatedElement = await this.collection.replaceOne({ _id: id }, object)
             logger.info(updatedElement); // TODO: check what is the return
@@ -97,18 +98,17 @@ export default class MongoDbContainer {
         }
     }
     async deleteById(id: string) {
-        await ensureDbConnection()
+        // ensureDbConnection()
         try {
             const deletedElement = await this.collection.deleteOne({ _id: id })
             logger.info(deletedElement); // TODO: check what is the return
             return this.getAll()
         } catch (err) {
-            err.status = 404
             throw err
         }
     }
     async deleteAll() {
-        await ensureDbConnection()
+        // ensureDbConnection()
         try {
             await this.collection.deleteMany({})
             return this.getAll()
@@ -118,7 +118,7 @@ export default class MongoDbContainer {
         }
     }
     async checkIsDuplicate(field: string, value: any) {
-        await ensureDbConnection()
+        // ensureDbConnection()
         try {
             const element = await this.getElementByValue(field, value)
             if (element) {

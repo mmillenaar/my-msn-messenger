@@ -1,4 +1,4 @@
-export type ChatMessage = {
+export interface ChatMessage {
     username: string,
     message: string,
     date: string,

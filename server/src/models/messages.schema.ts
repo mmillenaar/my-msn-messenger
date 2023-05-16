@@ -1,11 +1,10 @@
 import mongoose from 'mongoose'
 
-const messagesSchema = new mongoose.Schema(
-    {
-        username: { type: String, require: true },
-        date: { type: Date, require: true },
-        message: { type: String, require: true },
-    },
-)
+const messageSchema = new mongoose.Schema({
+    text: { type: String, required: true },
+    sender: { type: String, required: true },
+    recipient: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+})
 
-export default messagesSchema
+export default messageSchema
