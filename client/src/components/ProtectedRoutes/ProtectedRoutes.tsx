@@ -1,21 +1,26 @@
-import { ReactNode } from "react";
-import { Navigate, Routes } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import Context from "../../Context/AppContext";
 
-interface ProtectedRoutesProps {
-    isLoggedIn: boolean | undefined;
-    children: ReactNode;
-}
+const ProtectedRoutes = () => {
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null);
+    const { checkUserLogin } = useContext(Context)!;
 
-const ProtectedRoutes = ({ isLoggedIn, children }: ProtectedRoutesProps) => {
-    if (isLoggedIn) {
-        console.log('Logged in, rendering protected routes.');
+    useEffect(() => {
+        const verifyUser = async () => {
+            const isLoggedIn = await checkUserLogin();
+            setIsUserLoggedIn(isLoggedIn);
+        };
 
-        return <Routes>{children}</Routes>;
-    } else {
-        console.log('Not logged in, redirecting to login page.');
+        verifyUser();
+    }, [checkUserLogin]);
 
-        return <Navigate to='/login' />;
+    if (isUserLoggedIn === null) {
+
+        return <div>Loading...</div>;
     }
-}
+
+    return isUserLoggedIn ? <Outlet /> : <Navigate to='/login' />;
+};
 
 export default ProtectedRoutes;
