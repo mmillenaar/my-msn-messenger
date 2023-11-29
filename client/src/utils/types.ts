@@ -5,7 +5,9 @@ export interface AppContextProviderProps {
 }
 
 export interface ContextTypes {
-    checkUserLogin: () => Promise<boolean>;
+    checkUserLogin: () => Promise<boolean | null>;
+    isUserLoggedIn: boolean | null;
+    logout: () => void;
 }
 
 export interface AuthDataTypes {

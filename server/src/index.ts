@@ -10,6 +10,7 @@ import authRouter from "./routes/auth/userAuth.route";
 import loginRouter from "./routes/users/login.route";
 import homeRouter from "./routes/web/home.route";
 import registerRouter from "./routes/users/register.route";
+import logoutRouter from "./routes/users/logout.route";
 import { handleSocketConnection } from "./utils/socketHandler";
 import { passportMiddleware, passportSessionHandler } from "./middlewares/passport.middleware";
 
@@ -42,6 +43,7 @@ handleSocketConnection(io)
 app.use('/api/auth', authRouter)
 app.use('/login', loginRouter)
 app.use('/register', registerRouter)
+app.use('/logout', logoutRouter)
 app.use(homeRouter)
 
 const PORT: string | number = process.env.PORT || 3030
