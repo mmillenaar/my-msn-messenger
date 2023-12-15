@@ -1,4 +1,8 @@
-import { Navigate } from 'react-router-dom';
+import { useContext, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Context from '../../Context/AppContext';
+import { formConfirmPasswordGroup, formEmailGroup, formPasswordGroup, formUsernameGroup } from '../../utils/constants';
+import FormGroup from './FormGroup/FormGroup';
 import './Form.scss'
 
 export enum FormMethod {
@@ -16,45 +20,103 @@ interface FormProps {
 }
 
 const Form = ({ action, method }: FormProps) => {
+    const [doPasswordsMatch, setDoPasswordsMatch] = useState<boolean | null>(null)
 
-    const UsernameGroup = () => {
-        return (
-            <div className="form__group">
-                <label htmlFor="username">Username</label>
-                <input type="text" name="username" id="username" />
-            </div>
-        )
+    const emailRef = useRef<HTMLInputElement>(null)
+    const passwordRef = useRef<HTMLInputElement>(null)
+    const usernameRef = useRef<HTMLInputElement>(null)
+    const confirmPasswordRef = useRef<HTMLInputElement>(null)
+
+    const { setIsUserLoggedIn } = useContext(Context)!
+
+    const navigate = useNavigate()
+
+    const handleOnFormSubmit = async () => {
+        if (doPasswordsMatch === false) {
+            alert('Passwords do not match')
+
+            return
+        }
+
+        const res = await fetch(`/${action}`, {
+            method: method,
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: emailRef.current?.value,
+                password: passwordRef.current?.value,
+                username: usernameRef.current?.value,
+                confirmPassword: confirmPasswordRef.current?.value,
+            })
+        })
+        const data = await res.json()
+
+        if (res.status === 200) {
+            setIsUserLoggedIn(true)
+            navigate('/')
+        }
+        else {
+            alert(data.message)
+
+            return null
+        }
     }
-    const ConfirmPasswordGroup = () => {
-        return (
-            <div className="form__group">
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <input type="password" name="confirmPassword" id="confirmPassword" />
-            </div>
-        )
-    }
-    const handleOnFormSubmit = () => {
-        return <Navigate to='/' />
+
+    const onConfirmPasswordBlur = () => {
+        if (passwordRef.current?.value === confirmPasswordRef.current?.value) {
+            setDoPasswordsMatch(true)
+        }
+        else {
+            setDoPasswordsMatch(false)
+        }
     }
 
     return (
         <div className="form">
-            <form action={`/${action}`} method={method} className="form__wrapper" onSubmit={handleOnFormSubmit}>
-                { action === FormAction.REGISTER && <UsernameGroup /> }
-                <div className="form__group">
-                    <label htmlFor="email">Email</label>
-                    <input type="email" name="email" id="email" />
-                </div>
-                <div className="form__group">
-                    <label htmlFor="password">Password</label>
-                    <input type="password" name="password" id="password" />
-                </div>
-                { action === FormAction.REGISTER && <ConfirmPasswordGroup /> }
+            <div className="form__wrapper">
+                {action === FormAction.REGISTER &&
+                    <FormGroup
+                        groupName={formUsernameGroup.groupName}
+                        inputType={formUsernameGroup.inputType}
+                        label={formUsernameGroup.label}
+                        inputRef={usernameRef}
+                    />
+                }
+                <FormGroup
+                    groupName={formEmailGroup.groupName}
+                    inputType={formEmailGroup.inputType}
+                    label={formEmailGroup.label}
+                    inputRef={emailRef}
+                />
+                <FormGroup
+                    groupName={formPasswordGroup.groupName}
+                    inputType={formPasswordGroup.inputType}
+                    label={formPasswordGroup.label}
+                    inputRef={passwordRef}
+                />
+                {action === FormAction.REGISTER &&
+                    <FormGroup
+                        groupName={formConfirmPasswordGroup.groupName}
+                        inputType={formConfirmPasswordGroup.inputType}
+                        label={formConfirmPasswordGroup.label}
+                        inputRef={confirmPasswordRef}
+                        onBlur={onConfirmPasswordBlur}
+                    />
+                }
+                { doPasswordsMatch === false &&
+                    <p className="form__password-match-error" style={{color: 'red'}}>Passwords do not match</p>
+                }
                 <div className="form__buttons">
-                    <button className="form__buttons-cancel" type="button">Cancel</button>
-                    <button className="form__buttons-submit" type="submit">Submit</button>
+                    <button className="form__buttons-cancel" type="button">
+                        Cancel
+                    </button>
+                    <button className="form__buttons-submit" type="submit" onClick={handleOnFormSubmit}>
+                        Submit
+                    </button>
                 </div>
-            </form>
+            </div>
         </div>
     )
 }

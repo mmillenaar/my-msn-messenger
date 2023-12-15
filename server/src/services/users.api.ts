@@ -15,36 +15,42 @@ class UsersApi extends MongoDbContainer {
     async authenticateUser(email: string, password: string) {
         try {
             const user = await this.getUserByEmail(email)
-            if (!bcrypt.compareSync(password, user.password)) {
-                throw new Error(`Authentication error: incorrect password`)
+            if (!user || !bcrypt.compareSync(password, user.password)) {
+                return { error: 'Invalid email or password' }
             }
-            return user
+            return { user: user }
         }
         catch (err) {
             logger.error(err)
-            throw err // TODO: program needs to NOT STOP
+
+            return { error: 'ServerError' }
         }
     }
     async registerUser(userData: any) { // TODO: sepecify USERDATA TYPE
         try {
-            const isDuplicate = await super.checkIsDuplicate('email', userData.email)
-            if (!isDuplicate) {
-                const saltRounds = 10;
-                const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
-                const newUser = {
-                    ...userData,
-                    password: hashedPassword
-                }
-                const savedUser = await super.save(newUser)
-                return savedUser
+            const isDuplicateEmail = await super.checkIsDuplicate('email', userData.email)
+            const isDuplicateUsername = await super.checkIsDuplicate('username', userData.username)
+
+            if (isDuplicateEmail) {
+                return { error: 'Email already exists' }
+            } else if (isDuplicateUsername) {
+                return { error: 'Username already exists' }
             }
-            else {
-                throw new Error(`User with email: ${userData.email} already exists`)
+
+            const saltRounds = 10
+            const hashedPassword = await bcrypt.hash(userData.password, saltRounds)
+            const newUser = {
+                ...userData,
+                password: hashedPassword
             }
+            const savedUser = await super.save(newUser)
+
+            return { user: savedUser }
         }
         catch (err) {
             logger.error(err)
-            throw err
+
+            return { error: 'ServerError' }
         }
     }
 }

@@ -10,8 +10,13 @@ passport.use('login', new Strategy(
     { usernameField: 'email' },
     async (username: string, password: string, done) => { // TODO: what is 'done' type?
         try {
-            const user = await usersApi.authenticateUser(username, password)
-            done(null, user)
+            const result = await usersApi.authenticateUser(username, password)
+
+            if (result. error) {
+                return done(null, false, { message: result.error })
+            }
+
+            done(null, result.user)
         }
         catch (err) {
             logger.error(err)
@@ -27,8 +32,13 @@ passport.use('register', new Strategy(
     async (req: Request, username: string, password: string, done) => {
         try {
             const newUser = req.body
-            const registeredUser = await usersApi.registerUser(newUser)
-            done(null, registeredUser)
+            const result = await usersApi.registerUser(newUser)
+
+            if (result.error) {
+                return done(null, false, { message: result.error })
+            }
+
+            done(null, result.user)
         }
         catch (err) {
             logger.error(err)

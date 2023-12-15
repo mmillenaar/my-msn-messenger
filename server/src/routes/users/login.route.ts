@@ -5,7 +5,6 @@ const loginRouter = Router();
 
 loginRouter
     .route("/")
-    // .get(getLogin)
     .post(postLogin)
 
 export default loginRouter;
