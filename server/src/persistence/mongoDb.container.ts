@@ -37,11 +37,12 @@ export default class MongoDbContainer {
                 return allContent
             }
             else {
-                throw new Error('Error accessing database')
+                throw new Error(`Error getting all elements`)
             }
         } catch (err) {
             logger.error(err);
-            throw err
+
+            return null
         }
     }
     async getById(id: string) {
@@ -56,19 +57,23 @@ export default class MongoDbContainer {
             }
         } catch (err) {
             logger.error(err);
-            throw err
+
+            return null
         }
     }
     async getElementByValue(field: string, value: any) {
         // ensureDbConnection()
         try {
             const foundElement = await this.collection.findOne({ [field] : value}).select('-__v').lean()
-            if (foundElement) {
-                return foundElement
+            if (!foundElement) {
+                throw new Error(`Element with ${field}: ${value} not found`)
             }
+
+            return foundElement
         } catch (err) {
             logger.error(err);
-            throw err
+
+            return null
         }
     }
     async save(object: {}) {
@@ -76,15 +81,21 @@ export default class MongoDbContainer {
         try {
             const newObjectSchema = new this.collection(object)
             const savedElement = await newObjectSchema.save()
-            if (savedElement) {
-                return this.getById(savedElement._id)
+
+            if (!savedElement) {
+                throw new Error(`Error saving element: ${JSON.stringify(object)}`)
             }
-            else {
-                throw new Error(`Error saving element: ${object}`)
+
+            const retrievedElement = await this.getById(savedElement._id) // TODO: check why retrieving element again
+            if (!retrievedElement) {
+                throw new Error(`Error retrieving saved element: ${JSON.stringify(object)}`)
             }
+
+            return retrievedElement
         } catch (err) {
             logger.error(err);
-            throw err
+
+            return null
         }
     }
     async update(object: {}, id: string) {
@@ -92,9 +103,16 @@ export default class MongoDbContainer {
         try {
             const updatedElement = await this.collection.replaceOne({ _id: id }, object)
             logger.info(updatedElement); // TODO: check what is the return
+
+            if (!updatedElement) {
+                throw new Error(`Error updating element with id: ${id}`)
+            }
+
             return this.getById(id)
         } catch (err) {
-            throw err
+            logger.error(err);
+
+            return null
         }
     }
     async deleteById(id: string) {
@@ -102,35 +120,50 @@ export default class MongoDbContainer {
         try {
             const deletedElement = await this.collection.deleteOne({ _id: id })
             logger.info(deletedElement); // TODO: check what is the return
+
+            if (!deletedElement) {
+                throw new Error(`Error deleting element with id: ${id}`)
+            }
+
             return this.getAll()
         } catch (err) {
-            throw err
+            logger.error(err);
+
+            return null
         }
     }
     async deleteAll() {
         // ensureDbConnection()
         try {
-            await this.collection.deleteMany({})
+            const deletion = await this.collection.deleteMany({})
+            if (deletion.deletedCount === 0) {
+                throw new Error('Error deleting all elements')
+            }
+
             return this.getAll()
         }
         catch (err) {
-            throw err
+            logger.error(err);
+
+            return null
         }
     }
     async checkIsDuplicate(field: string, value: any) {
         // ensureDbConnection()
         try {
             const element = await this.getElementByValue(field, value)
-            if (element) {
-                return true
+
+            if (!element) {
+                return false
             }
             else {
-                return false
+                return true
             }
         }
         catch (err) {
             logger.error(err)
-            throw err
+
+            return null
         }
     }
 }

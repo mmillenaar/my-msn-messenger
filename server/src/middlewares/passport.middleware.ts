@@ -1,8 +1,8 @@
+import { Request } from 'express'
 import passport from 'passport'
 import { Strategy } from 'passport-local'
 import { usersApi } from '../services/users.api'
 import logger from '../config/logger.config'
-import { Request } from 'express'
 import { User } from '../utils/types'
 
 
@@ -13,7 +13,7 @@ passport.use('login', new Strategy(
             const result = await usersApi.authenticateUser(username, password)
 
             if (result. error) {
-                return done(null, false, { message: result.error })
+                return done(null, false, { message: result.error, status: result.status  })
             }
 
             done(null, result.user)
@@ -35,7 +35,7 @@ passport.use('register', new Strategy(
             const result = await usersApi.registerUser(newUser)
 
             if (result.error) {
-                return done(null, false, { message: result.error })
+                return done(null, false, { message: result.error, status: result.status })
             }
 
             done(null, result.user)

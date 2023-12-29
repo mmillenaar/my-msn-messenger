@@ -9,21 +9,28 @@ class UsersApi extends MongoDbContainer {
     }
 
     async getUserByEmail(email: string) {
-        const user = await super.getElementByValue('email', email)
-        return user
+        try {
+            const user = await super.getElementByValue('email', email)
+            return user
+        }
+        catch (err) {
+            logger.error(err)
+
+            return { error: 'ServerError, please try again', status: 500 }
+        }
     }
     async authenticateUser(email: string, password: string) {
         try {
             const user = await this.getUserByEmail(email)
             if (!user || !bcrypt.compareSync(password, user.password)) {
-                return { error: 'Invalid email or password' }
+                return { error: 'Invalid email or password', status: 401 }
             }
             return { user: user }
         }
         catch (err) {
             logger.error(err)
 
-            return { error: 'ServerError' }
+            return { error: 'ServerError, please try again', status: 500 }
         }
     }
     async registerUser(userData: any) { // TODO: sepecify USERDATA TYPE
@@ -32,9 +39,9 @@ class UsersApi extends MongoDbContainer {
             const isDuplicateUsername = await super.checkIsDuplicate('username', userData.username)
 
             if (isDuplicateEmail) {
-                return { error: 'Email already exists' }
+                return { error: 'Email already exists', status: 409 }
             } else if (isDuplicateUsername) {
-                return { error: 'Username already exists' }
+                return { error: 'Username already exists', status: 409 }
             }
 
             const saltRounds = 10
@@ -45,12 +52,16 @@ class UsersApi extends MongoDbContainer {
             }
             const savedUser = await super.save(newUser)
 
+            if (!savedUser) {
+                throw new Error('Error saving the registered user')
+            }
+
             return { user: savedUser }
         }
         catch (err) {
             logger.error(err)
 
-            return { error: 'ServerError' }
+            return { error: 'ServerError, please try again', status: 500 }
         }
     }
 }
