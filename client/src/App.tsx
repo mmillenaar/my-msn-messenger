@@ -18,7 +18,7 @@ const App = () => {
                 <AppContextProvider>
                     <Routes>
                         <Route element={<ProtectedRoutes/>}>
-                            <Route path='/' element={<Home username='mat' />} />
+                            <Route path='/' element={<Home />} />
                         </Route>
                         <Route path='/login' element={<Login />} />
                         <Route path='/register' element={<Register />} />

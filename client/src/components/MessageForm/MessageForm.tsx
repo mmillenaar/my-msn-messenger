@@ -16,7 +16,7 @@ const MessageForm = () => {
             const formMessage: ChatMessage = {
                 username: usernameRef.current.value,
                 message: messageRef.current.value,
-                date: new Date().toISOString() // TODO: in which format should dates be stored in DB?
+                timestamp: new Date().toISOString() // TODO: in which format should dates be stored in DB?
             }
             socket.emit('new-user-message', formMessage)
             console.log('message sent!');

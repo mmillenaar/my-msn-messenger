@@ -1,12 +1,35 @@
 import { ReactNode, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthDataTypes } from "../utils/types";
+
+interface MessageTypes {
+    text: string;
+    sender: string;
+    recipient: string;
+    timestamp: string;
+}
+
+interface ConversationTypes {
+    participants: string[];
+    messages: MessageTypes[];
+}
+
+interface UserTypes {
+    username: string;
+    email: string;
+    conversations: ConversationTypes[];
+}
+
+interface AuthDataTypes {
+    isAuthenticated: boolean
+    user: UserTypes
+}
 
 interface ContextTypes {
     checkUserLogin: () => Promise<boolean | null>;
     isUserLoggedIn: boolean | null;
     setIsUserLoggedIn: (value: boolean | null) => void;
     logout: () => void;
+    userData: UserTypes | null;
 }
 
 interface AppContextProviderProps {
@@ -17,6 +40,7 @@ const Context = createContext<ContextTypes | null>(null)
 
 export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
+    const [userData, setUserData] = useState<UserTypes | null>(null)
 
     const navigate = useNavigate()
 
@@ -25,6 +49,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             const res = await fetch('/api/auth/user-auth')
             const data: AuthDataTypes = await res.json()
             setIsUserLoggedIn(data.isAuthenticated)
+
+            if (data.isAuthenticated) {
+                setUserData(data.user)
+            }
 
             return data.isAuthenticated
         }
@@ -48,6 +76,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             }
         } catch (error) {
             console.error('Error during logout', error)
+
+            return null
         }
     };
 
@@ -57,7 +87,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             checkUserLogin,
             isUserLoggedIn,
             setIsUserLoggedIn,
-            logout
+            logout,
+            userData
         }}>
             {children}
         </Context.Provider>

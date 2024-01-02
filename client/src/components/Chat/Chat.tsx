@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { ChatMessage } from '../../utils/types'
 import Message from './Message/Message'
 import socket from '../../utils/websocket'
-
+import { ChatMessage } from '../../utils/types'
 import './Chat.scss'
+
 
 const Chat = () => {
     const [chatData, setChatData] = useState<ChatMessage[]>([])
@@ -35,13 +35,13 @@ const Chat = () => {
     return (
         <div className="chat">
             {chatData.map(messageData => {
-                const {username, message, date} = messageData
+                const {username, message, timestamp} = messageData
                 return (
                     <Message
-                        key={date}
+                        key={timestamp}
                         username={username}
                         message={message}
-                        date={date}
+                        timestamp={timestamp}
                     />
                 )
             })}

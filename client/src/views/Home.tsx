@@ -1,19 +1,25 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import Context from "../Context/AppContext"
 
-interface HomeProps {
-    username: string
-}
 
-const Home = ({ username }: HomeProps) => {
+const Home = () => {
+    const { userData, checkUserLogin, logout } = useContext(Context)!
 
-    const { logout } = useContext(Context)!
+    useEffect(() => {
+        if (!userData) {
+            checkUserLogin()
+        }
+    }, [userData, checkUserLogin])
+
+    if (!userData) {
+        return <div>Loading user data...</div>
+    }
 
     return (
         <div className="home">
             <div className="home__wrapper">
                 <h1 className="home__title">
-                    Welcome {username}!
+                    Welcome {userData?.username}!
                 </h1>
                 <div className="home__logout-wrapper">
                     <div className="home__logout-button">

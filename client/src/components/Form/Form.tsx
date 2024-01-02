@@ -1,8 +1,8 @@
 import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FormGroup from './FormGroup/FormGroup';
 import Context from '../../Context/AppContext';
 import { formConfirmPasswordGroup, formEmailGroup, formPasswordGroup, formUsernameGroup } from '../../utils/constants';
-import FormGroup from './FormGroup/FormGroup';
 import './Form.scss'
 
 export enum FormMethod {

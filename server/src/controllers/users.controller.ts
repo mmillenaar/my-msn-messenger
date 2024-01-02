@@ -47,7 +47,7 @@ export const getLogout = (req, res) => {
             return res.status(500).json({ message: 'Error logging out' })
         }
         else {
-            res.status(200).send({ message: 'Logged out successfully' })
+            return res.status(200).send({ message: 'Logged out successfully' })
         }
     });
 }

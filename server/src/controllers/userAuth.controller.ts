@@ -1,11 +1,15 @@
 import { Request, Response } from "express"
 
 export const getCheckUserAuth = async (req: any, res: Response) => {
-    const user = req.isAuthenticated()
-    if (user) {
-        res.status(200).send({ isAuthenticated: true })
+    if (req.isAuthenticated()) {
+        const {
+            password,
+            ...userForClient
+        } = req.user
+
+        return res.status(200).send({ isAuthenticated: true, user: userForClient })
     }
     else {
-        res.status(401).send({ isAuthenticated: false })
+        return res.status(401).send({ isAuthenticated: false, message: 'Please login' })
     }
 }
