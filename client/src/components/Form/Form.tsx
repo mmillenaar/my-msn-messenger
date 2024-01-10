@@ -27,7 +27,7 @@ const Form = ({ action, method }: FormProps) => {
     const usernameRef = useRef<HTMLInputElement>(null)
     const confirmPasswordRef = useRef<HTMLInputElement>(null)
 
-    const { setIsUserLoggedIn } = useContext(Context)!
+    const { setIsUserLoggedIn } = useContext(Context)
 
     const navigate = useNavigate()
 

@@ -66,7 +66,7 @@ export default class MongoDbContainer {
         try {
             const foundElement = await this.collection.findOne({ [field] : value}).select('-__v').lean()
             if (!foundElement) {
-                throw new Error(`Element with ${field}: ${value} not found`)
+                return null
             }
 
             return foundElement

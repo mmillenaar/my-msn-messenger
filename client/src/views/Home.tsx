@@ -1,9 +1,11 @@
 import { useContext, useEffect } from "react"
 import Context from "../Context/AppContext"
+// import MessageForm from "../components/MessageForm/MessageForm"
+// import Chat from "../components/Chat/Chat"
 
 
 const Home = () => {
-    const { userData, checkUserLogin, logout } = useContext(Context)!
+    const { userData, checkUserLogin, logout } = useContext(Context)
 
     useEffect(() => {
         if (!userData) {
@@ -21,6 +23,8 @@ const Home = () => {
                 <h1 className="home__title">
                     Welcome {userData?.username}!
                 </h1>
+                {/* <MessageForm />
+                <Chat /> */}
                 <div className="home__logout-wrapper">
                     <div className="home__logout-button">
                         <p onClick={logout}>Logout</p>

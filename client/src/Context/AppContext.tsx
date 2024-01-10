@@ -1,28 +1,8 @@
 import { ReactNode, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { closeSocketConnection } from "../utils/websocket";
+import { AuthDataTypes, UserTypes } from "../utils/types";
 
-interface MessageTypes {
-    text: string;
-    sender: string;
-    recipient: string;
-    timestamp: string;
-}
-
-interface ConversationTypes {
-    participants: string[];
-    messages: MessageTypes[];
-}
-
-interface UserTypes {
-    username: string;
-    email: string;
-    conversations: ConversationTypes[];
-}
-
-interface AuthDataTypes {
-    isAuthenticated: boolean
-    user: UserTypes
-}
 
 interface ContextTypes {
     checkUserLogin: () => Promise<boolean | null>;
@@ -36,7 +16,15 @@ interface AppContextProviderProps {
     children: ReactNode
 }
 
-const Context = createContext<ContextTypes | null>(null)
+const defaultContext: ContextTypes = {
+    checkUserLogin: async () => null,
+    isUserLoggedIn: null,
+    setIsUserLoggedIn: () => {},
+    logout: () => {},
+    userData: null,
+}
+
+const Context = createContext<ContextTypes>(defaultContext)
 
 export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
@@ -70,6 +58,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
             if (response.status === 200) {
                 setIsUserLoggedIn(null)
+                closeSocketConnection(userData?.id)
                 navigate('/login')
             } else {
                 console.error(data.message)

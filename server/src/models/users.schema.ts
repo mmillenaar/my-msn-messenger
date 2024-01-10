@@ -1,11 +1,17 @@
 import mongoose from 'mongoose'
-import conversationSchema from './conversations.schema'
+import chatSchema from './chats.schema'
+import contactSchema from './contacts.schema'
 
 const userSchema = new mongoose.Schema({
-    username: { type: String, require: true },
-    email: { type: String, unique: true, require: true },
+    username: { type: String, unique: true, required: true },
+    email: { type: String, unique: true, required: true },
     password: { type: String, require: true },
-    conversations: [conversationSchema]
+    chats: [chatSchema],
+    contacts: [contactSchema],
+    contactRequests: {
+        sent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        received: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+    }
 })
 
 export default userSchema

@@ -18,3 +18,9 @@ export const formConfirmPasswordGroup = {
     inputType: "password",
     label: "Confirm Password"
 }
+
+export enum MessageStatus {
+    SENT = 'sent',
+    RECEIVED = 'received',
+    READ = 'read'
+}
