@@ -1,9 +1,9 @@
 import logger from "../../config/logger.config"
-import { handleNewMessage, logoutSocket, registerSocket, sendRetrievedChat } from "../../controllers/chats.controller"
+import { handleNewMessage, logoutSocket, registerSocket, sendRetrievedChat } from "../../controllers/sockets.controller"
 import { ChatMessageTypes } from "../../utils/types"
 
 
-export default async function handleSocketChat(socket) {
+export default async function setupSocketListeners(socket) {
     socket.on('register-user', (id: string) => {
         registerSocket(id, socket)
     })
@@ -15,6 +15,7 @@ export default async function handleSocketChat(socket) {
     socket.on('new-message', async (message: ChatMessageTypes) => {
         handleNewMessage(message)
     })
+
     socket.on('logout', (userId: string) => {
         logoutSocket(userId)
         logger.info(`Client ${socket.id} disconnected`)

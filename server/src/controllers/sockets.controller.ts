@@ -38,3 +38,5 @@ export const handleNewMessage = async (message: ChatMessageTypes) => {
 export const logoutSocket = (userId: string) => {
     userSockets.delete(userId)
 }
+
+export default userSockets

@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 import logger from '../config/logger.config';
 import userSchema from "../models/users.schema";
 import MongoDbContainer from "../persistence/mongoDb.container";
+import { ContactRequestActions } from '../utils/constants';
 
 class UsersApi extends MongoDbContainer {
     constructor() {
@@ -57,6 +58,53 @@ class UsersApi extends MongoDbContainer {
             }
 
             return { user: savedUser }
+        }
+        catch (err) {
+            logger.error(err)
+
+            return { error: 'ServerError, please try again', status: 500 }
+        }
+    }
+
+    async handleContactRequest(userId: string, contactId: string, action: string) {
+        try {
+            const user = await super.getById(userId)
+            const contact = await super.getById(contactId)
+
+            const deleteContactRequests = () => {
+                user.contactRequests.sent = user.contactRequests.sent.filter(
+                    (id) => id !== contactId
+                )
+                contact.contactRequests.received = contact.contactRequests.received.filter(
+                    (id) => id !== userId
+                )
+            }
+
+            switch (action) {
+                case ContactRequestActions.SEND:
+                    user.contactRequests.sent.push(contactId)
+
+                    break
+                case ContactRequestActions.RECEIVE:
+                    user.contactRequests.received.push(contactId)
+
+                    break
+                case ContactRequestActions.ACCEPT:
+                    user.contacts.push(contactId)
+                    contact.contacts.push(userId)
+
+                    deleteContactRequests()
+
+                    break
+                case ContactRequestActions.REJECT:
+                    deleteContactRequests()
+
+                    break
+                default:
+                    break
+            }
+
+            return super.save(user)
         }
         catch (err) {
             logger.error(err)

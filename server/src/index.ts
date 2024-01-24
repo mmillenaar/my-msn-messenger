@@ -6,12 +6,9 @@ import { Server as HttpServer } from 'http'
 import { Server as Socket } from 'socket.io'
 
 import logger from "./config/logger.config";
-import authRouter from "./routes/auth/userAuth.route";
-import loginRouter from "./routes/users/login.route";
-import registerRouter from "./routes/users/register.route";
-import logoutRouter from "./routes/users/logout.route";
 import { handleSocketConnection } from "./utils/socketHandler";
 import { passportMiddleware, passportSessionHandler } from "./middlewares/passport.middleware";
+import userRouter from "./routes/users/user.route";
 
 const app = express()
 dotenv.config()
@@ -39,10 +36,7 @@ const io = new Socket(httpServer, {
 })
 handleSocketConnection(io)
 
-app.use('/api/auth', authRouter)
-app.use('/login', loginRouter)
-app.use('/register', registerRouter)
-app.use('/logout', logoutRouter)
+app.use('/user', userRouter)
 
 const PORT: string | number = process.env.PORT || 3030
 const server = httpServer.listen(PORT, () => {

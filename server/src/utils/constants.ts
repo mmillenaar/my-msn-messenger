@@ -3,3 +3,10 @@ export enum MessageStatus {
     RECEIVED = 'received',
     READ = 'read'
 }
+
+export enum ContactRequestActions {
+    ACCEPT = 'accept',
+    RECEIVE = 'receive',
+    REJECT = 'reject',
+    SEND = 'send'
+}

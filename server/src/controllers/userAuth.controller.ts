@@ -4,8 +4,14 @@ export const getCheckUserAuth = async (req: any, res: Response) => {
     if (req.isAuthenticated()) {
         const {
             password,
-            ...userForClient
+            _id,
+            ...rest
         } = req.user
+
+        const userForClient = {
+            id: _id,
+            ...rest
+        }
 
         return res.status(200).send({ isAuthenticated: true, user: userForClient })
     }
