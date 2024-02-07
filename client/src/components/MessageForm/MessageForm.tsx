@@ -38,4 +38,4 @@
 //     )
 // }
 
-// export default MessageForm
+export default {}

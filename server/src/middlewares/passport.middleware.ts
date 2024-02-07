@@ -3,7 +3,7 @@ import passport from 'passport'
 import { Strategy } from 'passport-local'
 import { usersApi } from '../services/users.api'
 import logger from '../config/logger.config'
-import { UserTypes } from '../utils/types'
+import { UserType } from '../utils/types'
 
 
 passport.use('login', new Strategy(
@@ -47,11 +47,11 @@ passport.use('register', new Strategy(
     }
 ))
 
-passport.serializeUser((user: UserTypes, done) => {
+passport.serializeUser((user: UserType, done) => {
     done(null, user)
 })
 
-passport.deserializeUser((user: UserTypes, done) => {
+passport.deserializeUser((user: UserType, done) => {
     done(null, user)
 })
 

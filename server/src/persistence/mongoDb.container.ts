@@ -25,6 +25,7 @@ connect()
 
 export default class MongoDbContainer {
     private collection
+
     constructor(collectionName: string, schema: Schema) {
         this.collection = mongoose.model(collectionName, schema)
     }
@@ -50,6 +51,8 @@ export default class MongoDbContainer {
         try {
             const foundElement = await this.collection.findById(id).select('-__v').lean()
             if (foundElement) {
+                // mongoose returns an object with an _id property, we need a string
+                foundElement._id = foundElement._id.toString()
                 return foundElement
             }
             else {
@@ -68,6 +71,8 @@ export default class MongoDbContainer {
             if (!foundElement) {
                 return null
             }
+            // mongoose returns an object with an _id property, we need a string
+            foundElement._id = foundElement._id.toString()
 
             return foundElement
         } catch (err) {
@@ -90,6 +95,8 @@ export default class MongoDbContainer {
             if (!retrievedElement) {
                 throw new Error(`Error retrieving saved element: ${JSON.stringify(object)}`)
             }
+            // mongoose returns an object with an _id property, we need a string
+            retrievedElement._id = retrievedElement._id.toString()
 
             return retrievedElement
         } catch (err) {
@@ -101,8 +108,7 @@ export default class MongoDbContainer {
     async update(object: {}, id: string) {
         // ensureDbConnection()
         try {
-            const updatedElement = await this.collection.replaceOne({ _id: id }, object)
-            logger.info(updatedElement); // TODO: check what is the return
+            const updatedElement = await this.collection.updateOne({ _id: id }, object)
 
             if (!updatedElement) {
                 throw new Error(`Error updating element with id: ${id}`)

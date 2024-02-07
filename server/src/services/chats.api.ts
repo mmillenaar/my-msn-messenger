@@ -1,6 +1,6 @@
 import chatSchema from "../models/chats.schema";
 import MongoDbContainer from "../persistence/mongoDb.container";
-import { ChatMessageTypes } from "../utils/types";
+import { ChatMessageType } from "../utils/types";
 
 class ChatsApi extends MongoDbContainer {
     constructor() {
@@ -12,7 +12,7 @@ class ChatsApi extends MongoDbContainer {
 
         return await this.getElementByValue('participantsIds', sortedParticipants)
     }
-    async saveMessage(message: ChatMessageTypes) {
+    async saveMessage(message: ChatMessageType) {
         const chat = await this.retrieveChatData(message.senderId, message.recipientId)
         if (!chat) {
             return null

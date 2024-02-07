@@ -38,7 +38,7 @@ const Form = ({ action, method }: FormProps) => {
             return
         }
 
-        const res = await fetch(`/${action}`, {
+        const res = await fetch(`/user/${action}`, {
             method: method,
             credentials: "include",
             headers: {

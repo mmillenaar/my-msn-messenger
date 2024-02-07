@@ -1,7 +1,7 @@
-import { ReactNode, createContext, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { closeSocketConnection } from "../utils/websocket";
-import { AuthDataTypes, UserTypes } from "../utils/types";
+import { AuthDataType, UserType } from "../utils/types";
 
 
 interface ContextTypes {
@@ -9,7 +9,10 @@ interface ContextTypes {
     isUserLoggedIn: boolean | null;
     setIsUserLoggedIn: (value: boolean | null) => void;
     logout: () => void;
-    userData: UserTypes | null;
+    userData: UserType | null;
+    setUserData: Dispatch<SetStateAction<UserType | null>>;
+    isSocketConnected: boolean;
+    setIsSocketConnected: Dispatch<SetStateAction<boolean>>;
 }
 
 interface AppContextProviderProps {
@@ -22,20 +25,24 @@ const defaultContext: ContextTypes = {
     setIsUserLoggedIn: () => {},
     logout: () => {},
     userData: null,
+    setUserData: () => { },
+    isSocketConnected: false,
+    setIsSocketConnected: () => {}
 }
 
 const Context = createContext<ContextTypes>(defaultContext)
 
 export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
-    const [userData, setUserData] = useState<UserTypes | null>(null)
+    const [userData, setUserData] = useState<UserType | null>(null)
+    const [isSocketConnected, setIsSocketConnected] = useState(false)
 
     const navigate = useNavigate()
 
     const checkUserLogin = async () => {
         try {
-            const res = await fetch('/api/auth/user-auth')
-            const data: AuthDataTypes = await res.json()
+            const response = await fetch('/user/auth')
+            const data: AuthDataType = await response.json()
             setIsUserLoggedIn(data.isAuthenticated)
 
             if (data.isAuthenticated) {
@@ -53,12 +60,12 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
     const logout = async () => {
         try {
-            const response = await fetch('/logout')
+            const response = await fetch('/user/logout')
             const data = await response.json()
 
             if (response.status === 200) {
                 setIsUserLoggedIn(null)
-                closeSocketConnection(userData?.id)
+                setUserData(null)
                 navigate('/login')
             } else {
                 console.error(data.message)
@@ -77,7 +84,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             isUserLoggedIn,
             setIsUserLoggedIn,
             logout,
-            userData
+            userData,
+            setUserData,
+            isSocketConnected,
+            setIsSocketConnected
         }}>
             {children}
         </Context.Provider>

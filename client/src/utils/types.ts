@@ -1,6 +1,6 @@
 import { MessageStatus } from "./constants";
 
-export interface ChatMessageTypes {
+export interface ChatMessageType {
     text: string;
     senderId: string;
     recipientId: string;
@@ -9,20 +9,36 @@ export interface ChatMessageTypes {
     status: MessageStatus
 }
 
-interface ChatTypes {
+interface ChatType {
     id: string;
     participants: string[];
-    messages: ChatMessageTypes[];
+    messages: ChatMessageType[];
 }
 
-export interface UserTypes {
+export interface UserType {
     id: string;
     username: string;
     email: string;
-    chats:ChatTypes[];
+    chats: ChatType[];
+    contacts: string[];
+    contactRequests: {
+        sent: ContactRequestType[];
+        received: ContactRequestType[];
+    }
 }
 
-export interface AuthDataTypes {
+export interface ContactRequestType {
+    username: string;
+    email: string;
+    id: string
+}
+
+export interface AuthDataType {
     isAuthenticated: boolean
-    user: UserTypes
+    user: UserType
+}
+
+export interface ContactRequestModalActionType {
+    accept: boolean;
+    reject: boolean;
 }

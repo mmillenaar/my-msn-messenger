@@ -24,3 +24,9 @@ export enum MessageStatus {
     RECEIVED = 'received',
     READ = 'read'
 }
+
+export enum ContactRequestActions {
+    SEND = 'send',
+    ACCEPT = 'accept',
+    REJECT = 'reject'
+}

@@ -6,7 +6,7 @@ export const handleSocketConnection = (io: Server) => {
     io.on('connection', async socket => {
         try {
             logger.info(`New client ${socket.id} connected`);
-            setupSocketListeners(socket)
+            await setupSocketListeners(socket)
         }
         catch(err) {
             logger.info(err);

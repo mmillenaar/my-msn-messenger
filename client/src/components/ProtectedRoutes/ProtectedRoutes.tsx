@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import Context from "../../Context/AppContext";
-import { initializeSocketConnection } from "../../utils/websocket";
+import { closeSocketConnection, initializeSocketConnection } from "../../utils/websocket";
 
 const ProtectedRoutes = () => {
-    const { isUserLoggedIn, userData, checkUserLogin } = useContext(Context)
+    const { isUserLoggedIn, userData, isSocketConnected, checkUserLogin, setIsSocketConnected } = useContext(Context)
 
     useEffect(() => {
         if (isUserLoggedIn === null) {
@@ -13,10 +13,19 @@ const ProtectedRoutes = () => {
     }, [isUserLoggedIn, checkUserLogin]);
 
     useEffect(() => {
-        if (isUserLoggedIn && userData) {
+        if (isUserLoggedIn && userData && !isSocketConnected) {
             initializeSocketConnection(userData.id)
+            setIsSocketConnected(true)
         }
-    }, [isUserLoggedIn, userData])
+
+        return () => {
+            if (userData && isSocketConnected) {
+                console.log('disconnecting socket')
+                setIsSocketConnected(false)
+                closeSocketConnection(userData.id)
+            }
+        }
+    }, [isUserLoggedIn, userData, isSocketConnected, setIsSocketConnected])
 
     if (isUserLoggedIn === null) {
         return <div>Loading...</div>;

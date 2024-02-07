@@ -1,5 +1,5 @@
 import { Socket, io } from 'socket.io-client'
-import { ChatMessageTypes } from './types';
+import { ChatMessageType, UserType } from './types';
 
 let socket: Socket | null = null;
 
@@ -16,13 +16,13 @@ export const openChat = (senderId: string, recipientId: string) => {
     socket.emit('get-chat-history', { senderId, recipientId })
 }
 
-export const sendMessage = (message: ChatMessageTypes) => {
+export const sendMessage = (message: ChatMessageType) => {
     if (!socket) return
 
     socket.emit('new-message', message)
 }
 
-export const setupChatListener = (callback: (data: ChatMessageTypes[]) => void) => {
+export const setupChatListener = (callback: (data: ChatMessageType[]) => void) => {
     if (!socket) return
 
     socket.on('chat-render', async (chatData) => {
@@ -41,8 +41,23 @@ export const setupChatListener = (callback: (data: ChatMessageTypes[]) => void) 
     }
 }
 
-export const closeSocketConnection = (userId: string) => {
-    if (socket) {
+export const setupContactRequestListener = (callback: (updatedUser: UserType) => void) => {
+    if (!socket) return
+
+    socket.on('incoming-contact-request', (updatedReceiver: UserType) => {
+        callback(updatedReceiver)
+    })
+    socket.on('accepted-contact-request', (updatedSender: UserType) => {
+        callback(updatedSender)
+    })
+}
+
+export const closeSocketConnection = (userId: string | undefined) => {
+    if (!socket) return console.error('Socket connection not established')
+
+    else if (!userId) return console.error('User id not provided')
+
+    else {
         socket.emit('logout', userId)
         socket.disconnect()
         console.log('Socket connection closed')

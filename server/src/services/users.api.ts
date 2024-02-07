@@ -3,6 +3,7 @@ import logger from '../config/logger.config';
 import userSchema from "../models/users.schema";
 import MongoDbContainer from "../persistence/mongoDb.container";
 import { ContactRequestActions } from '../utils/constants';
+import { UserType } from '../utils/types';
 
 class UsersApi extends MongoDbContainer {
     constructor() {
@@ -11,22 +12,25 @@ class UsersApi extends MongoDbContainer {
 
     async getUserByEmail(email: string) {
         try {
-            const user = await super.getElementByValue('email', email)
+            const user: UserType = await super.getElementByValue('email', email)
             return user
         }
         catch (err) {
             logger.error(err)
 
-            return { error: 'ServerError, please try again', status: 500 }
+            // TODO: check errors!!
+            // return { error: 'ServerError, please try again', status: 500 }
         }
     }
     async authenticateUser(email: string, password: string) {
         try {
-            const user = await this.getUserByEmail(email)
+            const user: UserType = await this.getUserByEmail(email)
+
             if (!user || !bcrypt.compareSync(password, user.password)) {
                 return { error: 'Invalid email or password', status: 401 }
+            } else {
+                return { user: user }
             }
-            return { user: user }
         }
         catch (err) {
             logger.error(err)
@@ -36,8 +40,8 @@ class UsersApi extends MongoDbContainer {
     }
     async registerUser(userData: any) { // TODO: sepecify USERDATA TYPE
         try {
-            const isDuplicateEmail = await super.checkIsDuplicate('email', userData.email)
-            const isDuplicateUsername = await super.checkIsDuplicate('username', userData.username)
+            const isDuplicateEmail: boolean = await super.checkIsDuplicate('email', userData.email)
+            const isDuplicateUsername: boolean = await super.checkIsDuplicate('username', userData.username)
 
             if (isDuplicateEmail) {
                 return { error: 'Email already exists', status: 409 }
@@ -51,7 +55,7 @@ class UsersApi extends MongoDbContainer {
                 ...userData,
                 password: hashedPassword
             }
-            const savedUser = await super.save(newUser)
+            const savedUser: UserType = await super.save(newUser)
 
             if (!savedUser) {
                 throw new Error('Error saving the registered user')
@@ -68,21 +72,35 @@ class UsersApi extends MongoDbContainer {
 
     async handleContactRequest(userId: string, contactId: string, action: string) {
         try {
-            const user = await super.getById(userId)
-            const contact = await super.getById(contactId)
+            const user: UserType = await super.getById(userId)
+            const contact: UserType = await super.getById(contactId)
 
             const deleteContactRequests = () => {
-                user.contactRequests.sent = user.contactRequests.sent.filter(
-                    (id) => id !== contactId
+                user.contactRequests.received = user.contactRequests.received.filter(
+                    (id) => id != contactId
                 )
-                contact.contactRequests.received = contact.contactRequests.received.filter(
-                    (id) => id !== userId
+                contact.contactRequests.sent = contact.contactRequests.sent.filter(
+                    (id) => id != userId
                 )
+            }
+            const checkContactRequestValidity = () => {
+                if (user.contacts.includes(contactId) ||
+                    user.contactRequests.sent.includes(contactId) ||
+                    user.contactRequests.received.includes(contactId)) {
+
+                    return false
+                } else {
+                    return true
+                }
             }
 
             switch (action) {
                 case ContactRequestActions.SEND:
-                    user.contactRequests.sent.push(contactId)
+                    if (checkContactRequestValidity()) {
+                        user.contactRequests.sent.push(contactId)
+                    } else {
+                        return { error: 'Already a contact', status: 409 }
+                    }
 
                     break
                 case ContactRequestActions.RECEIVE:
@@ -104,13 +122,51 @@ class UsersApi extends MongoDbContainer {
                     break
             }
 
-            return super.save(user)
+            await super.update(contact, contactId)
+            return await super.update(user, userId)
         }
         catch (err) {
             logger.error(err)
 
             return { error: 'ServerError, please try again', status: 500 }
         }
+    }
+    async populateUser(user: UserType) {
+        //populate contact requests
+        const contactRequestPromises = user.contactRequests.received.map(async (id) => {
+            const contact: UserType = await super.getById(id)
+
+            return {
+                username: contact.username,
+                email: contact.email,
+                id: contact._id
+            }
+        })
+
+        const populatedContactRequests = await Promise.all(contactRequestPromises)
+
+        return {
+            ...user,
+            contactRequests: {
+                ...user.contactRequests,
+                received: populatedContactRequests
+            }
+        }
+    }
+    async setupUserForClient(user: UserType) {
+        //populate contact requests
+        const populatedUser = await this.populateUser(user)
+
+        //remove password
+        const { password, _id, ...rest } = populatedUser
+
+        // change ID denomination
+        const userForClient = {
+            id: _id,
+            ...rest
+        }
+
+        return userForClient
     }
 }
 

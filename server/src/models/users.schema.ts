@@ -6,10 +6,10 @@ const userSchema = new mongoose.Schema({
     email: { type: String, unique: true, required: true },
     password: { type: String, require: true },
     chats: [chatSchema],
-    contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}],
+    contacts: [{ type: mongoose.Schema.Types.ObjectId, required: true}],
     contactRequests: {
-        sent: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        received: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+        sent: [{ type: mongoose.Schema.Types.ObjectId }],
+        received: [{ type: mongoose.Schema.Types.ObjectId }]
     }
 })
 
