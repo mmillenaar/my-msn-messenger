@@ -76,7 +76,17 @@ export const sendContactRequest = async (req, res) => {
 
     const contact: UserType = await usersApi.getElementByValue('email', contactEmail)
     const updatedSender = await usersApi.handleContactRequest(userId, contact._id, ContactRequestActions.SEND)
+
+    if (updatedSender.error) {
+        return res.status(409).json({ error: updatedSender.error })
+    }
+
     const updatedReceiver = await usersApi.handleContactRequest(contact._id, userId, ContactRequestActions.RECEIVE)
+
+    if (!updatedSender || !updatedReceiver) {
+        return res.status(500).json({ error: 'Error sending contact request' })
+    }
+
     const updatedSenderForClient = await usersApi.setupUserForClient(updatedSender)
     const updatedReceiverForClient = await usersApi.setupUserForClient(updatedReceiver)
 
@@ -85,12 +95,6 @@ export const sendContactRequest = async (req, res) => {
 
     if (receiverSocket) {
         receiverSocket.emit('incoming-contact-request', updatedReceiverForClient)
-    }
-    if (updatedSender.error) {
-        return res.status(409).json({ message: updatedSender.error })
-    }
-    if (!updatedSender || !updatedReceiver) {
-        return res.status(500).json({ message: 'Error sending contact request' })
     }
 
     res.status(200).json({ message: 'Contact request sent', user: updatedSenderForClient })
@@ -117,7 +121,7 @@ export const acceptContactRequest = async (req, res) => {
         return res.status(500).json({ message: 'Error sending contact request' })
     }
 
-    const updatedUserForClient = usersApi.setupUserForClient(updatedUser)
+    const updatedUserForClient = await usersApi.setupUserForClient(updatedUser)
 
     res.status(200).json({ message: 'Contact request accepted', user: updatedUserForClient })
 }

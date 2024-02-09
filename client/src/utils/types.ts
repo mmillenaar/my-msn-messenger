@@ -20,14 +20,14 @@ export interface UserType {
     username: string;
     email: string;
     chats: ChatType[];
-    contacts: string[];
+    contacts: ContactType[];
     contactRequests: {
-        sent: ContactRequestType[];
-        received: ContactRequestType[];
+        sent: ContactType[];
+        received: ContactType[];
     }
 }
 
-export interface ContactRequestType {
+export interface ContactType {
     username: string;
     email: string;
     id: string

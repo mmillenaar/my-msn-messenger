@@ -2,12 +2,11 @@ import mongoose, { Schema } from 'mongoose'
 import { dbConfig } from '../config/db.config'
 import logger from '../config/logger.config'
 
-// let isDbConnected: boolean = false
 
 const connect = async () => {
     try {
         await mongoose.connect(dbConfig.URL, dbConfig.options)
-        // isDbConnected = true
+
         logger.info('MongoDb connected')
     }
     catch (err) {
@@ -16,12 +15,19 @@ const connect = async () => {
 }
 connect()
 
-// const ensureDbConnection = async () => {
-//     if (!isDbConnected) {
-//         await connect()
-//     }
-// }
-// ensureDbConnection()
+// Utility function to convert ObjectIds to strings
+function convertObjectIdsToStrings(obj: any) {
+    if (obj instanceof mongoose.Types.ObjectId) {
+        return obj.toString()
+    } else if (Array.isArray(obj)) {
+        return obj.map(element => convertObjectIdsToStrings(element));
+    } else if (typeof obj === 'object' && obj !== null) {
+        Object.keys(obj).forEach(key => {
+            obj[key] = convertObjectIdsToStrings(obj[key])
+        })
+    }
+    return obj
+}
 
 export default class MongoDbContainer {
     private collection
@@ -31,11 +37,10 @@ export default class MongoDbContainer {
     }
 
     async getAll() {
-        // ensureDbConnection()
         try {
             const allContent = await this.collection.find().select('-__v').lean()
             if (allContent) {
-                return allContent
+                return allContent.map(doc => convertObjectIdsToStrings(doc));
             }
             else {
                 throw new Error(`Error getting all elements`)
@@ -47,13 +52,11 @@ export default class MongoDbContainer {
         }
     }
     async getById(id: string) {
-        // ensureDbConnection()
         try {
             const foundElement = await this.collection.findById(id).select('-__v').lean()
             if (foundElement) {
-                // mongoose returns an object with an _id property, we need a string
-                foundElement._id = foundElement._id.toString()
-                return foundElement
+                // mongoose returns an object with _ids as ObjectId types, we need strings
+                return convertObjectIdsToStrings(foundElement)
             }
             else {
                 throw new Error(`Element with id: ${id} not found`)
@@ -65,16 +68,13 @@ export default class MongoDbContainer {
         }
     }
     async getElementByValue(field: string, value: any) {
-        // ensureDbConnection()
         try {
             const foundElement = await this.collection.findOne({ [field] : value}).select('-__v').lean()
             if (!foundElement) {
                 return null
             }
-            // mongoose returns an object with an _id property, we need a string
-            foundElement._id = foundElement._id.toString()
-
-            return foundElement
+            // mongoose returns an object with _ids as ObjectId types, we need strings
+            return convertObjectIdsToStrings(foundElement)
         } catch (err) {
             logger.error(err);
 
@@ -82,7 +82,6 @@ export default class MongoDbContainer {
         }
     }
     async save(object: {}) {
-        // ensureDbConnection()
         try {
             const newObjectSchema = new this.collection(object)
             const savedElement = await newObjectSchema.save()
@@ -95,9 +94,7 @@ export default class MongoDbContainer {
             if (!retrievedElement) {
                 throw new Error(`Error retrieving saved element: ${JSON.stringify(object)}`)
             }
-            // mongoose returns an object with an _id property, we need a string
-            retrievedElement._id = retrievedElement._id.toString()
-
+            // mongoose returns an object with _ids as ObjectId types, we need strings
             return retrievedElement
         } catch (err) {
             logger.error(err);
@@ -106,7 +103,6 @@ export default class MongoDbContainer {
         }
     }
     async update(object: {}, id: string) {
-        // ensureDbConnection()
         try {
             const updatedElement = await this.collection.updateOne({ _id: id }, object)
 
@@ -122,7 +118,6 @@ export default class MongoDbContainer {
         }
     }
     async deleteById(id: string) {
-        // ensureDbConnection()
         try {
             const deletedElement = await this.collection.deleteOne({ _id: id })
             logger.info(deletedElement); // TODO: check what is the return
@@ -139,7 +134,6 @@ export default class MongoDbContainer {
         }
     }
     async deleteAll() {
-        // ensureDbConnection()
         try {
             const deletion = await this.collection.deleteMany({})
             if (deletion.deletedCount === 0) {
@@ -155,7 +149,6 @@ export default class MongoDbContainer {
         }
     }
     async checkIsDuplicate(field: string, value: any) {
-        // ensureDbConnection()
         try {
             const element = await this.getElementByValue(field, value)
 

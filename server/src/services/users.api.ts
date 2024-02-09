@@ -99,7 +99,8 @@ class UsersApi extends MongoDbContainer {
                     if (checkContactRequestValidity()) {
                         user.contactRequests.sent.push(contactId)
                     } else {
-                        return { error: 'Already a contact', status: 409 }
+                        // TODO: be more specific
+                        return { error: 'Already a contact/ contact request already sent', status: 409 }
                     }
 
                     break
@@ -142,11 +143,23 @@ class UsersApi extends MongoDbContainer {
                 id: contact._id
             }
         })
-
         const populatedContactRequests = await Promise.all(contactRequestPromises)
+
+        //populate contacts
+        const contactPromises = user.contacts.map(async (id) => {
+            const contact: UserType = await super.getById(id)
+
+            return {
+                username: contact.username,
+                email: contact.email,
+                id: contact._id
+            }
+        })
+        const populatedContacts = await Promise.all(contactPromises)
 
         return {
             ...user,
+            contacts: populatedContacts,
             contactRequests: {
                 ...user.contactRequests,
                 received: populatedContactRequests
@@ -154,7 +167,7 @@ class UsersApi extends MongoDbContainer {
         }
     }
     async setupUserForClient(user: UserType) {
-        //populate contact requests
+        //populate user
         const populatedUser = await this.populateUser(user)
 
         //remove password

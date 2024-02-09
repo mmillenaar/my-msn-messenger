@@ -5,6 +5,7 @@ import SearchBar from "../components/SearchBar/SearchBar"
 import ContactRequestsBar from "../components/ContactRequestsBar/ContactRequestsBar"
 import { ContactRequestModalActionType } from "../utils/types"
 import { ContactRequestActions } from "../utils/constants"
+import ContactList from "../components/ContactList/ContactList"
 
 
 const Home = () => {
@@ -55,7 +56,12 @@ const Home = () => {
             const data = await response.json()
 
             if (response.ok) {
+                console.log(data)
                 setUserData(data.user)
+            }
+            // TODO: manage error correctly
+            if (data.error) {
+                alert(data.error)
             }
         }
         catch (err) {
@@ -74,6 +80,7 @@ const Home = () => {
                     Welcome {userData?.username}!
                 </h1>
                 <SearchBar handleSubmit={sendContactRequest} />
+                <ContactList contacts={userData.contacts}/>
                 <ContactRequestsBar
                     contactRequests={userData.contactRequests.received}
                     handleModalAction={ handleContactRequestModalAction }

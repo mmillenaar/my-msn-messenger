@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { ContactRequestModalActionType, ContactRequestType } from "../../utils/types";
+import { ContactRequestModalActionType, ContactType } from "../../utils/types";
 import ContactRequestModal from "../ContactRequestModal/ContactRequestModal";
 
 interface ContactRequestsBarProps {
-    contactRequests: ContactRequestType[] | null;
+    contactRequests: ContactType[] | null;
     handleModalAction: (contactEmail: string, action: ContactRequestModalActionType) => void;
 }
 

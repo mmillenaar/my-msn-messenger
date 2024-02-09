@@ -1,8 +1,8 @@
 import { ChangeEvent, useState } from "react";
-import { ContactRequestModalActionType, ContactRequestType } from "../../utils/types";
+import { ContactRequestModalActionType, ContactType } from "../../utils/types";
 
 interface ContactRequestModalProps {
-    contactRequest: ContactRequestType;
+    contactRequest: ContactType;
     isOpen: boolean;
     handleClose: () => void;
     handleModalAction: (ContactEmail: string, action: ContactRequestModalActionType) => void;
