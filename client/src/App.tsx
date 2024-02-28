@@ -5,6 +5,7 @@ import Register from './views/Register';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import { AppContextProvider } from './Context/AppContext';
 import Home from './views/Home';
+import Chat from './views/Chat';
 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
                     <Routes>
                         <Route element={<ProtectedRoutes/>}>
                             <Route path='/' element={<Home />} />
+                            <Route path='/chat/:contactId' element={ <Chat />} />
                         </Route>
                         <Route path='/login' element={<Login />} />
                         <Route path='/register' element={<Register />} />

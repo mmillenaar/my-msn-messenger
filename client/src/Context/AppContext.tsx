@@ -1,6 +1,5 @@
 import { Dispatch, ReactNode, SetStateAction, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { closeSocketConnection } from "../utils/websocket";
 import { AuthDataType, UserType } from "../utils/types";
 
 

@@ -2,16 +2,23 @@ import { MessageStatus } from "./constants";
 
 export interface ChatMessageType {
     text: string;
-    senderId: string;
-    recipientId: string;
+    sender: ContactType;
     timestamp: number;
-    id: string;
     status: MessageStatus
+    recipient: ContactType;
 }
 
-interface ChatType {
+export interface ChatMessageForServer {
+    text: string;
+    senderId: string;
+    timestamp: number;
+    status: MessageStatus
+    recipientId: string;
+}
+
+export interface ChatType {
     id: string;
-    participants: string[];
+    participants: ContactType[];
     messages: ChatMessageType[];
 }
 
@@ -30,7 +37,8 @@ export interface UserType {
 export interface ContactType {
     username: string;
     email: string;
-    id: string
+    id: string;
+    chatId?: string;
 }
 
 export interface AuthDataType {

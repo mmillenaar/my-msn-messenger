@@ -69,9 +69,10 @@ export const checkUserAuth = async (req: any, res: Response) => {
 }
 
 export const sendContactRequest = async (req, res) => {
-    const { userId, contactEmail } = req.body
-    if (!userId || !contactEmail) {
-        return res.status(400).json({ message: 'Missing required fields' })
+    const userId = req.user._id
+    const { contactEmail } = req.body
+    if (!contactEmail) {
+        return res.status(400).json({ message: 'Missing required field' })
     }
 
     const contact: UserType = await usersApi.getElementByValue('email', contactEmail)
@@ -101,9 +102,10 @@ export const sendContactRequest = async (req, res) => {
 }
 
 export const acceptContactRequest = async (req, res) => {
-    const { userId, contactEmail } = req.body
-    if (!userId || !contactEmail) {
-        return res.status(400).json({ message: 'Missing required fields' })
+    const userId = req.user._id
+    const { contactEmail } = req.body
+    if (!contactEmail) {
+        return res.status(400).json({ message: 'Missing required field' })
     }
 
     const contact: UserType = await usersApi.getElementByValue('email', contactEmail)
@@ -127,8 +129,9 @@ export const acceptContactRequest = async (req, res) => {
 }
 
 export const rejectContactRequest = async (req, res) => {
-    const { userId, contactEmail } = req.body
-    if (!userId || !contactEmail) {
+    const userId = req.user._id
+    const { contactEmail } = req.body
+    if (!contactEmail) {
         return res.status(400).json({ message: 'Missing required fields' })
     }
 

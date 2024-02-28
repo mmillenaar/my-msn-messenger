@@ -6,7 +6,7 @@ export interface UserType {
     email: string;
     password: string;
     chats: [ChatType];
-    contacts: string[];
+    contacts: ContactType[];
     contactRequests: {
         sent: string[],
         received: string[]
@@ -14,8 +14,9 @@ export interface UserType {
 }
 
 export interface ChatType {
-    participantIds: string[],
+    participantsIds: string[],
     messages: ChatMessageType[],
+    _id: string;
 }
 
 export interface ChatMessageType {
@@ -24,4 +25,9 @@ export interface ChatMessageType {
     recipientId: string;
     timestamp: number;
     status: MessageStatus;
+}
+
+export interface ContactType {
+    _id: string;
+    chatId?: string;
 }

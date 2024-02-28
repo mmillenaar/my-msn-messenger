@@ -3,7 +3,7 @@ import logger from '../config/logger.config';
 import userSchema from "../models/users.schema";
 import MongoDbContainer from "../persistence/mongoDb.container";
 import { ContactRequestActions } from '../utils/constants';
-import { UserType } from '../utils/types';
+import { ContactType, UserType } from '../utils/types';
 
 class UsersApi extends MongoDbContainer {
     constructor() {
@@ -84,7 +84,7 @@ class UsersApi extends MongoDbContainer {
                 )
             }
             const checkContactRequestValidity = () => {
-                if (user.contacts.includes(contactId) ||
+                if (user.contacts.filter(contact => JSON.stringify(contact._id) === contactId).length > 0 ||
                     user.contactRequests.sent.includes(contactId) ||
                     user.contactRequests.received.includes(contactId)) {
 
@@ -109,8 +109,8 @@ class UsersApi extends MongoDbContainer {
 
                     break
                 case ContactRequestActions.ACCEPT:
-                    user.contacts.push(contactId)
-                    contact.contacts.push(userId)
+                    user.contacts.push({_id: contactId})
+                    contact.contacts.push({_id: userId})
 
                     deleteContactRequests()
 
@@ -146,13 +146,14 @@ class UsersApi extends MongoDbContainer {
         const populatedContactRequests = await Promise.all(contactRequestPromises)
 
         //populate contacts
-        const contactPromises = user.contacts.map(async (id) => {
-            const contact: UserType = await super.getById(id)
+        const contactPromises = user.contacts.map(async (contact: ContactType) => {
+            const searchedContact = await super.getById(contact._id)
 
             return {
-                username: contact.username,
-                email: contact.email,
-                id: contact._id
+                username: searchedContact.username,
+                email: searchedContact.email,
+                id: contact._id,
+                chatId: contact.chatId
             }
         })
         const populatedContacts = await Promise.all(contactPromises)
@@ -180,6 +181,34 @@ class UsersApi extends MongoDbContainer {
         }
 
         return userForClient
+    }
+    async addChatId(userId: string, contactId: string, chatId: string) {
+        try {
+            const user: UserType = await super.getById(userId)
+            const contact: UserType = await super.getById(contactId)
+
+            // Modify user's contacts
+            user.contacts.forEach(contactItem => {
+                if (contactItem._id.toString() === contactId) {
+                    contactItem.chatId = chatId;
+                }
+            });
+
+            // Modify contact's contacts
+            contact.contacts.forEach(contactItem => {
+                if (contactItem._id.toString() === userId) {
+                    contactItem.chatId = chatId;
+                }
+            });
+
+            await super.update(contact, contactId)
+            return await super.update(user, userId)
+        }
+        catch (err) {
+            logger.error(err)
+
+            return { error: 'ServerError, please try again', status: 500 }
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { chatsApi } from "../services/chats.api";
-import { ChatMessageType } from "../utils/types";
+import { ChatMessageType, ChatType } from "../utils/types";
 
 // TODO: handle errors
 
@@ -10,28 +10,31 @@ export const registerSocket = (userId: string, socket: Socket) => {
     userSockets.set(userId, socket)
 }
 
-export const sendRetrievedChat = async (senderId: string, recipientId: string, socket: Socket) => {
-    const retrievedChat = await chatsApi.retrieveChatData(senderId, recipientId)
-    if (!retrievedChat) {
+export const sendRetrievedChat = async (socket: Socket, chatId?: string) => {
+    if (!chatId) {
         // return socket.emit('error', 'Failure retrieving chat data, please try again')
+        return
     }
-    socket.emit('chat-render', retrievedChat)
+    const retrievedChat = await chatsApi.retrieveChatData(chatId)
+    const chatForCient = await chatsApi.setupChatForClient(retrievedChat)
+    socket.emit('chat-render', chatForCient)
 }
 
-export const handleNewMessage = async (message: ChatMessageType) => {
-    const savedMessage = await chatsApi.saveMessage(message)
-    if (!savedMessage) {
-        return
+export const handleNewMessage = async (message: ChatMessageType, chatId?: string) => {
+    const savedChat: ChatType = await chatsApi.saveMessage(message, chatId)
+    if (!savedChat) {
+        return // TODO: handle error
     }
     const senderSocket = userSockets.get(message.senderId)
     const recipientSocket = userSockets.get(message.recipientId)
 
-    sendRetrievedChat(message.senderId, message.recipientId, senderSocket)
+    await sendRetrievedChat(senderSocket, savedChat._id)
 
     if (!recipientSocket) {
-        // handle event when recipient is not online
+        // handle event when recipient is not online (message status)
     } else {
-        sendRetrievedChat(message.senderId, message.recipientId, recipientSocket)
+        // TODO: notification
+        await sendRetrievedChat(recipientSocket, savedChat._id)
     }
 }
 

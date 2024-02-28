@@ -1,5 +1,6 @@
 import { Socket, io } from 'socket.io-client'
-import { ChatMessageType, UserType } from './types';
+import { ChatMessageForServer, ChatType, UserType } from './types';
+import { Dispatch, SetStateAction } from 'react';
 
 let socket: Socket | null = null;
 
@@ -10,19 +11,19 @@ export const initializeSocketConnection = (userId: string) => {
     socket.emit('register-user', userId)
 }
 
-export const openChat = (senderId: string, recipientId: string) => {
+export const openChat = (chatId: string) => {
     if (!socket) return
 
-    socket.emit('get-chat-history', { senderId, recipientId })
+    socket.emit('get-chat-history', chatId)
 }
 
-export const sendMessage = (message: ChatMessageType) => {
+export const sendMessage = (message: ChatMessageForServer, chatId?: string) => {
     if (!socket) return
 
-    socket.emit('new-message', message)
+    socket.emit('new-message',{ message, chatId })
 }
 
-export const setupChatListener = (callback: (data: ChatMessageType[]) => void) => {
+export const setupChatListener = (callback: Dispatch<SetStateAction<ChatType | null>>) => {
     if (!socket) return
 
     socket.on('chat-render', async (chatData) => {

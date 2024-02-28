@@ -1,4 +1,5 @@
 import { ContactType } from "../../utils/types"
+import ContactChatLink from "../ContactChatLink/ContactChatLink"
 
 interface ContactListProps {
     contacts: ContactType[]
@@ -11,9 +12,12 @@ const ContactList = ({ contacts }: ContactListProps) => {
             <div className="contact-list__wrapper">
                 {contacts.map((contact, index) => {
                     return (
-                        <div className="contact-list__contact" key={index}>
-                            <p className="contact__name">{contact.username}</p>
-                        </div>
+                        <ContactChatLink
+                            key={index}
+                            id={contact.id}
+                        >
+                            {contact.username}
+                        </ContactChatLink>
                     )
                 })}
             </div>

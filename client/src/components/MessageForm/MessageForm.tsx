@@ -1,41 +1,48 @@
-// import { useRef } from "react"
-// import { ChatMessageTypes } from "../../utils/types"
-// import { sendMessage } from "../../utils/websocket"
+import { useRef } from "react"
+import { ChatMessageForServer } from "../../utils/types"
+import { sendMessage } from "../../utils/websocket"
+import { MessageStatus } from "../../utils/constants";
 
-// const MessageForm = () => {
-//     const usernameRef = useRef<HTMLInputElement | null>(null)
-//     const messageRef = useRef<HTMLInputElement | null>(null)
+interface MessageFormProps {
+    userId: string;
+    contactId: string;
+    chatId?: string;
+}
 
-//     const cleanForm = (elementsArray: HTMLInputElement[]) => {
-//         elementsArray.forEach(element => element.value = '')
-//     }
+const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
+    const messageRef = useRef<HTMLInputElement | null>(null)
 
-//     const handleChatSubmit = async (e: React.FormEvent) => {
-//         e.preventDefault();
+    const cleanForm = (elementsArray: HTMLInputElement[]) => {
+        elementsArray.forEach(element => element.value = '')
+    }
 
-//         if (usernameRef.current && messageRef.current) {
-//             const formMessage: ChatMessageTypes = {
-//                 // FIXME: complete with new expected values
-//                 username: usernameRef.current.value,
-//                 message: messageRef.current.value,
-//                 timestamp: Date.now()
-//             }
+    const handleChatSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-//             sendMessage(formMessage)
-//             console.log('message sent!');
-//             cleanForm([usernameRef.current, messageRef.current])
-//         }
-//     }
+        if (messageRef.current) {
+            const formMessage: ChatMessageForServer = {
+                // FIXME: complete with new expected values
+                text: messageRef.current.value,
+                timestamp: Date.now(),
+                senderId: userId,
+                recipientId: contactId,
+                status: MessageStatus.SENT
+            }
 
-//     return (
-//         <div className="message-form">
-//             <form onSubmit={handleChatSubmit}>
-//                 <input ref={usernameRef} type="text" id="username" placeholder="Please insert your username" required />
-//                 <input ref={messageRef} type="text" id="message" placeholder="message" />
-//                 <button type="submit">Send</button>
-//             </form>
-//         </div>
-//     )
-// }
+            sendMessage(formMessage, chatId)
+            console.log('message sent!');
+            cleanForm([messageRef.current])
+        }
+    }
 
-export default {}
+    return (
+        <div className="message-form">
+            <form onSubmit={handleChatSubmit}>
+                <input ref={messageRef} type="text" id="message" placeholder="message" />
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    )
+}
+
+export default MessageForm

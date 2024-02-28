@@ -8,12 +8,12 @@ export default async function setupSocketListeners(socket) {
         registerSocket(id, socket)
     })
 
-    socket.on('get-chat-history', async (senderId: string, recipientId: string) => {
-        await sendRetrievedChat(senderId, recipientId, socket)
+    socket.on('get-chat-history', async (chatId: string) => {
+        await sendRetrievedChat(socket, chatId)
     })
 
-    socket.on('new-message', async (message: ChatMessageType) => {
-        await handleNewMessage(message)
+    socket.on('new-message', async ({ message, chatId }: { message: ChatMessageType, chatId?: string }) => {
+        await handleNewMessage(message, chatId)
     })
 
     socket.on('logout', (userId: string) => {
