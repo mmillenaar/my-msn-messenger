@@ -1,0 +1,16 @@
+$breakpoints: (
+    'phone-xsmall': calc(calc(320 / 16) * 1rem),
+    'phone-small': calc(calc(425 / 16) * 1rem),
+    'phone-medium': calc(calc(600 / 16) * 1rem),
+    'phone': calc(calc(768 / 16) * 1rem),
+    'tablet-small': calc(calc(900 / 16) * 1rem),
+    'tablet': calc(calc(1024 / 16) * 1rem),
+    'desktop-small': calc(calc(1200 / 16) * 1rem),
+    'desktop-medium': calc(calc(1440 / 16) * 1rem),
+    'desktop-mlarge': calc(calc(1600 / 16) * 1rem),
+    'desktop-large': calc(calc(1800 / 16) * 1rem),
+    'desktop-xlarge': calc(calc(1920 / 16) * 1rem),
+    'desktop-xxlarge': calc(calc(2120 / 16) * 1rem),
+) !default;
+
+@import '../../../node_modules/include-media/dist/_include-media.scss';

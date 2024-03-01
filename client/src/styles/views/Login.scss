@@ -1,0 +1,66 @@
+@import '../index';
+
+.login {
+    &__wrapper {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-height: 100%;
+        overflow: auto;
+    }
+    &__window-title {
+        color: $color-white;
+    }
+    &__window-content {
+        padding: 20px;
+    }
+    &__img {
+        &-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            @include media('>=tablet') {
+                max-width: 500px;
+                flex-direction: row;
+            }
+        }
+        &-image {
+            max-width: 100px;
+            align-self: center;
+        }
+        &-text {
+            text-align: center;
+
+            @include media('>=tablet') {
+                text-align: left;
+                max-width: 200px;
+            }
+        }
+    }
+    &__form {
+        margin-top: 20px;
+    }
+    &__microsoft-net-logo {
+        display: flex;
+        justify-content: end;
+
+        svg {
+            width: 70px;
+            height: auto;
+            display: flex;
+            justify-content: end;
+        }
+        &-text {
+            padding: 40px 2px 0 0;
+            color: #9f9e9a
+        }
+    }
+    &__helpers {
+        &-link-wrapper {
+            display: flex;
+            gap: 25px;
+        }
+    }
+}

@@ -1,0 +1,44 @@
+/// Returns a calc that translates into a fluid value between two breakpoints/limits.
+/// Commonly used for fluid typography - https://css-tricks.com/simplified-fluid-typography/
+/// Example usage: font-size: fluid('phone-small', 'tablet', 12px, 18px);
+///                line-height: fluid('phone-small', '1800px', 12px, 18px);
+/// Note that this is a linear function that will not stop growing/shrinking before or after the given breakpoints.
+///
+/// @param {String} $min-breakpoint - Where the distance starts to be calculated from.
+/// @param {String} $max-breakpoint - Where the distance ends.
+/// @param {Pixel Value} $min-value - The the minimum value that starts from the distance starting point.
+/// @param {Pixel Value} $max-value - The the maximum value that ends for the distance ending point.
+/// @return {String} - The calc() CSS operation with crazy mathz.
+///
+@function fluid($min-breakpoint, $max-breakpoint, $min-value, $max-value) {
+    $min-vw: 0;
+    $max-vw: 0;
+
+    @if map-has-key($breakpoints, $min-breakpoint) {
+        $min-vw: map-get($breakpoints, $min-breakpoint);
+    } @else {
+        $min-vw: to-number($min-breakpoint);
+    }
+
+    @if map-has-key($breakpoints, $max-breakpoint) {
+        $max-vw: map-get($breakpoints, $max-breakpoint);
+    } @else {
+        $max-vw: to-number($max-breakpoint);
+    }
+
+    $min-value: rem-calc($min-value, false);
+    $max-value: rem-calc($max-value, false);
+
+    $u1: unit($min-vw);
+    $u2: unit($max-vw);
+    $u3: unit($min-value);
+    $u4: unit($max-value);
+
+    @if $u1 == $u2 and $u1 == $u3 and $u1 == $u4 {
+        @return calc(
+            #{$min-value} + #{(strip-unit($max-value) - strip-unit($min-value))} * ((
+                            100vw - #{$min-vw}
+                        ) / #{strip-unit($max-vw - $min-vw)})
+        );
+    }
+}

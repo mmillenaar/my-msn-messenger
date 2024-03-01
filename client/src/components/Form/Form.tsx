@@ -77,26 +77,33 @@ const Form = ({ action, method }: FormProps) => {
         <div className="form">
             <div className="form__wrapper">
                 {action === FormAction.REGISTER &&
+                <div className="form__group">
                     <FormGroup
                         groupName={formUsernameGroup.groupName}
                         inputType={formUsernameGroup.inputType}
                         label={formUsernameGroup.label}
                         inputRef={usernameRef}
                     />
+                </div>
                 }
-                <FormGroup
-                    groupName={formEmailGroup.groupName}
-                    inputType={formEmailGroup.inputType}
-                    label={formEmailGroup.label}
-                    inputRef={emailRef}
-                />
-                <FormGroup
-                    groupName={formPasswordGroup.groupName}
-                    inputType={formPasswordGroup.inputType}
-                    label={formPasswordGroup.label}
-                    inputRef={passwordRef}
-                />
+                <div className="form__group">
+                    <FormGroup
+                        groupName={formEmailGroup.groupName}
+                        inputType={formEmailGroup.inputType}
+                        label={formEmailGroup.label}
+                        inputRef={emailRef}
+                    />
+                </div>
+                <div className="form__group">
+                    <FormGroup
+                        groupName={formPasswordGroup.groupName}
+                        inputType={formPasswordGroup.inputType}
+                        label={formPasswordGroup.label}
+                        inputRef={passwordRef}
+                    />
+                </div>
                 {action === FormAction.REGISTER &&
+                <div className="form__group">
                     <FormGroup
                         groupName={formConfirmPasswordGroup.groupName}
                         inputType={formConfirmPasswordGroup.inputType}
@@ -104,16 +111,17 @@ const Form = ({ action, method }: FormProps) => {
                         inputRef={confirmPasswordRef}
                         onBlur={onConfirmPasswordBlur}
                     />
+                </div>
                 }
                 { doPasswordsMatch === false &&
-                    <p className="form__password-match-error" style={{color: 'red'}}>Passwords do not match</p>
+                    <p className="form__password-match-error">* Passwords do not match</p>
                 }
                 <div className="form__buttons">
+                    <button className="form__buttons-submit" type="submit" onClick={handleOnFormSubmit}>
+                        OK
+                    </button>
                     <button className="form__buttons-cancel" type="button">
                         Cancel
-                    </button>
-                    <button className="form__buttons-submit" type="submit" onClick={handleOnFormSubmit}>
-                        Submit
                     </button>
                 </div>
             </div>

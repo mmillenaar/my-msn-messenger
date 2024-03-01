@@ -1,0 +1,12 @@
+.chat-message {
+    &__wrapper {
+        padding: 5px;
+    }
+    &__username {
+        margin: 0;
+        color: grey
+    }
+    &__text {
+        margin: 0;
+    }
+}

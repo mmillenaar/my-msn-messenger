@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import './FormGroup.scss'
 
 interface FormGroupProps {
     groupName: string;
@@ -11,15 +12,20 @@ interface FormGroupProps {
 const FormGroup = forwardRef<HTMLInputElement, FormGroupProps>(
     ({ groupName, inputType, label, inputRef, onBlur }, ref) => {
         return (
-            <div className="form__group">
-                <label htmlFor={ groupName }>{ label }</label>
-                <input
-                    ref={ref || inputRef}
-                    type={ inputType }
-                    name={ groupName }
-                    id={groupName}
-                    onBlur={ onBlur }
-                />
+            <div className="form-group">
+                <div className="form-group__wrapper">
+                    <label className='form-group__label' htmlFor={ groupName }>
+                        { label }
+                    </label>
+                    <input
+                        className='form-group__input'
+                        ref={ref || inputRef}
+                        type={ inputType }
+                        name={ groupName }
+                        id={groupName}
+                        onBlur={ onBlur }
+                    />
+                </div>
             </div>
         );
     }
