@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './views/Login';
 import Register from './views/Register';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
-import { AppContextProvider } from './Context/AppContext';
+import { AppContextProvider } from './context/AppContext';
 import Home from './views/Home';
 import Chat from './views/Chat';
 

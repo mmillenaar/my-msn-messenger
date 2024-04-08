@@ -26,6 +26,7 @@ export interface UserType {
     id: string;
     username: string;
     email: string;
+    status: string;
     chats: ChatType[];
     contacts: ContactType[];
     contactRequests: {
@@ -38,6 +39,7 @@ export interface ContactType {
     username: string;
     email: string;
     id: string;
+    status: string;
     chatId?: string;
 }
 

@@ -11,6 +11,12 @@ export const initializeSocketConnection = (userId: string) => {
     socket.emit('register-user', userId)
 }
 
+export const changeUserStatus = (userId: string, newStatus: string) => {
+    if (!socket) return
+
+    socket.emit('user-status-change', { userId, newStatus })
+}
+
 export const openChat = (chatId: string) => {
     if (!socket) return
 
@@ -42,9 +48,12 @@ export const setupChatListener = (callback: Dispatch<SetStateAction<ChatType | n
     }
 }
 
-export const setupContactRequestListener = (callback: (updatedUser: UserType) => void) => {
+export const setupUserEventsListener = (callback: (updatedUser: UserType) => void) => {
     if (!socket) return
 
+    socket.on('new-user-status', (user: UserType) => {
+        callback(user)
+    })
     socket.on('incoming-contact-request', (updatedReceiver: UserType) => {
         callback(updatedReceiver)
     })

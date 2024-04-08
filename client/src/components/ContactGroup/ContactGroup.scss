@@ -1,0 +1,50 @@
+@import '../../styles/index';
+
+.contact-group {
+    &__wrapper {
+        padding: 2px 0 0 2px;
+    }
+    &__title {
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 0.9;
+        }
+
+        &-icon {
+            svg {
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                box-shadow: 2px 2px 2px 0 $color-grey-1;
+
+                circle {
+                    fill: $color-white !important;
+                }
+                path {
+                    fill: $color-blue-1 !important;
+                }
+            }
+
+            &--open {
+                transform: rotate(90deg);
+
+                svg {
+                    box-shadow: 2px -2px 2px 0 $color-grey-1;
+                }
+            }
+        }
+        &-text {
+            padding-left: 5px;
+            color: $color-blue-1;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    }
+    &__contacts {
+        margin-left: 30px;
+    }
+}

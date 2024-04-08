@@ -1,6 +1,7 @@
 import { Dispatch, ReactNode, SetStateAction, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthDataType, UserType } from "../utils/types";
+import { closeSocketConnection } from "../utils/websocket";
 
 
 interface ContextTypes {
@@ -10,8 +11,8 @@ interface ContextTypes {
     logout: () => void;
     userData: UserType | null;
     setUserData: Dispatch<SetStateAction<UserType | null>>;
-    isSocketConnected: boolean;
-    setIsSocketConnected: Dispatch<SetStateAction<boolean>>;
+    isSocketConnected: boolean | null;
+    setIsSocketConnected: Dispatch<SetStateAction<boolean | null>>;
 }
 
 interface AppContextProviderProps {
@@ -25,7 +26,7 @@ const defaultContext: ContextTypes = {
     logout: () => {},
     userData: null,
     setUserData: () => { },
-    isSocketConnected: false,
+    isSocketConnected: null,
     setIsSocketConnected: () => {}
 }
 
@@ -34,7 +35,7 @@ const Context = createContext<ContextTypes>(defaultContext)
 export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
     const [userData, setUserData] = useState<UserType | null>(null)
-    const [isSocketConnected, setIsSocketConnected] = useState(false)
+    const [isSocketConnected, setIsSocketConnected] = useState<boolean | null>(null)
 
     const navigate = useNavigate()
 
@@ -64,6 +65,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
             if (response.status === 200) {
                 setIsUserLoggedIn(null)
+                closeSocketConnection(userData?.id)
                 setUserData(null)
                 navigate('/login')
             } else {

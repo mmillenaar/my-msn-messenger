@@ -22,7 +22,7 @@ app.use(session({
     saveUninitialized: false,
     rolling: true,
     cookie: {
-        maxAge: 600000
+        maxAge: 600000000
     }
 }))
 app.use(passportMiddleware)

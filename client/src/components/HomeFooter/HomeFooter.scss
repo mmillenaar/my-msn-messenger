@@ -1,0 +1,41 @@
+@import '../../styles/index';
+
+.home-footer {
+    background: $color-grey-2;
+    &__title-bar {
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        background: $color-blue-2;
+
+        &:hover {
+            opacity: 0.9;
+        }
+
+        &-icon {
+            svg{
+                width: 25px;
+                height: 25px;
+
+                circle {
+                    fill: $color-blue-3 !important;
+                }
+            }
+
+            &--open {
+                transform: rotate(90deg);
+            }
+        }
+        &-text {
+            color: $color-white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    }
+    &__content {
+        padding: 5px;
+    }
+
+}

@@ -1,10 +1,11 @@
-import { MessageStatus } from "./constants";
+import { MessageStatus, UserStatus } from "./constants";
 
 export interface UserType {
     _id: string;
     username: string;
     email: string;
     password: string;
+    status: UserStatus;
     chats: [ChatType];
     contacts: ContactType[];
     contactRequests: {

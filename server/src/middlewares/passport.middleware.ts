@@ -12,7 +12,7 @@ passport.use('login', new Strategy(
         try {
             const result = await usersApi.authenticateUser(username, password)
 
-            if (result. error) {
+            if (result.error) {
                 return done(null, false, { message: result.error, status: result.status  })
             }
 

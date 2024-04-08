@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { acceptContactRequest, checkUserAuth, getLogout, postLogin, postRegister, rejectContactRequest, sendContactRequest } from "../../controllers/users.controller";
+import { acceptContactRequest, checkUserAuth, getLogout, postLogin, postRegister, rejectContactRequest, sendContactRequest, updateUsername } from "../../controllers/users.controller";
 // import { checkUserAuth } from "../../controllers/userAuth.controller";
 
 const userRouter = Router();
@@ -17,5 +17,7 @@ userRouter.route("/contact-request/send").post(sendContactRequest)
 userRouter.route("/contact-request/accept").post(acceptContactRequest)
 
 userRouter.route("/contact-request/reject").post(rejectContactRequest)
+
+userRouter.route("/update/username").put(updateUsername)
 
 export default userRouter;

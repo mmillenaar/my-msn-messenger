@@ -9,9 +9,6 @@
         max-height: 100%;
         overflow: auto;
     }
-    &__window-title {
-        color: $color-white;
-    }
     &__window-content {
         padding: 20px;
     }
@@ -54,7 +51,7 @@
         }
         &-text {
             padding: 40px 2px 0 0;
-            color: #9f9e9a
+            color: $color-grey-1;
         }
     }
     &__helpers {

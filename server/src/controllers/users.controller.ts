@@ -3,7 +3,7 @@ import passport from 'passport'
 import logger from '../config/logger.config'
 import { usersApi } from '../services/users.api'
 import { userSockets } from './sockets.controller'
-import { ContactRequestActions } from '../utils/constants'
+import { ContactRequestActions, UserUpdateFields } from '../utils/constants'
 import { UserType } from '../utils/types'
 
 
@@ -145,4 +145,22 @@ export const rejectContactRequest = async (req, res) => {
     const updatedUserForClient = await usersApi.setupUserForClient(updatedUser)
 
     res.status(200).json({ message: 'Contact request rejected', user: updatedUserForClient })
+}
+
+export const updateUsername = async (req, res) => {
+    const userId = req.user._id
+    const { newUsername } = req.body
+    if (!newUsername) {
+        return res.status(400).json({ message: 'Missing required fields' })
+    }
+
+    const updatedUser: UserType = await usersApi.updateUser(userId, UserUpdateFields.USERNAME, newUsername)
+
+    if (!updatedUser) {
+        return res.status(500).json({ message: 'Error updating username' })
+    }
+
+    const updatedUserForClient = await usersApi.setupUserForClient(updatedUser)
+
+    res.status(200).json({ message: 'Username updated', user: updatedUserForClient })
 }

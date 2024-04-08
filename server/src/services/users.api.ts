@@ -140,7 +140,7 @@ class UsersApi extends MongoDbContainer {
             return {
                 username: contact.username,
                 email: contact.email,
-                id: contact._id
+                id: contact._id,
             }
         })
         const populatedContactRequests = await Promise.all(contactRequestPromises)
@@ -153,7 +153,8 @@ class UsersApi extends MongoDbContainer {
                 username: searchedContact.username,
                 email: searchedContact.email,
                 id: contact._id,
-                chatId: contact.chatId
+                chatId: contact.chatId,
+                status: searchedContact.status
             }
         })
         const populatedContacts = await Promise.all(contactPromises)
@@ -203,6 +204,26 @@ class UsersApi extends MongoDbContainer {
 
             await super.update(contact, contactId)
             return await super.update(user, userId)
+        }
+        catch (err) {
+            logger.error(err)
+
+            return { error: 'ServerError, please try again', status: 500 }
+        }
+    }
+    async updateUser(id: string, field: string, value: any) {
+        try {
+            const user: UserType = await super.getById(id)
+
+            if (field === 'password') {
+                const saltRounds = 10
+                const hashedPassword = await bcrypt.hash(value, saltRounds)
+                user[field] = hashedPassword
+            } else {
+                user[field] = value
+            }
+
+            return await super.update(user, id)
         }
         catch (err) {
             logger.error(err)

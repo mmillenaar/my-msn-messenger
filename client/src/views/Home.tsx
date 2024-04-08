@@ -1,32 +1,78 @@
 import { useContext, useEffect } from "react"
-import Context from "../Context/AppContext"
-import { setupContactRequestListener } from "../utils/websocket"
-import SearchBar from "../components/SearchBar/SearchBar"
+import Context from "../context/AppContext"
+import { setupUserEventsListener } from "../utils/websocket"
 import ContactRequestsBar from "../components/ContactRequestsBar/ContactRequestsBar"
-import { ContactRequestModalActionType } from "../utils/types"
+import { ContactRequestModalActionType, UserType } from "../utils/types"
 import { ContactRequestActions } from "../utils/constants"
 import ContactList from "../components/ContactList/ContactList"
+import msnLogo from '../assets/icons/MSN-messenger-icon.webp'
+import StatusHeader from "../components/StatusHeader/StatusHeader"
+import '../styles/views/Home.scss'
+import HomeFooter from "../components/HomeFooter/HomeFooter"
 
 
 const Home = () => {
-    const { userData, isSocketConnected, checkUserLogin, setUserData, logout } = useContext(Context)
-
-    useEffect(() => {
-        if (isSocketConnected) {
-            console.log('contact request socket listening')
-            setupContactRequestListener(setUserData)
+    const userData: UserType = {
+        id: '123',
+        username: 'matias',
+        email: 'mat1@a.com',
+        status: 'Busy',
+        chats: [],
+        contacts: [
+            {
+                username: 'mat',
+                email: 'mat2@a.com',
+                id: '321',
+                status: 'Away',
+            },
+            {
+                username: 'mat3',
+                email: 'mat3@a.com',
+                id: '3211',
+                status: 'Away',
+            },
+            {
+                username: 'mat5',
+                email: 'mat5@a.com',
+                id: '5211',
+                status: 'Offline',
+            },
+            {
+                username: 'mat4',
+                email: 'mat4@a.com',
+                id: '4211',
+                status: 'Online',
+            },
+        ],
+        contactRequests: {
+            sent: [],
+            received: [],
         }
-    }, [isSocketConnected, userData, setUserData])
-
-    useEffect(() => {
-        if (!userData) {
-            checkUserLogin()
-        }
-    }, [userData, checkUserLogin])
-
-    if (!userData) {
-        return <div>Loading user data...</div>
     }
+    // username: string;
+    // email: string;
+    // id: string;
+    // status: string;
+    // chatId?: string;
+
+    // const { userData, isSocketConnected, checkUserLogin, setUserData, logout } = useContext(Context)
+
+    // useEffect(() => {
+    //     if (isSocketConnected) {
+    //         console.log('user events socket listening')
+    //         setupUserEventsListener(setUserData)
+    //     }
+    // }, [isSocketConnected, userData, setUserData])
+
+    // useEffect(() => {
+    //     if (!userData) {
+    //         checkUserLogin()
+    //     }
+    // }, [userData, checkUserLogin])
+
+    // if (!userData) {
+    //     return <div>Loading user data...</div>
+    // }
 
     const sendContactRequest = async (contactEmail: string) => {
         await fetchContactRequest(contactEmail, ContactRequestActions.SEND)
@@ -56,7 +102,7 @@ const Home = () => {
 
             if (response.ok) {
                 console.log(data)
-                setUserData(data.user)
+                // setUserData(data.user)
             }
             // TODO: manage error correctly
             if (data.error) {
@@ -71,22 +117,36 @@ const Home = () => {
 
     return (
         <div className="home">
-            <div className="home__wrapper">
-                <div className="home__navbar">
-
+            <div className="home__wrapper window">
+                <div className="home__window-title title-bar">
+                    <img className="home__window-title-img" src={msnLogo} alt="MSN logo" />
+                    <p className="home__window-title-text">Windows Messenger</p>
                 </div>
-                <h1 className="home__title">
-                    Welcome {userData?.username}!
-                </h1>
-                <SearchBar handleSubmit={sendContactRequest} />
-                <ContactList contacts={userData.contacts}/>
-                <ContactRequestsBar
-                    contactRequests={userData.contactRequests.received}
-                    handleModalAction={ handleContactRequestModalAction }
-                />
-                <div className="home__logout-wrapper">
-                    <div className="home__logout-button">
-                        <p onClick={logout}>Logout</p>
+                <div className="home__content">
+                    <div className="home__status-header">
+                        <StatusHeader
+                            username={userData.username}
+                            status={userData.status}
+                            id={userData.id}
+                        />
+                    </div>
+                    <div className="home__contact-requests-bar">
+                        <ContactRequestsBar
+                            contactRequests={userData.contactRequests.received}
+                            handleModalAction={ handleContactRequestModalAction }
+                        />
+                    </div>
+                    <div className="home__contact-list">
+                        <ContactList contacts={userData.contacts}/>
+                    </div>
+                    <div className="home__footer">
+                        <HomeFooter />
+                    </div>
+                    {/* <SearchBar handleSubmit={sendContactRequest} /> */}
+                    <div className="home__logout-wrapper">
+                        <div className="home__logout-button">
+                            {/* <p onClick={logout}>Logout</p> */}
+                        </div>
                     </div>
                 </div>
             </div>
