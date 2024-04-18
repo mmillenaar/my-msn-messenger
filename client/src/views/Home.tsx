@@ -1,78 +1,35 @@
 import { useContext, useEffect } from "react"
 import Context from "../context/AppContext"
 import { setupUserEventsListener } from "../utils/websocket"
-import ContactRequestsBar from "../components/ContactRequestsBar/ContactRequestsBar"
-import { ContactRequestModalActionType, UserType } from "../utils/types"
+import { ContactRequestModalActionType } from "../utils/types"
 import { ContactRequestActions } from "../utils/constants"
-import ContactList from "../components/ContactList/ContactList"
 import msnLogo from '../assets/icons/MSN-messenger-icon.webp'
+import ContactRequestsBar from "../components/ContactRequestsBar/ContactRequestsBar"
+import ContactList from "../components/ContactList/ContactList"
 import StatusHeader from "../components/StatusHeader/StatusHeader"
-import '../styles/views/Home.scss'
 import HomeFooter from "../components/HomeFooter/HomeFooter"
+import '../styles/views/Home.scss'
 
 
 const Home = () => {
-    const userData: UserType = {
-        id: '123',
-        username: 'matias',
-        email: 'mat1@a.com',
-        status: 'Busy',
-        chats: [],
-        contacts: [
-            {
-                username: 'mat',
-                email: 'mat2@a.com',
-                id: '321',
-                status: 'Away',
-            },
-            {
-                username: 'mat3',
-                email: 'mat3@a.com',
-                id: '3211',
-                status: 'Away',
-            },
-            {
-                username: 'mat5',
-                email: 'mat5@a.com',
-                id: '5211',
-                status: 'Offline',
-            },
-            {
-                username: 'mat4',
-                email: 'mat4@a.com',
-                id: '4211',
-                status: 'Online',
-            },
-        ],
-        contactRequests: {
-            sent: [],
-            received: [],
+    const { userData, isSocketConnected, checkUserLogin, setUserData, logout } = useContext(Context)
+
+    useEffect(() => {
+        if (isSocketConnected) {
+            console.log('user events socket listening')
+            setupUserEventsListener(setUserData)
         }
+    }, [isSocketConnected, userData, setUserData])
+
+    useEffect(() => {
+        if (!userData) {
+            checkUserLogin()
+        }
+    }, [userData, checkUserLogin])
+
+    if (!userData) {
+        return <div>Loading user data...</div>
     }
-    // username: string;
-    // email: string;
-    // id: string;
-    // status: string;
-    // chatId?: string;
-
-    // const { userData, isSocketConnected, checkUserLogin, setUserData, logout } = useContext(Context)
-
-    // useEffect(() => {
-    //     if (isSocketConnected) {
-    //         console.log('user events socket listening')
-    //         setupUserEventsListener(setUserData)
-    //     }
-    // }, [isSocketConnected, userData, setUserData])
-
-    // useEffect(() => {
-    //     if (!userData) {
-    //         checkUserLogin()
-    //     }
-    // }, [userData, checkUserLogin])
-
-    // if (!userData) {
-    //     return <div>Loading user data...</div>
-    // }
 
     const sendContactRequest = async (contactEmail: string) => {
         await fetchContactRequest(contactEmail, ContactRequestActions.SEND)
@@ -120,7 +77,7 @@ const Home = () => {
             <div className="home__wrapper window">
                 <div className="home__window-title title-bar">
                     <img className="home__window-title-img" src={msnLogo} alt="MSN logo" />
-                    <p className="home__window-title-text">Windows Messenger</p>
+                    <h1 className="home__window-title-text">Windows Messenger</h1>
                 </div>
                 <div className="home__content">
                     <div className="home__status-header">

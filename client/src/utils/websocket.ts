@@ -29,6 +29,12 @@ export const sendMessage = (message: ChatMessageForServer, chatId?: string) => {
     socket.emit('new-message',{ message, chatId })
 }
 
+export const notifyTyping = (isTyping: boolean, userId: string) => {
+    if (!socket) return
+
+    socket.emit('user-typing', { isTyping, userId })
+}
+
 export const setupChatListener = (callback: Dispatch<SetStateAction<ChatType | null>>) => {
     if (!socket) return
 
@@ -44,6 +50,20 @@ export const setupChatListener = (callback: Dispatch<SetStateAction<ChatType | n
     return () => {
         if (socket) {
             socket.off('chat-render')
+        }
+    }
+}
+
+export const setupTypingListener = (callback: Dispatch<SetStateAction<boolean>>) => {
+    if (!socket) return
+
+    socket.on('typing', (isTyping: boolean) => {
+        callback(isTyping)
+    })
+
+    return () => {
+        if (socket) {
+            socket.off('typing')
         }
     }
 }

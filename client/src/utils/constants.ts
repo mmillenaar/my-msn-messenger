@@ -38,6 +38,7 @@ export enum ContactRequestActions {
 
 export const loginText = 'Please sign in with your .NET Passport to see your online contacts, have online conversations, and receive alerts:'
 export const registerText = 'Please create a .NET Passport to see your online contacts, have online conversations, and receive alerts:'
+export const chatBoxText = 'Never give out your password or credit card number in an instant message conversation.'
 
 export const userStatusItems = [
     {

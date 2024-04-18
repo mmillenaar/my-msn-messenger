@@ -1,5 +1,5 @@
 import logger from "../../config/logger.config"
-import { handleNewMessage, handleUserStatusChange, logoutSocket, registerSocket, sendRetrievedChat } from "../../controllers/sockets.controller"
+import { handleNewMessage, handleUserStatusChange, logoutSocket, notifyTyping, registerSocket, sendRetrievedChat } from "../../controllers/sockets.controller"
 import { UserStatus } from "../../utils/constants"
 import { ChatMessageType, UserType } from "../../utils/types"
 
@@ -22,6 +22,10 @@ export default async function setupSocketListeners(socket) {
 
     socket.on('new-message', async ({ message, chatId }: { message: ChatMessageType, chatId?: string }) => {
         await handleNewMessage(message, chatId)
+    })
+
+    socket.on('user-typing', ({ isTyping, userId }: { isTyping: boolean, userId: string }) => {
+        notifyTyping(isTyping, userId)
     })
 
     socket.on('logout', () => {

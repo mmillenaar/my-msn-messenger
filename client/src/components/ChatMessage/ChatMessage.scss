@@ -1,6 +1,6 @@
 .chat-message {
     &__wrapper {
-        padding: 5px;
+        padding: 2px;
     }
     &__username {
         margin: 0;
@@ -8,5 +8,6 @@
     }
     &__text {
         margin: 0;
+        padding-left: 10px;
     }
 }

@@ -58,6 +58,11 @@ export const handleNewMessage = async (message: ChatMessageType, chatId?: string
     }
 }
 
+export const notifyTyping = (isTyping: boolean, userId: string) => {
+    const contactSocket = userSockets.get(userId)
+    contactSocket.emit('typing', isTyping)
+}
+
 export const logoutSocket = async (socketId: string) => {
     const userId = socketIdUsers.get(socketId)
 

@@ -1,7 +1,8 @@
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { ChatMessageForServer } from "../../utils/types"
-import { sendMessage } from "../../utils/websocket"
+import { notifyTyping, sendMessage } from "../../utils/websocket"
 import { MessageStatus } from "../../utils/constants";
+import './MessageForm.scss'
 
 interface MessageFormProps {
     userId: string;
@@ -10,19 +11,31 @@ interface MessageFormProps {
 }
 
 const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
-    const messageRef = useRef<HTMLInputElement | null>(null)
+    const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true)
+    const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
-    const cleanForm = (elementsArray: HTMLInputElement[]) => {
-        elementsArray.forEach(element => element.value = '')
+    const handleInputChange = () => {
+        if (inputRef.current?.value !== '') {
+            setIsButtonDisabled(false)
+            notifyTyping(true, contactId)
+        } else {
+            setIsButtonDisabled(true)
+            notifyTyping(false, contactId)
+        }
+    }
+
+    const cleanForm = (element: HTMLTextAreaElement) => {
+        element.value = ''
+        setIsButtonDisabled(true)
     }
 
     const handleChatSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (messageRef.current) {
+        if (inputRef.current) {
             const formMessage: ChatMessageForServer = {
                 // FIXME: complete with new expected values
-                text: messageRef.current.value,
+                text: inputRef.current.value,
                 timestamp: Date.now(),
                 senderId: userId,
                 recipientId: contactId,
@@ -31,15 +44,34 @@ const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
 
             sendMessage(formMessage, chatId)
             console.log('message sent!');
-            cleanForm([messageRef.current])
+            cleanForm(inputRef.current)
+        }
+    }
+
+    const handleEnterKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            handleChatSubmit(e)
         }
     }
 
     return (
         <div className="message-form">
             <form onSubmit={handleChatSubmit}>
-                <input ref={messageRef} type="text" id="message" placeholder="message" />
-                <button type="submit">Send</button>
+                <textarea
+                    className="message-form__input"
+                    ref={inputRef}
+                    id="message"
+                    onChange={handleInputChange}
+                    onKeyDown={(e) => handleEnterKeyPress(e)}
+                />
+                <button
+                    className="message-form__button"
+                    type="submit"
+                    disabled={isButtonDisabled}
+                >
+                    Send
+                </button>
             </form>
         </div>
     )

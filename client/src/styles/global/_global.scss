@@ -1,9 +1,17 @@
 body {
     font-family: 'Tahoma', sans-serif;
 }
+p {
+    font-size: 16px;
+}
 .window {
     margin: 1px;
 }
 .title-bar {
-    color: $color-white
+    color: $color-white;
+    font-size: 13px;
+
+    h1 {
+        font-size: 13px;
+    }
 }
