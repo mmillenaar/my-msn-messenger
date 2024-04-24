@@ -1,0 +1,19 @@
+@import '../../styles/index';
+
+.window-title-bar {
+    &__wrapper.title-bar {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+    .title-bar {
+        &__text {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        &__img {
+            width: 20px;
+        }
+    }
+}

@@ -1,0 +1,47 @@
+@import '../../styles/index';
+
+.tab-navigation {
+    &.title-bar {
+        padding: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    &__wrapper {
+        width: 100%;
+        margin-bottom: 2px;
+        padding: 0 10px;
+        display: flex;
+        justify-content: flex-start;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    &__tab  {
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        background-color: rgba(0, 0, 0, 0.1);
+        box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 2px;
+
+        &.tab-navigation__tab {
+            &:hover:not(.tab-navigation__tab--active) {
+                background-color: rgba(0, 0, 0, 0.15);
+            }
+            &--active {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        &-image {
+            width: 20px;
+            height: auto;
+        }
+        p {
+            color: $color-grey-3;
+            font-size: 13px;
+        }
+    }
+
+}

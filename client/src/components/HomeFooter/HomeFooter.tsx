@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ReactComponent as ChevronRightIcon } from '../../assets/icons/double-chevron-right.svg'
 import plusIconImg from '../../assets/icons/plus-icon.png'
 import startChatImg from '../../assets/icons/start-chat.png'
+import msnIcon from '../../assets/icons/MSN-messenger-icon.webp'
 import ActionLink from '../ActionLink/ActionLink'
 import './HomeFooter.scss'
 
@@ -28,12 +29,16 @@ const HomeFooter = () => {
                         <ActionLink
                             text='Add a Contact'
                             url='' // TODO: fill url
+                            newTabLabel='Add Contact'
                             imgSource={plusIconImg}
+                            newTabImgSource={plusIconImg}
                         />
                         <ActionLink
                             text='Send an Instant Message'
                             url='' // TODO: fill url
                             imgSource={startChatImg}
+                            newTabLabel='New Instant Message'
+                            newTabImgSource={msnIcon}
                         />
                     </div>
                 }

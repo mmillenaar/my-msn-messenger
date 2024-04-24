@@ -8,6 +8,7 @@ import ContactRequestsBar from "../components/ContactRequestsBar/ContactRequests
 import ContactList from "../components/ContactList/ContactList"
 import StatusHeader from "../components/StatusHeader/StatusHeader"
 import HomeFooter from "../components/HomeFooter/HomeFooter"
+import WindowTitleBar from "../components/WindowTitleBar/WindowTitleBar"
 import '../styles/views/Home.scss'
 
 
@@ -75,9 +76,14 @@ const Home = () => {
     return (
         <div className="home">
             <div className="home__wrapper window">
-                <div className="home__window-title title-bar">
+                <div className="home__window-title-bar">
+                    <WindowTitleBar
+                        title="Windows Messenger"
+                        icon={msnLogo}
+                    />
+{/*
                     <img className="home__window-title-img" src={msnLogo} alt="MSN logo" />
-                    <h1 className="home__window-title-text">Windows Messenger</h1>
+                    <h1 className="home__window-title-text">Windows Messenger</h1> */}
                 </div>
                 <div className="home__content">
                     <div className="home__status-header">

@@ -2,6 +2,8 @@ import React, { useContext, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import Context from "../../context/AppContext";
 import { initializeSocketConnection } from "../../utils/websocket";
+import { TabProvider } from "../../context/TabContext";
+import TabNavigation from "../TabNavigation/TabNavigation";
 
 const ProtectedRoutes = () => {
     const { isUserLoggedIn, userData, isSocketConnected, checkUserLogin, setIsSocketConnected } = useContext(Context)
@@ -23,7 +25,12 @@ const ProtectedRoutes = () => {
         return <div>Loading...</div>;
     }
 
-    return isUserLoggedIn ? <Outlet /> : <Navigate to='/login' />;
+    return isUserLoggedIn
+        ? <>
+            <Outlet />
+            <TabNavigation />
+        </>
+        : <Navigate to='/login' />;
 };
 
 export default ProtectedRoutes;

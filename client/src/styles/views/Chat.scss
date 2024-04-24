@@ -1,10 +1,10 @@
 @import '../index';
 
 .chat {
-    height: 100vh;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
 
     &__wrapper.window {
         background: $color-blue-4;
@@ -14,15 +14,6 @@
         overflow-y: auto;
     }
     &__header {
-        .title-bar {
-            display: flex;
-            justify-content: start;
-            gap: 5px;
-
-            &__img {
-                width: 20px;
-            }
-        }
         &-subtitle {
             margin: 1px 5px;
             color: $color-blue-2;

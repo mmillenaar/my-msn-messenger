@@ -6,6 +6,8 @@ import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import { AppContextProvider } from './context/AppContext';
 import Home from './views/Home';
 import Chat from './views/Chat';
+import TabNavigation from './components/TabNavigation/TabNavigation';
+import { TabProvider } from './context/TabContext';
 
 
 const App = () => {
@@ -14,14 +16,16 @@ const App = () => {
         <div className="App">
             <BrowserRouter>
                 <AppContextProvider>
-                    <Routes>
-                        <Route element={<ProtectedRoutes/>}>
-                            <Route path='/' element={<Home />} />
-                            <Route path='/chat/:contactId' element={ <Chat />} />
-                        </Route>
-                        <Route path='/login' element={<Login />} />
-                        <Route path='/register' element={<Register />} />
-                    </Routes>
+                    <TabProvider>
+                        <Routes>
+                            <Route element={<ProtectedRoutes />}>
+                                    <Route path='/' element={<Home />} />
+                                    <Route path='/chat/:contactId' element={<Chat />} />
+                            </Route>
+                            <Route path='/login' element={<Login />} />
+                            <Route path='/register' element={<Register />} />
+                        </Routes>
+                    </TabProvider>
                 </AppContextProvider>
             </BrowserRouter>
         </div>

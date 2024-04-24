@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import logger from '../config/logger.config';
 import userSchema from "../models/users.schema";
 import MongoDbContainer from "../persistence/mongoDb.container";
-import { ContactRequestActions } from '../utils/constants';
+import { ContactRequestActions, UserStatus } from '../utils/constants';
 import { ContactType, UserType } from '../utils/types';
 
 class UsersApi extends MongoDbContainer {
@@ -51,9 +51,10 @@ class UsersApi extends MongoDbContainer {
 
             const saltRounds = 10
             const hashedPassword = await bcrypt.hash(userData.password, saltRounds)
-            const newUser = {
+            const newUser: UserType = {
                 ...userData,
-                password: hashedPassword
+                password: hashedPassword,
+                status: UserStatus.ONLINE
             }
             const savedUser: UserType = await super.save(newUser)
 

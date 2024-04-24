@@ -1,22 +1,28 @@
 @import '../index';
 
 .home {
-    &__wrapper.window {
-        background: $color-white;
-    }
-    &__window-title {
-        &.title-bar {
-            display: flex;
-            justify-content: start;
-            gap: 5px;
-        }
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
 
-        &-img {
-            width: 20px;
-        }
+    &__wrapper.window {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+        background: $color-white;
     }
     &__content {
         padding: 0 3px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
         border-radius: 10px;
+    }
+    &__contact-list {
+        flex-grow: 1;
+        overflow-y: auto;
     }
 }

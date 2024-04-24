@@ -52,3 +52,10 @@ export interface ContactRequestModalActionType {
     accept: boolean;
     reject: boolean;
 }
+
+export interface TabType {
+    id: string;
+    label: string;
+    path: string;
+    icon?: string;
+}

@@ -27,12 +27,13 @@ const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
     const cleanForm = (element: HTMLTextAreaElement) => {
         element.value = ''
         setIsButtonDisabled(true)
+        notifyTyping(false, contactId)
     }
 
     const handleChatSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (inputRef.current) {
+        if (inputRef.current && inputRef.current.value !== '') {
             const formMessage: ChatMessageForServer = {
                 // FIXME: complete with new expected values
                 text: inputRef.current.value,
@@ -66,7 +67,7 @@ const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
                     onKeyDown={(e) => handleEnterKeyPress(e)}
                 />
                 <button
-                    className="message-form__button"
+                    className={`message-form__button ${isButtonDisabled ? 'message-form__button--disabled' : ''}`}
                     type="submit"
                     disabled={isButtonDisabled}
                 >

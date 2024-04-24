@@ -2,6 +2,8 @@ import onlineIcon from '../assets/icons/avatar-online.png'
 import offlineIcon from '../assets/icons/avatar-offline.png'
 import busyIcon from '../assets/icons/avatar-busy.png'
 import outIcon from '../assets/icons/avatar-out.png'
+import msnIcon from '../assets/icons/MSN-messenger-icon.webp'
+import { TabType } from './types'
 
 export const formUsernameGroup = {
     groupName: "username",
@@ -77,3 +79,10 @@ export const userStatusItems = [
         priority: 5,
     }
 ]
+
+export const defaultTab: TabType = {
+    id: '/',
+    label: 'Windows Messenger',
+    path: '/',
+    icon: msnIcon
+}

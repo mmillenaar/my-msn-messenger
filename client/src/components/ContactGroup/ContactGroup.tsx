@@ -1,8 +1,9 @@
-import { ContactType } from '../../utils/types';
-import { ReactComponent as ChevronRightIcon } from '../../assets/icons/double-chevron-right.svg'
-import ActionLink from '../ActionLink/ActionLink';
 import { useState } from 'react';
+import { ContactType } from '../../utils/types';
 import { userStatusItems } from '../../utils/constants';
+import { ReactComponent as ChevronRightIcon } from '../../assets/icons/double-chevron-right.svg'
+import chatIcon from '../../assets/icons/start-chat.png'
+import ActionLink from '../ActionLink/ActionLink';
 import './ContactGroup.scss';
 
 interface ContactGroupProps {
@@ -35,6 +36,8 @@ const ContactGroup = ({ groupTitle, contacts }: ContactGroupProps) => {
                                 key={index}
                                 url={`/chat/${contact.id}`}
                                 text={contact.username}
+                                newTabLabel={`${contact.username} - Conversation`}
+                                newTabImgSource={chatIcon}
                                 imgSource={groupStatus?.icon}
                                 imgAlt={groupStatus?.name}
                             />

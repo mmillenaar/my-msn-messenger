@@ -22,5 +22,10 @@
     }
     &__button {
         height: 100%;
+        cursor: pointer;
+
+        &--disabled {
+            cursor: default;
+        }
     }
 }

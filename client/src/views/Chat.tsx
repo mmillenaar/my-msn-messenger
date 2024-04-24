@@ -9,6 +9,8 @@ import chatIcon from '../assets/icons/start-chat.png'
 import blockedUser from '../assets/icons/avatar-blocked.png'
 import userIcon from '../assets/icons/user-avatar.png'
 import { chatBoxText } from '../utils/constants'
+import WindowTitleBar from '../components/WindowTitleBar/WindowTitleBar'
+import { useTabs } from '../context/TabContext'
 import '../styles/views/Chat.scss'
 
 const Chat = () => {
@@ -17,6 +19,7 @@ const Chat = () => {
     const [contactData, setContactData] = useState<ContactType | undefined>(undefined)
     const [isContactTyping, setIsContactTyping] = useState<boolean>(false)
     const { userData } = useContext(Context)
+    const { removeTab } = useTabs()
     const { contactId } = useParams()
 
     const bottomRef = useRef<HTMLDivElement>(null)
@@ -67,13 +70,22 @@ const Chat = () => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
 
+    const handleWindowClose = () => {
+        const tabId = `/chat/${contactId}`
+        removeTab(tabId)
+    }
+
     return (
         <div className="chat">
             <div className="chat__wrapper window">
                 <div className="chat__header">
-                    <div className="chat__header-title title-bar">
-                        <img className="title-bar__img" src={chatIcon} alt="MSN logo" />
-                        <h1 className="title-bar__text">{contactData?.username} - Conversation</h1>
+                    <div className="chat__header-title">
+                        <WindowTitleBar
+                            title={`${contactData?.username} - Conversation`}
+                            icon={chatIcon}
+                            hasControls={true}
+                            onClose={handleWindowClose}
+                        />
                     </div>
                     <h2 className="chat__header-subtitle">
                         To: {contactData?.username} {`<${contactData?.email}>`}
