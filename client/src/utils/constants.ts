@@ -44,37 +44,44 @@ export const chatBoxText = 'Never give out your password or credit card number i
 
 export const userStatusItems = [
     {
-        name: 'Online',
+        id: 'Online',
+        text: 'Online',
         icon: onlineIcon,
         priority: 1,
     },
     {
-        name: 'Offline',
+        id: 'Offline',
+        text: 'Offline',
         icon: offlineIcon,
         priority: 7,
     },
     {
-        name: 'Busy',
+        id: 'Busy',
+        text: 'Busy',
         icon: busyIcon,
         priority: 6,
     },
     {
-        name: 'Away',
+        id: 'Away',
+        text: 'Away',
         icon: outIcon,
         priority: 3,
     },
     {
-        name: 'Be Right Back',
+        id: 'Be Right Back',
+        text: 'Be Right Back',
         icon: outIcon,
         priority: 2,
     },
     {
-        name: 'On the Phone',
+        id: 'On the Phone',
+        text: 'On the Phone',
         icon: busyIcon,
         priority: 4,
     },
     {
-        name: 'Out to Lunch',
+        id: 'Out to Lunch',
+        text: 'Out to Lunch',
         icon: outIcon,
         priority: 5,
     }
@@ -86,3 +93,33 @@ export const defaultTab: TabType = {
     path: '/',
     icon: msnIcon
 }
+
+export enum ContactErrorType {
+    NOT_FOUND = 'not found',
+    ALREADY_EXISTS = 'already exists',
+    OTHER_ERROR = 'other error'
+}
+
+export const addContactFirstStepSubtitle = "Please type your contact's complete e-mail address"
+export const getAddContactSuccessSubtitle = (contactEmail: string) => {
+    return `Success! ${contactEmail} wass added to your list!`
+}
+export const getAddContactErrorSubtitle = (contactEmail: string) => {
+    return `Error! ${contactEmail} could not be added to your list`
+}
+export const addContactSuccessText = 'An invitation was sent. You will have to wait until it is accepted to start chatting! Please proceed to Home page to chat with any other contact.'
+export const getAddContactErrorText = (errorCode?: ContactErrorType) => {
+    switch (errorCode) {
+        case ContactErrorType.ALREADY_EXISTS:
+            return 'This contact is already in your contact list or you have already sent them an invitation. Please go back to Home page to start a conversation.'
+
+        case ContactErrorType.NOT_FOUND:
+            return 'The contact you are trying to reach does not exist. Please check for spelling mistakes or ask them to join MSN Messenger.'
+
+        default:
+            return 'There was a problem sending your invitation. Please try again.'
+    }
+}
+export const addContactEmailExamples = ['name_123@hotmail.com', 'myname@msn.com', 'example@passport.com']
+
+export const newConversationsubtitle = 'Please type the e-mail address or username of the person you want to start a conversation with:'

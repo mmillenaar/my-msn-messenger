@@ -70,11 +70,6 @@ const Chat = () => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
 
-    const handleWindowClose = () => {
-        const tabId = `/chat/${contactId}`
-        removeTab(tabId)
-    }
-
     return (
         <div className="chat">
             <div className="chat__wrapper window">
@@ -84,7 +79,6 @@ const Chat = () => {
                             title={`${contactData?.username} - Conversation`}
                             icon={chatIcon}
                             hasControls={true}
-                            onClose={handleWindowClose}
                         />
                     </div>
                     <h2 className="chat__header-subtitle">

@@ -3,8 +3,8 @@ import passport from 'passport'
 import logger from '../config/logger.config'
 import { usersApi } from '../services/users.api'
 import { userSockets } from './sockets.controller'
-import { ContactRequestActions, UserUpdateFields } from '../utils/constants'
-import { UserType } from '../utils/types'
+import { ContactErrorType, ContactRequestActions, UserUpdateFields } from '../utils/constants'
+import { ContactResponseType, UserType } from '../utils/types'
 
 
 export const postLogin = (req, res, next) => {
@@ -71,21 +71,49 @@ export const checkUserAuth = async (req: any, res: Response) => {
 export const sendContactRequest = async (req, res) => {
     const userId = req.user._id
     const { contactEmail } = req.body
+
     if (!contactEmail) {
-        return res.status(400).json({ message: 'Missing required field' })
+        const response: ContactResponseType = {
+            success: false,
+            message: 'Missing required field',
+        }
+
+        return res.status(400).json(response)
     }
 
     const contact: UserType = await usersApi.getElementByValue('email', contactEmail)
+
+    if (!contact) {
+        const response: ContactResponseType = {
+            success: false,
+            message: 'User not found',
+            errorType: ContactErrorType.NOT_FOUND
+        }
+
+        return res.status(404).json(response)
+    }
     const updatedSender = await usersApi.handleContactRequest(userId, contact._id, ContactRequestActions.SEND)
 
-    if (updatedSender.error) {
-        return res.status(409).json({ error: updatedSender.error })
+    if (!updatedSender) {
+        const response: ContactResponseType = {
+            success: false,
+            message: 'Already a contact/ contact request already sent',
+            errorType: ContactErrorType.ALREADY_EXISTS
+        }
+
+        return res.status(409).json(response)
     }
 
     const updatedReceiver = await usersApi.handleContactRequest(contact._id, userId, ContactRequestActions.RECEIVE)
 
     if (!updatedSender || !updatedReceiver) {
-        return res.status(500).json({ error: 'Error sending contact request' })
+        const response: ContactResponseType = {
+            success: false,
+            message: 'Error sending contact request',
+            errorType: ContactErrorType.OTHER_ERROR
+        }
+
+        return res.status(500).json(response)
     }
 
     const updatedSenderForClient = await usersApi.setupUserForClient(updatedSender)
@@ -98,7 +126,13 @@ export const sendContactRequest = async (req, res) => {
         receiverSocket.emit('incoming-contact-request', updatedReceiverForClient)
     }
 
-    res.status(200).json({ message: 'Contact request sent', user: updatedSenderForClient })
+    const response: ContactResponseType = {
+        success: true,
+        message: 'Contact request sent',
+        user: updatedSenderForClient
+    }
+
+    res.status(200).json(response)
 }
 
 export const acceptContactRequest = async (req, res) => {
@@ -163,4 +197,13 @@ export const updateUsername = async (req, res) => {
     const updatedUserForClient = await usersApi.setupUserForClient(updatedUser)
 
     res.status(200).json({ message: 'Username updated', user: updatedUserForClient })
+}
+
+export const searchContacts = async (req, res) => {
+    const userId = req.user._id
+    const { searchTerm } = req.body
+
+    const matches = await usersApi.findContactMatches(userId, searchTerm)
+
+    return res.status(200).json(matches)
 }

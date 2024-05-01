@@ -13,7 +13,14 @@ import '../styles/views/Home.scss'
 
 
 const Home = () => {
-    const { userData, isSocketConnected, checkUserLogin, setUserData, logout } = useContext(Context)
+    const {
+        userData,
+        isSocketConnected,
+        checkUserLogin,
+        setUserData,
+        fetchContactRequest,
+        logout
+    } = useContext(Context)
 
     useEffect(() => {
         if (isSocketConnected) {
@@ -32,9 +39,6 @@ const Home = () => {
         return <div>Loading user data...</div>
     }
 
-    const sendContactRequest = async (contactEmail: string) => {
-        await fetchContactRequest(contactEmail, ContactRequestActions.SEND)
-    }
     const handleContactRequestModalAction = async (contactEmail: string, selection: ContactRequestModalActionType) => {
         if (selection.accept || selection.reject) {
             await fetchContactRequest(contactEmail,
@@ -45,34 +49,6 @@ const Home = () => {
         }
     }
 
-    const fetchContactRequest = async (contactEmail: string, action: ContactRequestActions) => {
-        try {
-            const response = await fetch(`/user/contact-request/${action}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contactEmail: contactEmail
-                })
-            })
-            const data = await response.json()
-
-            if (response.ok) {
-                console.log(data)
-                // setUserData(data.user)
-            }
-            // TODO: manage error correctly
-            if (data.error) {
-                alert(data.error)
-            }
-        }
-        catch (err) {
-            console.error(err)
-        }
-    }
-
-
     return (
         <div className="home">
             <div className="home__wrapper window">
@@ -81,9 +57,6 @@ const Home = () => {
                         title="Windows Messenger"
                         icon={msnLogo}
                     />
-{/*
-                    <img className="home__window-title-img" src={msnLogo} alt="MSN logo" />
-                    <h1 className="home__window-title-text">Windows Messenger</h1> */}
                 </div>
                 <div className="home__content">
                     <div className="home__status-header">
@@ -105,7 +78,6 @@ const Home = () => {
                     <div className="home__footer">
                         <HomeFooter />
                     </div>
-                    {/* <SearchBar handleSubmit={sendContactRequest} /> */}
                     <div className="home__logout-wrapper">
                         <div className="home__logout-button">
                             {/* <p onClick={logout}>Logout</p> */}

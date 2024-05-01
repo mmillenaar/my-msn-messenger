@@ -1,15 +1,11 @@
-import { useNavigate } from 'react-router-dom'
 import { useTabs } from '../../context/TabContext'
 import './TabNavigation.scss'
 
 const TabNavigation = () => {
-    const { tabs, currentTab, setActiveTab } = useTabs()
-
-    const navigate = useNavigate()
+    const { tabs, currentTab, setCurrentTab } = useTabs()
 
     const handleClick = (url: string) => {
-        setActiveTab(url)
-        navigate(url)
+        setCurrentTab(url)
     }
 
     return (

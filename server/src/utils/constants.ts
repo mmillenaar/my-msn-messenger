@@ -26,3 +26,9 @@ export enum UserStatus {
     ON_THE_PHONE = 'On the Phone',
     OUT_TO_LUNCH = 'Out to Lunch'
 }
+
+export enum ContactErrorType {
+    NOT_FOUND = 'not found',
+    ALREADY_EXISTS = 'already exists',
+    OTHER_ERROR = 'other error'
+}

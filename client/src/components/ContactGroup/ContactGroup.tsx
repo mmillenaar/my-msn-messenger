@@ -18,7 +18,7 @@ const ContactGroup = ({ groupTitle, contacts }: ContactGroupProps) => {
         setIsGroupOpen(prevState => !prevState)
     }
 
-    const groupStatus = userStatusItems.find(status => status.name === groupTitle)
+    const groupStatus = userStatusItems.find(status => status.text === groupTitle)
 
     return (
         <div className="contact-group">
@@ -39,7 +39,7 @@ const ContactGroup = ({ groupTitle, contacts }: ContactGroupProps) => {
                                 newTabLabel={`${contact.username} - Conversation`}
                                 newTabImgSource={chatIcon}
                                 imgSource={groupStatus?.icon}
-                                imgAlt={groupStatus?.name}
+                                imgAlt={groupStatus?.text}
                             />
                         )
                     })}

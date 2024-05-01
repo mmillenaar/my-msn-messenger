@@ -1,25 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
+import './SearchBar.scss'
 
 interface SearchBarProps {
-    handleSubmit: (search: string) => void;
+    searchTerm: string;
+    type: 'text' | 'number' | 'email';
+    handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const SearchBar = ({ handleSubmit }: SearchBarProps) => {
-    const [searchTerm, setSearchTerm] = useState('')
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(event.target.value)
-    };
+const SearchBar = ({ searchTerm, type, handleInputChange }: SearchBarProps) => {
 
     return (
-        <div>
+        <div className='search-bar'>
             <input
-                type="text"
+                className='search-bar__input'
+                type={type}
                 value={searchTerm}
                 onChange={handleInputChange}
-                placeholder="Search..."
             />
-            <button onClick={() => handleSubmit(searchTerm)}>Search</button>
         </div>
     )
 }

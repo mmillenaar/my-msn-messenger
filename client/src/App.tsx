@@ -8,6 +8,8 @@ import Home from './views/Home';
 import Chat from './views/Chat';
 import TabNavigation from './components/TabNavigation/TabNavigation';
 import { TabProvider } from './context/TabContext';
+import AddContactView from './views/AddContact';
+import NewConversation from './views/NewConversation';
 
 
 const App = () => {
@@ -19,8 +21,10 @@ const App = () => {
                     <TabProvider>
                         <Routes>
                             <Route element={<ProtectedRoutes />}>
-                                    <Route path='/' element={<Home />} />
-                                    <Route path='/chat/:contactId' element={<Chat />} />
+                                <Route path='/' element={<Home />} />
+                                <Route path='/chat/:contactId' element={<Chat />} />
+                                <Route path='/add-contact' element={<AddContactView />} />
+                                <Route path='/new-conversation' element={<NewConversation />} />
                             </Route>
                             <Route path='/login' element={<Login />} />
                             <Route path='/register' element={<Register />} />

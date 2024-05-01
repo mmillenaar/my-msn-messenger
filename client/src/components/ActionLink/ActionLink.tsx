@@ -13,7 +13,7 @@ interface ActionLinkProps {
 }
 
 const ActionLink = ({ url, imgSource, imgAlt, text, newTabLabel, newTabImgSource }: ActionLinkProps) => {
-    const { addTab, setActiveTab } = useTabs()
+    const { addTab } = useTabs()
 
     const handleClick = () => {
         const newTab: TabType = {
@@ -24,7 +24,6 @@ const ActionLink = ({ url, imgSource, imgAlt, text, newTabLabel, newTabImgSource
         }
 
         addTab(newTab)
-        setActiveTab(newTab.id)
     }
 
     return (

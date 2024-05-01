@@ -52,7 +52,7 @@ const StatusHeader = ({username, status, id}: StatusHeaderProps) => {
     }
 
     const findStatusImage = () => {
-        const statusImage = userStatusItems.find(item => item.name === status)
+        const statusImage = userStatusItems.find(item => item.text === status)
         return statusImage?.icon
     }
 

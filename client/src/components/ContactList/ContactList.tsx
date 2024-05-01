@@ -21,8 +21,8 @@ const ContactList = ({ contacts }: ContactListProps) => {
 
     const statusGroupNames = Object.keys(contactStatusGroup)
     const sortedGroupNames = statusGroupNames.sort((a, b) => {
-        const statusItemA = userStatusItems.find(item => item.name === a)
-        const statusItemB = userStatusItems.find(item => item.name === b)
+        const statusItemA = userStatusItems.find(item => item.text === a)
+        const statusItemB = userStatusItems.find(item => item.text === b)
 
         if (statusItemA && statusItemB) {
             return statusItemA?.priority - statusItemB?.priority

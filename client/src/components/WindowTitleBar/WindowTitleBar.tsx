@@ -1,3 +1,4 @@
+import { useLocation, useParams } from 'react-router-dom';
 import { useTabs } from '../../context/TabContext';
 import './WindowTitleBar.scss'
 
@@ -5,17 +6,22 @@ interface WindowTitleBarProps {
     title: string;
     icon?: string;
     hasControls?: boolean;
-    onClose?: () => void;
 }
 
-const WindowTitleBar = ({ title, icon, hasControls, onClose }: WindowTitleBarProps) => {
-    const {goToHomeTab} = useTabs()
+const WindowTitleBar = ({ title, icon, hasControls }: WindowTitleBarProps) => {
+    const { goToHomeTab, removeTab } = useTabs()
+
+    const url = useLocation().pathname
+
+    const onClose = () => {
+        removeTab(url)
+    }
 
     return (
         <div className="window-title-bar">
             <div className="window-title-bar__wrapper title-bar">
                 <div className="title-bar__text title-bar-text">
-                    <img className="title-bar__img" src={icon} alt="MSN logo" />
+                    {icon && <img className="title-bar__img" src={icon} alt='' />}
                     <h1 className="title-bar__text">{title}</h1>
                 </div>
                 {hasControls &&

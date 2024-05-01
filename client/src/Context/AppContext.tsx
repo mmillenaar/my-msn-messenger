@@ -1,7 +1,8 @@
 import { Dispatch, ReactNode, SetStateAction, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthDataType, UserType } from "../utils/types";
+import { AuthDataType, ContactRequestResponseType, UserType } from "../utils/types";
 import { closeSocketConnection } from "../utils/websocket";
+import { ContactRequestActions } from "../utils/constants";
 
 
 interface ContextTypes {
@@ -13,6 +14,7 @@ interface ContextTypes {
     setUserData: Dispatch<SetStateAction<UserType | null>>;
     isSocketConnected: boolean | null;
     setIsSocketConnected: Dispatch<SetStateAction<boolean | null>>;
+    fetchContactRequest: (contactEmail: string, action: ContactRequestActions) => Promise<ContactRequestResponseType>;
 }
 
 interface AppContextProviderProps {
@@ -27,7 +29,8 @@ const defaultContext: ContextTypes = {
     userData: null,
     setUserData: () => { },
     isSocketConnected: null,
-    setIsSocketConnected: () => {}
+    setIsSocketConnected: () => { },
+    fetchContactRequest: async () => ({} as ContactRequestResponseType)
 }
 
 const Context = createContext<ContextTypes>(defaultContext)
@@ -78,6 +81,25 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         }
     };
 
+    const fetchContactRequest = async (contactEmail: string, action: ContactRequestActions) => {
+        try {
+            const response = await fetch(`/user/contact-request/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contactEmail: contactEmail
+                })
+            })
+
+            return await response.json()
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+
 
     return (
         <Context.Provider value={{
@@ -88,7 +110,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             userData,
             setUserData,
             isSocketConnected,
-            setIsSocketConnected
+            setIsSocketConnected,
+            fetchContactRequest
         }}>
             {children}
         </Context.Provider>

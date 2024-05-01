@@ -3,7 +3,7 @@ import logger from '../config/logger.config';
 import userSchema from "../models/users.schema";
 import MongoDbContainer from "../persistence/mongoDb.container";
 import { ContactRequestActions, UserStatus } from '../utils/constants';
-import { ContactType, UserType } from '../utils/types';
+import { ContactForClientType, ContactRequestForClientType, ContactType, UserType } from '../utils/types';
 
 class UsersApi extends MongoDbContainer {
     constructor() {
@@ -100,8 +100,7 @@ class UsersApi extends MongoDbContainer {
                     if (checkContactRequestValidity()) {
                         user.contactRequests.sent.push(contactId)
                     } else {
-                        // TODO: be more specific
-                        return { error: 'Already a contact/ contact request already sent', status: 409 }
+                        return null
                     }
 
                     break
@@ -133,8 +132,7 @@ class UsersApi extends MongoDbContainer {
             return { error: 'ServerError, please try again', status: 500 }
         }
     }
-    async populateUser(user: UserType) {
-        //populate contact requests
+    async populateContactRequests(user: UserType) {
         const contactRequestPromises = user.contactRequests.received.map(async (id) => {
             const contact: UserType = await super.getById(id)
 
@@ -144,9 +142,11 @@ class UsersApi extends MongoDbContainer {
                 id: contact._id,
             }
         })
-        const populatedContactRequests = await Promise.all(contactRequestPromises)
+        const populatedContactRequests: ContactRequestForClientType[] = await Promise.all(contactRequestPromises)
 
-        //populate contacts
+        return populatedContactRequests
+    }
+    async populateContacts(user: UserType) {
         const contactPromises = user.contacts.map(async (contact: ContactType) => {
             const searchedContact = await super.getById(contact._id)
 
@@ -158,14 +158,20 @@ class UsersApi extends MongoDbContainer {
                 status: searchedContact.status
             }
         })
-        const populatedContacts = await Promise.all(contactPromises)
+        const populatedContacts: ContactForClientType[] = await Promise.all(contactPromises)
+
+        return populatedContacts
+    }
+    async populateUser(user: UserType) {
+        const populatedUserContacts = await this.populateContacts(user)
+        const populatedUserContactRequests = await this.populateContactRequests(user)
 
         return {
             ...user,
-            contacts: populatedContacts,
+            contacts: populatedUserContacts,
             contactRequests: {
-                ...user.contactRequests,
-                received: populatedContactRequests
+                sent: user.contactRequests.sent,
+                received: populatedUserContactRequests
             }
         }
     }
@@ -225,6 +231,21 @@ class UsersApi extends MongoDbContainer {
             }
 
             return await super.update(user, id)
+        }
+        catch (err) {
+            logger.error(err)
+
+            return { error: 'ServerError, please try again', status: 500 }
+        }
+    }
+    async findContactMatches(userId: string, query: string) {
+        try {
+            const user: UserType = await super.getById(userId)
+            const populatedUserContacts = await this.populateContacts(user)
+
+            const matches = populatedUserContacts.filter(contact => contact.username.includes(query) || contact.email.includes(query))
+
+            return matches
         }
         catch (err) {
             logger.error(err)

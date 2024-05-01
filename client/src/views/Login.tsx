@@ -9,7 +9,11 @@ const Login = () => {
     return (
         <div className="login">
             <div className="login__wrapper window">
-                <div className="login__window-title title-bar">.NET Messenger Service</div>
+                <div className="login__window-title title-bar">
+                    <div className="title-bar-text">
+                        .NET Messenger Service
+                    </div>
+                </div>
                 <div className="login__window-content">
                     <div className="login__img-wrapper">
                         <img className="login__img-image" src={ msnLogo } alt="MSN logo" />

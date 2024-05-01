@@ -28,14 +28,14 @@ const HomeFooter = () => {
                     <div className="home-footer__content">
                         <ActionLink
                             text='Add a Contact'
-                            url='' // TODO: fill url
+                            url='/add-contact'
                             newTabLabel='Add Contact'
                             imgSource={plusIconImg}
                             newTabImgSource={plusIconImg}
                         />
                         <ActionLink
                             text='Send an Instant Message'
-                            url='' // TODO: fill url
+                            url='/new-conversation'
                             imgSource={startChatImg}
                             newTabLabel='New Instant Message'
                             newTabImgSource={msnIcon}

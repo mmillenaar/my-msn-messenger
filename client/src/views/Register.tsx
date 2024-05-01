@@ -9,7 +9,11 @@ const Register = () => {
     return (
         <div className="register">
             <div className="register__wrapper window">
-                <div className="register__window-title title-bar">Register to .NET Messenger Service</div>
+                <div className="register__window-title title-bar">
+                    <div className="title-bar-text">
+                        Register to .NET Messenger Service
+                    </div>
+                </div>
                 <div className="register__window-content">
                     <div className="register__img-wrapper">
                         <img className="register__img-image" src={ msnLogo } alt="MSN logo" />

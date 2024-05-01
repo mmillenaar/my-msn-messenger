@@ -16,6 +16,15 @@
             color: $color-white;
         }
 
+        &--disabled {
+            cursor: default;
+
+            &:hover {
+                background: none;
+                color: inherit;
+            }
+        }
+
         &-icon {
             max-width: 18px;
             margin-right: 5px;

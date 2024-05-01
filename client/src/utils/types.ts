@@ -1,4 +1,4 @@
-import { MessageStatus } from "./constants";
+import { ContactErrorType, MessageStatus } from "./constants";
 
 export interface ChatMessageType {
     text: string;
@@ -58,4 +58,11 @@ export interface TabType {
     label: string;
     path: string;
     icon?: string;
+}
+
+export interface ContactRequestResponseType {
+    success: boolean;
+    message: string;
+    errorType?: ContactErrorType;
+    user?: UserType;
 }
