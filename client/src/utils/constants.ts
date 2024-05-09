@@ -123,3 +123,16 @@ export const getAddContactErrorText = (errorCode?: ContactErrorType) => {
 export const addContactEmailExamples = ['name_123@hotmail.com', 'myname@msn.com', 'example@passport.com']
 
 export const newConversationsubtitle = 'Please type the e-mail address or username of the person you want to start a conversation with:'
+
+export const contactRequestViewCheckboxOptions = [
+    {
+        label: 'Allow this contact to see your status and send you messages',
+        id: 'accept-contact-request',
+        name: 'accept',
+    },
+    {
+        label: 'Prevent this contact from seeing your status and sending you messages',
+        id: 'reject-contact-request',
+        name: 'reject',
+    }
+]

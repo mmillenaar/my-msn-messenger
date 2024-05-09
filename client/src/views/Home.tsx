@@ -1,8 +1,6 @@
 import { useContext, useEffect } from "react"
 import Context from "../context/AppContext"
 import { setupUserEventsListener } from "../utils/websocket"
-import { ContactRequestModalActionType } from "../utils/types"
-import { ContactRequestActions } from "../utils/constants"
 import msnLogo from '../assets/icons/MSN-messenger-icon.webp'
 import ContactRequestsBar from "../components/ContactRequestsBar/ContactRequestsBar"
 import ContactList from "../components/ContactList/ContactList"
@@ -18,7 +16,6 @@ const Home = () => {
         isSocketConnected,
         checkUserLogin,
         setUserData,
-        fetchContactRequest,
         logout
     } = useContext(Context)
 
@@ -37,16 +34,6 @@ const Home = () => {
 
     if (!userData) {
         return <div>Loading user data...</div>
-    }
-
-    const handleContactRequestModalAction = async (contactEmail: string, selection: ContactRequestModalActionType) => {
-        if (selection.accept || selection.reject) {
-            await fetchContactRequest(contactEmail,
-                selection.accept ? ContactRequestActions.ACCEPT : ContactRequestActions.REJECT
-            )
-        } else {
-            alert('Invalid selection')
-        }
     }
 
     return (
@@ -69,7 +56,6 @@ const Home = () => {
                     <div className="home__contact-requests-bar">
                         <ContactRequestsBar
                             contactRequests={userData.contactRequests.received}
-                            handleModalAction={ handleContactRequestModalAction }
                         />
                     </div>
                     <div className="home__contact-list">

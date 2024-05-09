@@ -2,10 +2,10 @@ import { useTabs } from '../../context/TabContext'
 import './TabNavigation.scss'
 
 const TabNavigation = () => {
-    const { tabs, currentTab, setCurrentTab } = useTabs()
+    const { tabs, currentTab, navigateToTab } = useTabs()
 
     const handleClick = (url: string) => {
-        setCurrentTab(url)
+        navigateToTab(url)
     }
 
     return (

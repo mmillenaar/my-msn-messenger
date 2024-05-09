@@ -6,10 +6,10 @@ import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import { AppContextProvider } from './context/AppContext';
 import Home from './views/Home';
 import Chat from './views/Chat';
-import TabNavigation from './components/TabNavigation/TabNavigation';
 import { TabProvider } from './context/TabContext';
 import AddContactView from './views/AddContact';
 import NewConversation from './views/NewConversation';
+import ContactRequestView from './views/ContactRequestView';
 
 
 const App = () => {
@@ -25,6 +25,7 @@ const App = () => {
                                 <Route path='/chat/:contactId' element={<Chat />} />
                                 <Route path='/add-contact' element={<AddContactView />} />
                                 <Route path='/new-conversation' element={<NewConversation />} />
+                                <Route path='/contact-request/:contactId' element={<ContactRequestView />} />
                             </Route>
                             <Route path='/login' element={<Login />} />
                             <Route path='/register' element={<Register />} />

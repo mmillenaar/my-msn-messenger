@@ -1,0 +1,36 @@
+@import '../index';
+
+.contact-request-view {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        &-image {
+            width: 25px;
+        }
+    }
+    &__content {
+        padding: 10px 0 10px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-grow: 1;
+
+        &-text {
+            font-size: 14px;
+        }
+    }
+    &__options {
+        padding: 10px 0;
+    }
+    &__buttons {
+        align-self: flex-end;
+        display: flex;
+        gap: 10px;
+    }
+}

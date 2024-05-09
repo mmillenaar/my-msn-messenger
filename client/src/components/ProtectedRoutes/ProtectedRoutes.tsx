@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import Context from "../../context/AppContext";
 import { initializeSocketConnection } from "../../utils/websocket";
-import { TabProvider } from "../../context/TabContext";
 import TabNavigation from "../TabNavigation/TabNavigation";
 
 const ProtectedRoutes = () => {

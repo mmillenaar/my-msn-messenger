@@ -1,0 +1,40 @@
+@import '../../styles/index';
+
+.contact-requests-bar {
+    position: relative;
+
+    &__wrapper {
+        margin: 1px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 5px;
+        background: $color-yellow-1;
+        border: 1px solid $color-grey-2;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+            text-decoration-color: $color-blue-4;
+        }
+    }
+    &__icon {
+        width: 15px;
+        height: 15px;
+    }
+    &__text {
+        font-size: 12px;
+        color: $color-blue-4;
+    }
+    .contact-requests-modal {
+        &__wrapper {
+            padding: 0px 20px 20px 10px;
+            position: absolute;
+            top: 20px;
+            left: 0;
+            z-index: 10;
+            border: 1px solid $color-grey-1;
+            background: $color-grey-2;
+        }
+    }
+}

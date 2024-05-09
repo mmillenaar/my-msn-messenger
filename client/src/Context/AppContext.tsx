@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthDataType, ContactRequestResponseType, UserType } from "../utils/types";
 import { closeSocketConnection } from "../utils/websocket";
 import { ContactRequestActions } from "../utils/constants";
+import { useTabs } from "./TabContext";
 
 
 interface ContextTypes {
@@ -40,6 +41,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [userData, setUserData] = useState<UserType | null>(null)
     const [isSocketConnected, setIsSocketConnected] = useState<boolean | null>(null)
 
+    const { clearTabs } = useTabs()
+
     const navigate = useNavigate()
 
     const checkUserLogin = async () => {
@@ -70,6 +73,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
                 setIsUserLoggedIn(null)
                 closeSocketConnection(userData?.id)
                 setUserData(null)
+                clearTabs()
                 navigate('/login')
             } else {
                 console.error(data.message)
@@ -92,8 +96,13 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
                     contactEmail: contactEmail
                 })
             })
+            const data = await response.json()
 
-            return await response.json()
+            if (data.user) {
+                setUserData(data.user)
+            }
+
+            return data
         }
         catch (err) {
             console.error(err)

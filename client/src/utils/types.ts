@@ -48,7 +48,7 @@ export interface AuthDataType {
     user: UserType
 }
 
-export interface ContactRequestModalActionType {
+export interface ContactRequestActionType {
     accept: boolean;
     reject: boolean;
 }
@@ -65,4 +65,11 @@ export interface ContactRequestResponseType {
     message: string;
     errorType?: ContactErrorType;
     user?: UserType;
+}
+
+export interface CheckboxOptionType {
+    label: string;
+    id: string;
+    name: string;
+    checked: boolean;
 }

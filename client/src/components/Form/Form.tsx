@@ -120,7 +120,11 @@ const Form = ({ action, method }: FormProps) => {
                     <button className="form__buttons-submit" type="submit" onClick={handleOnFormSubmit}>
                         OK
                     </button>
-                    <button className="form__buttons-cancel" type="button">
+                    <button
+                        className="form__buttons-cancel"
+                        type="button"
+                        onClick={() => navigate('/')}
+                    >
                         Cancel
                     </button>
                 </div>

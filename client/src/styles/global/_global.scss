@@ -6,7 +6,8 @@ p {
 }
 .App {
     height: 100vh;
-    overflow-y: hidden;
+    width: 100vw;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }

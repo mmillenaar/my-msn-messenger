@@ -9,7 +9,7 @@ const Register = () => {
     return (
         <div className="register">
             <div className="register__wrapper window">
-                <div className="register__window-title title-bar">
+            <div className="register__window-title title-bar">
                     <div className="title-bar-text">
                         Register to .NET Messenger Service
                     </div>
@@ -22,8 +22,8 @@ const Register = () => {
                     <div className="register__form">
                         <Form action={FormAction.REGISTER} method={FormMethod.POST} />
                     </div>
-                    <div className="login__microsoft-net-logo">
-                        <p className="login__microsoft-net-logo-text">Passport</p>
+                    <div className="register__microsoft-net-logo">
+                        <p className="register__microsoft-net-logo-text">Passport</p>
                         <MicrosoftNetIcon />
                     </div>
                     <div className="register__back-button">
