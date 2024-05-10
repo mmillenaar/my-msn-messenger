@@ -7,6 +7,9 @@ import ContactList from "../components/ContactList/ContactList"
 import StatusHeader from "../components/StatusHeader/StatusHeader"
 import HomeFooter from "../components/HomeFooter/HomeFooter"
 import WindowTitleBar from "../components/WindowTitleBar/WindowTitleBar"
+import { TabType } from "../utils/types"
+import { useTabs } from "../context/TabContext"
+import { useNavigate } from "react-router-dom"
 import '../styles/views/Home.scss'
 
 
@@ -18,6 +21,9 @@ const Home = () => {
         setUserData,
         logout
     } = useContext(Context)
+
+    const { addTab } = useTabs()
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (isSocketConnected) {
@@ -31,6 +37,11 @@ const Home = () => {
             checkUserLogin()
         }
     }, [userData, checkUserLogin])
+
+    const handleLinkClick = (newTab: TabType) => {
+        navigate(newTab.path)
+        addTab(newTab)
+    }
 
     if (!userData) {
         return <div>Loading user data...</div>
@@ -59,15 +70,16 @@ const Home = () => {
                         />
                     </div>
                     <div className="home__contact-list">
-                        <ContactList contacts={userData.contacts}/>
+                        <ContactList
+                            contacts={userData.contacts}
+                            handleContactClick={handleLinkClick}
+                        />
                     </div>
                     <div className="home__footer">
-                        <HomeFooter />
-                    </div>
-                    <div className="home__logout-wrapper">
-                        <div className="home__logout-button">
-                            {/* <p onClick={logout}>Logout</p> */}
-                        </div>
+                        <HomeFooter
+                            handleActionLinkClick={handleLinkClick}
+                            handleLogout={logout}
+                        />
                     </div>
                 </div>
             </div>

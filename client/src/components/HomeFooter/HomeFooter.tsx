@@ -2,11 +2,18 @@ import { useState } from 'react'
 import { ReactComponent as ChevronRightIcon } from '../../assets/icons/double-chevron-right.svg'
 import plusIconImg from '../../assets/icons/plus-icon.png'
 import startChatImg from '../../assets/icons/start-chat.png'
-import msnIcon from '../../assets/icons/MSN-messenger-icon.webp'
+import logoutIcon from '../../assets/icons/logout.png'
 import ActionLink from '../ActionLink/ActionLink'
+import { addContactTab, newConversationTab } from '../../utils/constants'
+import { TabType } from '../../utils/types'
 import './HomeFooter.scss'
 
-const HomeFooter = () => {
+interface HomeFooterProps {
+    handleActionLinkClick: (tab: TabType) => void;
+    handleLogout: () => void;
+}
+
+const HomeFooter = ({ handleActionLinkClick, handleLogout }: HomeFooterProps) => {
     const [isTitleBarOpen, setIsTitleBarOpen] = useState<boolean>(true)
 
     const handleTitleBarClick = () => {
@@ -28,17 +35,18 @@ const HomeFooter = () => {
                     <div className="home-footer__content">
                         <ActionLink
                             text='Add a Contact'
-                            url='/add-contact'
-                            newTabLabel='Add Contact'
                             imgSource={plusIconImg}
-                            newTabImgSource={plusIconImg}
+                            handleClick={() => handleActionLinkClick(addContactTab)}
                         />
                         <ActionLink
                             text='Send an Instant Message'
-                            url='/new-conversation'
                             imgSource={startChatImg}
-                            newTabLabel='New Instant Message'
-                            newTabImgSource={msnIcon}
+                            handleClick={() => handleActionLinkClick(newConversationTab)}
+                        />
+                        <ActionLink
+                            text='Logout'
+                            imgSource={logoutIcon}
+                            handleClick={handleLogout}
                         />
                     </div>
                 }

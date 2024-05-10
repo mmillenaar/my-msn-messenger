@@ -1,13 +1,14 @@
 import { userStatusItems } from "../../utils/constants"
-import { ContactType } from "../../utils/types"
+import { ContactType, TabType } from "../../utils/types"
 import ContactGroup from "../ContactGroup/ContactGroup"
 import './ContactList.scss'
 
 interface ContactListProps {
     contacts: ContactType[]
+    handleContactClick: (newTab: TabType) => void
 }
 
-const ContactList = ({ contacts }: ContactListProps) => {
+const ContactList = ({ contacts, handleContactClick }: ContactListProps) => {
     const contactStatusGroup: {
         [key: string]: ContactType[];
     } = {}
@@ -40,6 +41,7 @@ const ContactList = ({ contacts }: ContactListProps) => {
                             key={index}
                             groupTitle={groupName}
                             contacts={contactStatusGroup[groupName]}
+                            handleContactClick={handleContactClick}
                         />
                     )
                 })}

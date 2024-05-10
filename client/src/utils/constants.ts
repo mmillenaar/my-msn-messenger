@@ -93,6 +93,18 @@ export const defaultTab: TabType = {
     path: '/',
     icon: msnIcon
 }
+export const addContactTab: TabType = {
+    id: '/add-contact',
+    label: 'Add Contact',
+    path: '/add-contact',
+    icon: msnIcon
+}
+export const newConversationTab: TabType = {
+    id: '/new-conversation',
+    label: 'New Instant Message',
+    path: '/new-conversation',
+    icon: msnIcon
+}
 
 export enum ContactErrorType {
     NOT_FOUND = 'not found',

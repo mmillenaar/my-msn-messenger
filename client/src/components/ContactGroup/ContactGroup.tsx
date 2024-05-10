@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ContactType } from '../../utils/types';
+import { ContactType, TabType } from '../../utils/types';
 import { userStatusItems } from '../../utils/constants';
 import { ReactComponent as ChevronRightIcon } from '../../assets/icons/double-chevron-right.svg'
 import chatIcon from '../../assets/icons/start-chat.png'
@@ -9,9 +9,10 @@ import './ContactGroup.scss';
 interface ContactGroupProps {
     groupTitle: string;
     contacts: ContactType[];
+    handleContactClick: (tab: TabType) => void;
 }
 
-const ContactGroup = ({ groupTitle, contacts }: ContactGroupProps) => {
+const ContactGroup = ({ groupTitle, contacts, handleContactClick }: ContactGroupProps) => {
     const [isGroupOpen, setIsGroupOpen] = useState<boolean>(true)
 
     const handleGroupTitleClick = () => {
@@ -31,15 +32,19 @@ const ContactGroup = ({ groupTitle, contacts }: ContactGroupProps) => {
                 </div>
                 <div className="contact-group__contacts">
                     {isGroupOpen && contacts.map((contact, index) => {
+                        const newTab: TabType = {
+                            id: `/chat/${contact.id}`,
+                            label: `${contact.username} - Conversation`,
+                            icon: chatIcon,
+                            path: `/chat/${contact.id}`
+                        }
                         return (
                             <ActionLink
                                 key={index}
-                                url={`/chat/${contact.id}`}
                                 text={contact.username}
-                                newTabLabel={`${contact.username} - Conversation`}
-                                newTabImgSource={chatIcon}
                                 imgSource={groupStatus?.icon}
                                 imgAlt={groupStatus?.text}
+                                handleClick={() => handleContactClick(newTab)}
                             />
                         )
                     })}
