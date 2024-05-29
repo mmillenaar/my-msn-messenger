@@ -20,7 +20,7 @@ export const postLogin = (req, res, next) => {
                 return next(loginErr)
             }
 
-            return res.status(200).json({ message: 'Login successful' })
+            return checkUserAuth(req, res)
         })
     })(req, res, next)
 }
@@ -38,7 +38,7 @@ export const postRegister = (req, res, next) => {
                 return next(loginErr)
             }
 
-            return res.status(200).json({ message: 'Registration successful' })
+            return checkUserAuth(req, res)
         })
     })(req, res, next)
 }
@@ -61,10 +61,18 @@ export const checkUserAuth = async (req: any, res: Response) => {
         const user: UserType = await usersApi.getById(req.user._id)
         const userForClient = await usersApi.setupUserForClient(user)
 
-        return res.status(200).send({ isAuthenticated: true, user: userForClient})
+        return res.status(200).send({
+            isAuthenticated: true,
+            user: userForClient,
+            sessionExpiration: req.session.cookie.maxAge
+        })
     }
     else {
-        return res.status(401).send({ isAuthenticated: false, message: 'Please login' })
+        return res.status(401).send({
+            isAuthenticated: false,
+            message: 'Please login',
+            sessionExpiration: null
+        })
     }
 }
 

@@ -6,12 +6,13 @@ import { useNavigate } from 'react-router-dom';
 interface TabContextType {
     tabs: TabType[];
     currentTab: string | null;
-    addTab: (tab: TabType) => void;
+    addTab: (tab: TabType, active: boolean) => void;
     removeTab: (tabId: string) => void;
     setCurrentTab: (tabId: string) => void;
     goToHomeTab: () => void;
     clearTabs: () => void;
     navigateToTab: (tabId: string) => void;
+    addNotification: (tabId: string) => void;
 }
 
 interface TabProviderProps {
@@ -26,7 +27,8 @@ const defaultState: TabContextType = {
     setCurrentTab: () => { },
     goToHomeTab: () => { },
     clearTabs: () => { },
-    navigateToTab: () => { }
+    navigateToTab: () => { },
+    addNotification: () => { }
 }
 
 const TabContext = createContext<TabContextType>(defaultState)
@@ -43,12 +45,13 @@ export const TabProvider = ({ children }: TabProviderProps) => {
 
     const navigate = useNavigate()
 
-    const addTab = (tab: TabType) => {
+    const addTab = (tab: TabType, active: boolean) => {
         setTabs(prevTabs => {
             if (!prevTabs.find(t => t.id === tab.id)) { // Prevent adding duplicate tabs
                 const newTabs = [...prevTabs, tab]
                 localStorage.setItem('openedTabs', JSON.stringify(newTabs))
-                navigateToTab(tab.id)
+
+                if (active) navigateToTab(tab.id)
 
                 return newTabs
             }
@@ -65,19 +68,56 @@ export const TabProvider = ({ children }: TabProviderProps) => {
         setCurrentTab(tabId)
         localStorage.setItem('currentTab', tabId)
         navigate(tabId)
+        removeNotification(tabId)
     }
 
     const removeTab = (tabId: string) => {
-        setTabs(prevTabs => prevTabs.filter(t => t.id !== tabId))
-        localStorage.setItem('openedTabs', JSON.stringify(tabs.filter(t => t.id !== tabId)))
+        setTabs(prevTabs => {
+            const newTabs = prevTabs.filter(t => t.id !== tabId)
+
+            localStorage.setItem('openedTabs', JSON.stringify(newTabs))
+
+            return newTabs
+        })
         if (currentTab === tabId) {
             goToHomeTab()
         }
     }
 
     const clearTabs = () => {
-        setTabs([])
+        setTabs([defaultTab])
+        localStorage.removeItem('openedTabs')
         goToHomeTab()
+    }
+
+    const removeNotification = (tabId: string) => {
+        setTabs(prevTabs => {
+            const newTabs = prevTabs.map(t => {
+                if (t.id === tabId) {
+                    t.hasNotification = false
+                }
+                return t
+            })
+
+            localStorage.setItem('openedTabs', JSON.stringify(newTabs))
+
+            return newTabs
+        })
+    }
+
+    const addNotification = (tabId: string) => {
+        setTabs(prevTabs => {
+            const newTabs = prevTabs.map(t => {
+                if (t.id === tabId) {
+                    t.hasNotification = true
+                }
+                return t
+            })
+
+            localStorage.setItem('openedTabs', JSON.stringify(newTabs))
+
+            return newTabs
+        })
     }
 
     return (
@@ -89,7 +129,8 @@ export const TabProvider = ({ children }: TabProviderProps) => {
             setCurrentTab,
             goToHomeTab,
             clearTabs,
-            navigateToTab
+            navigateToTab,
+            addNotification
         }}>
             {children}
         </TabContext.Provider>

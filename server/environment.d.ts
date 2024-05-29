@@ -1,4 +1,4 @@
-import { User } from "./src/utils/types";
+import { UserType } from "./src/utils/types";
 
 declare global {
     namespace NodeJS {
@@ -9,7 +9,7 @@ declare global {
     }
     namespace Express {
         interface Request {
-            user?: User;
+            user?: UserType;
             isAuthenticated?: () => boolean;
         }
     }

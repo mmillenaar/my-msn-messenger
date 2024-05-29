@@ -1,6 +1,5 @@
 import { useContext, useEffect } from "react"
 import Context from "../context/AppContext"
-import { setupUserEventsListener } from "../utils/websocket"
 import msnLogo from '../assets/icons/MSN-messenger-icon.webp'
 import ContactRequestsBar from "../components/ContactRequestsBar/ContactRequestsBar"
 import ContactList from "../components/ContactList/ContactList"
@@ -14,33 +13,19 @@ import '../styles/views/Home.scss'
 
 
 const Home = () => {
-    const {
-        userData,
-        isSocketConnected,
-        checkUserLogin,
-        setUserData,
-        logout
-    } = useContext(Context)
+    const { userData, logout } = useContext(Context)
+    const { clearTabs, addTab } = useTabs()
 
-    const { addTab } = useTabs()
     const navigate = useNavigate()
-
-    useEffect(() => {
-        if (isSocketConnected) {
-            console.log('user events socket listening')
-            setupUserEventsListener(setUserData)
-        }
-    }, [isSocketConnected, userData, setUserData])
-
-    useEffect(() => {
-        if (!userData) {
-            checkUserLogin()
-        }
-    }, [userData, checkUserLogin])
 
     const handleLinkClick = (newTab: TabType) => {
         navigate(newTab.path)
-        addTab(newTab)
+        addTab(newTab, true)
+    }
+
+    const handleLogoutClick = () => {
+        logout()
+        clearTabs()
     }
 
     if (!userData) {
@@ -78,7 +63,7 @@ const Home = () => {
                     <div className="home__footer">
                         <HomeFooter
                             handleActionLinkClick={handleLinkClick}
-                            handleLogout={logout}
+                            handleLogout={handleLogoutClick}
                         />
                     </div>
                 </div>

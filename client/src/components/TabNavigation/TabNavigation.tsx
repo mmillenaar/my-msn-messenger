@@ -18,7 +18,9 @@ const TabNavigation = () => {
                         <div
                             key={tab.id}
                             className={
-                                `tab-navigation__tab ${isActive ? 'tab-navigation__tab--active' : ''}`
+                                `tab-navigation__tab ${
+                                    tab.hasNotification ? 'tab-navigation__tab--notification' :
+                                    isActive ? 'tab-navigation__tab--active' : ''}`
                             }
                             onClick={() => handleClick(tab.path)}
                         >

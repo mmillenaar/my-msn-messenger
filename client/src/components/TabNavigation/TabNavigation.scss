@@ -1,5 +1,20 @@
 @import '../../styles/index';
 
+@keyframes tiltingNotificationTab {
+    0% {
+        background-color: unset;
+    }
+    50% {
+        background-color: unset;
+    }
+    51% {
+        background-color: $color-orange-1;
+    }
+    100% {
+        background-color: $color-orange-1;
+    }
+}
+
 .tab-navigation {
     &.title-bar {
         padding: 0;
@@ -40,6 +55,10 @@
             &:hover:not(.tab-navigation__tab--active) {
                 background-color: rgba(0, 0, 0, 0.15);
             }
+            &--notification {
+                background-color: $color-orange-1;
+                animation: tiltingNotificationTab 1s infinite alternate;
+            }
             &--active {
                 background-color: rgba(0, 0, 0, 0.3);
             }
@@ -50,7 +69,7 @@
             height: auto;
         }
         p {
-            color: $color-grey-3;
+            color: $color-white;
             font-size: 13px;
             text-wrap: nowrap;
         }

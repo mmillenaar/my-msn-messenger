@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import dotenv from 'dotenv'
 import cors from 'cors'
 import session from 'express-session'
@@ -22,7 +22,7 @@ app.use(session({
     saveUninitialized: false,
     rolling: true,
     cookie: {
-        maxAge: 600000000
+        maxAge: 10000
     }
 }))
 app.use(passportMiddleware)

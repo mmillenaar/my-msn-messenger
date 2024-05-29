@@ -1,0 +1,31 @@
+@import '../../styles/index';
+
+.notification-popup {
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    &__icon {
+        padding: 10px;
+        align-self: flex-start;
+    }
+    &__content {
+        text-align: center;
+        color: $color-black;
+
+        p {
+            font-size: 12px;
+        }
+    }
+    &__image {
+        align-self: flex-end;
+        width: 40px;
+    }
+    &__border {
+        margin-top: -8px;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, #efd564 0%, #efd564 70%, #dc3205 70%, #dc3205 80%, #4c70b8 80%, #4c70b8 90%, #7bbb92 90%, #7bbb92 100%);
+    }
+}

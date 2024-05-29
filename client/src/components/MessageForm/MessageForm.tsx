@@ -35,16 +35,14 @@ const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
 
         if (inputRef.current && inputRef.current.value !== '') {
             const formMessage: ChatMessageForServer = {
-                // FIXME: complete with new expected values
                 text: inputRef.current.value,
                 timestamp: Date.now(),
                 senderId: userId,
                 recipientId: contactId,
-                status: MessageStatus.SENT
+                status: MessageStatus.SENT // TODO: check if we are going to use message status
             }
 
             sendMessage(formMessage, chatId)
-            console.log('message sent!');
             cleanForm(inputRef.current)
         }
     }

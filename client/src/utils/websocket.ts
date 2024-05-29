@@ -1,6 +1,5 @@
 import { Socket, io } from 'socket.io-client'
-import { ChatMessageForServer, ChatType, UserType } from './types';
-import { Dispatch, SetStateAction } from 'react';
+import { ChatMessageForServer, ChatType, NotificationType, UserType } from './types';
 
 let socket: Socket | null = null;
 
@@ -35,12 +34,14 @@ export const notifyTyping = (isTyping: boolean, userId: string) => {
     socket.emit('user-typing', { isTyping, userId })
 }
 
-export const setupChatListener = (callback: Dispatch<SetStateAction<ChatType | null>>) => {
+export const setupChatListener = (
+    setChatData: (newChatData: ChatType) => void,
+) => {
     if (!socket) return
 
     socket.on('chat-render', async (chatData) => {
         try {
-            callback(chatData);
+            setChatData(chatData);
         }
         catch (err) {
             console.error(err);
@@ -54,11 +55,11 @@ export const setupChatListener = (callback: Dispatch<SetStateAction<ChatType | n
     }
 }
 
-export const setupTypingListener = (callback: Dispatch<SetStateAction<boolean>>) => {
+export const setupTypingListener = (setIsContactTyping: (setIsContactTyping: boolean) => void) => {
     if (!socket) return
 
     socket.on('typing', (isTyping: boolean) => {
-        callback(isTyping)
+        setIsContactTyping(isTyping)
     })
 
     return () => {
@@ -68,17 +69,31 @@ export const setupTypingListener = (callback: Dispatch<SetStateAction<boolean>>)
     }
 }
 
-export const setupUserEventsListener = (callback: (updatedUser: UserType) => void) => {
+export const setupUserEventsListener = (setUserData: (updatedUser: UserType) => void) => {
     if (!socket) return
 
     socket.on('new-user-status', (user: UserType) => {
-        callback(user)
+        setUserData(user)
+    })
+    socket.on('new-user-connected', ({contactUsername, updatedUser}: {contactUsername: string, updatedUser: UserType}) => {
+        setUserData(updatedUser)
     })
     socket.on('incoming-contact-request', (updatedReceiver: UserType) => {
-        callback(updatedReceiver)
+        setUserData(updatedReceiver)
     })
     socket.on('accepted-contact-request', (updatedSender: UserType) => {
-        callback(updatedSender)
+        setUserData(updatedSender)
+    })
+}
+
+export const setupNotificationListener = (callback: (notification: NotificationType) => void) => {
+    if (!socket) return
+
+    socket.on('incoming-message', (notification: NotificationType) => {
+        callback(notification)
+    })
+    socket.on('new-user-connected', ({contactUsername, updatedUser}: {contactUsername: string, updatedUser: UserType}) => {
+        callback({ user: { username: contactUsername } })
     })
 }
 

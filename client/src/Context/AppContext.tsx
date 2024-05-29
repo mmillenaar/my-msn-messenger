@@ -1,9 +1,8 @@
-import { Dispatch, ReactNode, SetStateAction, createContext, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthDataType, ContactRequestResponseType, UserType } from "../utils/types";
 import { closeSocketConnection } from "../utils/websocket";
 import { ContactRequestActions } from "../utils/constants";
-import { useTabs } from "./TabContext";
 
 
 interface ContextTypes {
@@ -40,10 +39,26 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
     const [userData, setUserData] = useState<UserType | null>(null)
     const [isSocketConnected, setIsSocketConnected] = useState<boolean | null>(null)
-
-    const { clearTabs } = useTabs()
+    const [sessionExpiration, setSessionExpiration] = useState<number | null>(null)
 
     const navigate = useNavigate()
+
+    useEffect(() => {
+        let timeoutId: ReturnType<typeof setTimeout> | null = null
+
+        if (sessionExpiration) {
+            timeoutId = setTimeout(async () => {
+                await logout()
+                navigate('/')
+            }, sessionExpiration)
+        }
+
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId)
+            }
+        }
+    }, [sessionExpiration])
 
     const checkUserLogin = async () => {
         try {
@@ -53,6 +68,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
             if (data.isAuthenticated) {
                 setUserData(data.user)
+                setSessionExpiration(data.sessionExpiration)
+            } else {
+                setUserData(null)
+                setSessionExpiration(null)
             }
 
             return data.isAuthenticated
@@ -73,8 +92,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
                 setIsUserLoggedIn(null)
                 closeSocketConnection(userData?.id)
                 setUserData(null)
-                clearTabs()
-                navigate('/login')
+                setIsSocketConnected(null)
             } else {
                 console.error(data.message)
             }
@@ -109,7 +127,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         }
     }
 
-
     return (
         <Context.Provider value={{
             checkUserLogin,
@@ -120,7 +137,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             setUserData,
             isSocketConnected,
             setIsSocketConnected,
-            fetchContactRequest
+            fetchContactRequest,
         }}>
             {children}
         </Context.Provider>

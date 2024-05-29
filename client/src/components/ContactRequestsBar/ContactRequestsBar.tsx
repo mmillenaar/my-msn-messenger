@@ -22,7 +22,7 @@ const ContactRequestsBar = ({ contactRequests }: ContactRequestsBarProps) => {
                 label: `<${contactRequest.email}> - Contact Request`,
                 icon: msnIcon
             }
-            addTab(newTab)
+            addTab(newTab, true)
         })
     }
 

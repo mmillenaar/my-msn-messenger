@@ -46,6 +46,7 @@ export interface ContactType {
 export interface AuthDataType {
     isAuthenticated: boolean
     user: UserType
+    sessionExpiration: number | null
 }
 
 export interface ContactRequestActionType {
@@ -58,6 +59,7 @@ export interface TabType {
     label: string;
     path: string;
     icon?: string;
+    hasNotification?: boolean;
 }
 
 export interface ContactRequestResponseType {
@@ -72,4 +74,12 @@ export interface CheckboxOptionType {
     id: string;
     name: string;
     checked: boolean;
+}
+
+export interface NotificationType {
+    user: {
+        username: string;
+        id?: string;
+    };
+    message?: string;
 }

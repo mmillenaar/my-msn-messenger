@@ -65,7 +65,7 @@ const NewConversation = () => {
         }
 
         removeTab('/new-conversation')
-        addTab(newTab)
+        addTab(newTab, true)
     }
 
     const handleClose = () => {

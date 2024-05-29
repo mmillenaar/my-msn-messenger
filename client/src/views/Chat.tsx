@@ -10,7 +10,6 @@ import blockedUser from '../assets/icons/avatar-blocked.png'
 import userIcon from '../assets/icons/user-avatar.png'
 import { chatBoxText } from '../utils/constants'
 import WindowTitleBar from '../components/WindowTitleBar/WindowTitleBar'
-import { useTabs } from '../context/TabContext'
 import '../styles/views/Chat.scss'
 
 const Chat = () => {
@@ -19,7 +18,6 @@ const Chat = () => {
     const [contactData, setContactData] = useState<ContactType | undefined>(undefined)
     const [isContactTyping, setIsContactTyping] = useState<boolean>(false)
     const { userData } = useContext(Context)
-    const { removeTab } = useTabs()
     const { contactId } = useParams()
 
     const bottomRef = useRef<HTMLDivElement>(null)

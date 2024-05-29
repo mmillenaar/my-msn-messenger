@@ -27,7 +27,7 @@ const Form = ({ action, method }: FormProps) => {
     const usernameRef = useRef<HTMLInputElement>(null)
     const confirmPasswordRef = useRef<HTMLInputElement>(null)
 
-    const { setIsUserLoggedIn } = useContext(Context)
+    const { setIsUserLoggedIn, setUserData } = useContext(Context)
 
     const navigate = useNavigate()
 
@@ -55,6 +55,7 @@ const Form = ({ action, method }: FormProps) => {
 
         if (res.status === 200) {
             setIsUserLoggedIn(true)
+            setUserData(data.user)
             navigate('/')
         }
         else {

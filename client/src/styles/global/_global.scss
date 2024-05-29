@@ -11,6 +11,8 @@ p {
     display: flex;
     flex-direction: column;
 }
+
+// Override xp.css library styles
 .window {
     margin: 1px;
 }
@@ -21,4 +23,34 @@ p {
     h1 {
         font-size: 13px;
     }
+}
+
+// Override notification library styles
+.Toastify__toast-container {
+    max-width: 100px;
+
+    @include media('>=phone') {
+        max-width: 200px;
+    }
+
+    .Toastify__toast {
+        padding: 0;
+        background: linear-gradient($color-blue-1, $color-white);
+        border: 4px solid $color-grey-2;
+        border-radius: 2px;
+        font-family: unset;
+
+        &-body {
+            padding: 0;
+        }
+
+        .Toastify__close-button {
+            min-height: unset;
+            min-width: unset;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+    }
+
 }
