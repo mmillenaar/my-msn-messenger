@@ -4,7 +4,6 @@ import cors from 'cors'
 import session from 'express-session'
 import { Server as HttpServer } from 'http'
 import { Server as Socket } from 'socket.io'
-
 import logger from "./config/logger.config";
 import { handleSocketConnection } from "./utils/socketHandler";
 import { passportMiddleware, passportSessionHandler } from "./middlewares/passport.middleware";
@@ -22,7 +21,7 @@ app.use(session({
     saveUninitialized: false,
     rolling: true,
     cookie: {
-        maxAge: 10000
+        maxAge: 600000
     }
 }))
 app.use(passportMiddleware)

@@ -1,4 +1,4 @@
-import { ContactErrorType, MessageStatus, UserStatus } from "./constants";
+import { ContactErrorType, UserStatus } from "./constants";
 
 export interface UserType {
     _id: string;
@@ -25,7 +25,6 @@ export interface ChatMessageType {
     senderId: string;
     recipientId: string;
     timestamp: number;
-    status: MessageStatus;
 }
 
 export interface ContactType {

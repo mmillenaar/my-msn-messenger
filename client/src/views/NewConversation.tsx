@@ -4,7 +4,7 @@ import SelectionPopover from '../components/SelectionPopover/SelectionPopover'
 import newConversationIcon from '../assets/icons/start-chat.png'
 import microsoftDotNetImage from '../assets/images/microsoft-net.png'
 import SearchBar from '../components/SearchBar/SearchBar'
-import { newConversationsubtitle } from '../utils/constants'
+import { newConversationTab, newConversationsubtitle } from '../utils/constants'
 import { ContactType, TabType } from '../utils/types'
 import WindowLayout from '../components/WindowLayout/WindowLayout'
 import '../styles/views/NewConversation.scss'
@@ -64,12 +64,12 @@ const NewConversation = () => {
             icon: newConversationIcon
         }
 
-        removeTab('/new-conversation')
+        removeTab(newConversationTab.id)
         addTab(newTab, true)
     }
 
     const handleClose = () => {
-        removeTab('/new-conversation')
+        removeTab(newConversationTab.id)
     }
 
     return (

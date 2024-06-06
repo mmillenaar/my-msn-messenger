@@ -195,13 +195,17 @@ class UsersApi extends MongoDbContainer {
             const user: UserType = await super.getById(userId)
             const contact: UserType = await super.getById(contactId)
 
-            // Modify user's contact
-            const userContact = user.contacts.find(contact => contact._id.toString() === contactId)
-            // Modify contact's user
-            const contactUser = contact.contacts.find(contact => contact._id.toString() === userId)
+            const modifiedUser = {
+                ...user,
+                contacts: user.contacts.map(contact => contact._id.toString() === contactId ? { ...contact, chatId } : contact)
+            }
+            const modifiedContact = {
+                ...contact,
+                contacts: contact.contacts.map(contact => contact._id.toString() === userId ? { ...contact, chatId } : contact)
+            }
 
-            await super.update(contactUser, contactId)
-            return await super.update(userContact, userId)
+            await super.update(modifiedContact, contactId)
+            return await super.update(modifiedUser, userId)
         }
         catch (err) {
             logger.error(err)

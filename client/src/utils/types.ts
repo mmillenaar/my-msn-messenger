@@ -1,10 +1,9 @@
-import { ContactErrorType, MessageStatus } from "./constants";
+import { ContactErrorType } from "./constants";
 
 export interface ChatMessageType {
     text: string;
     sender: ContactType;
     timestamp: number;
-    status: MessageStatus
     recipient: ContactType;
 }
 
@@ -12,7 +11,6 @@ export interface ChatMessageForServer {
     text: string;
     senderId: string;
     timestamp: number;
-    status: MessageStatus
     recipientId: string;
 }
 

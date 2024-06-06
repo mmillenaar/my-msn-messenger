@@ -1,10 +1,11 @@
+import { Socket } from "socket.io"
 import logger from "../../config/logger.config"
 import { handleNewMessage, handleUserStatusChange, logoutSocket, notifyTyping, registerSocket, sendRetrievedChat } from "../../controllers/sockets.controller"
 import { UserStatus } from "../../utils/constants"
-import { ChatMessageType, UserType } from "../../utils/types"
+import { ChatMessageType } from "../../utils/types"
 
 
-export default async function setupSocketListeners(socket) {
+export default async function setupSocketListeners(socket: Socket) {
     socket.on('register-user',  async (id: string) => {
         await registerSocket(id, socket)
 

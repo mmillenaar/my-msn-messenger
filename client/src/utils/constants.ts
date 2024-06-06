@@ -26,12 +26,6 @@ export const formConfirmPasswordGroup = {
     label: "Confirm Password"
 }
 
-export enum MessageStatus {
-    SENT = 'sent',
-    RECEIVED = 'received',
-    READ = 'read'
-}
-
 export enum ContactRequestActions {
     SEND = 'send',
     ACCEPT = 'accept',
@@ -41,6 +35,7 @@ export enum ContactRequestActions {
 export const loginText = 'Please sign in with your .NET Passport to see your online contacts, have online conversations, and receive alerts:'
 export const registerText = 'Please create a .NET Passport to see your online contacts, have online conversations, and receive alerts:'
 export const chatBoxText = 'Never give out your password or credit card number in an instant message conversation.'
+export const offlineContactText = "This user is offline. They will not be notified about your new messages."
 
 export const userStatusItems = [
     {

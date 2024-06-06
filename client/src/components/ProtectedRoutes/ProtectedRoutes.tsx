@@ -9,6 +9,8 @@ import { NotificationType, TabType } from "../../utils/types";
 import TabNavigation from "../TabNavigation/TabNavigation";
 import NotificationPopup from "../NotificationPopup/NotificationPopup";
 import newConversationIcon from '../../assets/icons/start-chat.png'
+import newMessageAudio from '../../assets/audio/newMessage.mp3'
+import onlineAudio from '../../assets/audio/online.mp3'
 
 const ProtectedRoutes = () => {
     const [ areSocketListenersActive, setAreSocketListenersActive ] = useState<boolean>(false)
@@ -43,6 +45,20 @@ const ProtectedRoutes = () => {
         }
     }, [isSocketConnected, setUserData, areSocketListenersActive])
 
+    // Web Audio API to play audio even when window is not active
+    const audioContext = new (window.AudioContext)()
+    const playAudio = (audioUrl: string) => {
+        fetch(audioUrl)
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+            .then(audioBuffer => {
+                const source = audioContext.createBufferSource()
+                source.buffer = audioBuffer
+                source.connect(audioContext.destination)
+                source.start()
+            })
+    }
+
     const handleNotification = (notification: NotificationType) => {
         toast(<NotificationPopup
             username={notification.user.username}
@@ -57,9 +73,15 @@ const ProtectedRoutes = () => {
             transition: Slide,
         })
 
-        // message notification in tabs
-        if (!notification.message) return
+        // Play notification audio based on notification type
+        if (!notification.message) {
+            return playAudio(onlineAudio)
+        }
+        else {
+            playAudio(newMessageAudio)
+        }
 
+        // message notification in tabs
         const conversationTab = tabs.find(tab => tab.id === `/chat/${notification.user.id}`)
         if (!conversationTab) {
             const newTab: TabType = {

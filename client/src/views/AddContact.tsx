@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import SearchBar from '../components/SearchBar/SearchBar'
 import Context from '../context/AppContext'
-import { ContactRequestActions, addContactEmailExamples, getAddContactErrorText, addContactFirstStepSubtitle, addContactSuccessText, getAddContactErrorSubtitle, getAddContactSuccessSubtitle, ContactErrorType } from '../utils/constants'
+import { ContactRequestActions, addContactEmailExamples, getAddContactErrorText, addContactFirstStepSubtitle, addContactSuccessText, getAddContactErrorSubtitle, getAddContactSuccessSubtitle, ContactErrorType, addContactTab } from '../utils/constants'
 import microsoftDotNetImage from '../assets/images/microsoft-net.png'
 import { useTabs } from '../context/TabContext'
 import WindowLayout from '../components/WindowLayout/WindowLayout'
@@ -13,7 +13,6 @@ const AddContactView = () => {
     const [isProcessFirstStep, setIsProcessFirstStep] = useState<boolean>(true)
     const [isResponseSuccessful, setIsResponseSuccessful] = useState<boolean | null>(null)
     const [responseErrorCode, setResponseErrorCode] = useState<ContactErrorType | undefined>(undefined)
-    const url = useLocation().pathname
 
     const { fetchContactRequest } = useContext(Context)
     const { removeTab } = useTabs()
@@ -35,7 +34,7 @@ const AddContactView = () => {
     }
 
     const backToHome = () => {
-        removeTab(url)
+        removeTab(addContactTab.id)
     }
 
     return (

@@ -28,7 +28,7 @@ const ContactList = ({ contacts, handleContactClick }: ContactListProps) => {
         if (statusItemA && statusItemB) {
             return statusItemA?.priority - statusItemB?.priority
         } else {
-            return 0 // TODO: check if OK to assing 0
+            return 0
         }
     })
 

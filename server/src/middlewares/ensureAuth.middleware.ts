@@ -1,12 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 
-//FIXME: is this being used??
-
-const ensureAuthenticated = (req: any, res: Response, next: NextFunction) => { // TODO: change 'any' type for Request
+const ensureAuthenticated = (req: Request, res: Response, next: NextFunction) => {
     if (req.isAuthenticated()) {
         next();
     } else {
-        return res.status(401).json({ message: 'Please login' });
+        return res.status(401).send({
+            isAuthenticated: false,
+            message: 'Please login',
+            sessionExpiration: null
+        })
     }
 }
 

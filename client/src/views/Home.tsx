@@ -8,7 +8,6 @@ import HomeFooter from "../components/HomeFooter/HomeFooter"
 import WindowTitleBar from "../components/WindowTitleBar/WindowTitleBar"
 import { TabType } from "../utils/types"
 import { useTabs } from "../context/TabContext"
-import { useNavigate } from "react-router-dom"
 import '../styles/views/Home.scss'
 
 
@@ -16,10 +15,8 @@ const Home = () => {
     const { userData, logout } = useContext(Context)
     const { clearTabs, addTab } = useTabs()
 
-    const navigate = useNavigate()
 
     const handleLinkClick = (newTab: TabType) => {
-        navigate(newTab.path)
         addTab(newTab, true)
     }
 

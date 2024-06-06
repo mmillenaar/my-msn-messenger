@@ -1,7 +1,6 @@
 import { useRef, useState } from "react"
 import { ChatMessageForServer } from "../../utils/types"
 import { notifyTyping, sendMessage } from "../../utils/websocket"
-import { MessageStatus } from "../../utils/constants";
 import './MessageForm.scss'
 
 interface MessageFormProps {
@@ -39,7 +38,6 @@ const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
                 timestamp: Date.now(),
                 senderId: userId,
                 recipientId: contactId,
-                status: MessageStatus.SENT // TODO: check if we are going to use message status
             }
 
             sendMessage(formMessage, chatId)

@@ -47,28 +47,34 @@ export const TabProvider = ({ children }: TabProviderProps) => {
 
     const addTab = (tab: TabType, active: boolean) => {
         setTabs(prevTabs => {
+            if (active) navigateToTab(tab.id)
+
             if (!prevTabs.find(t => t.id === tab.id)) { // Prevent adding duplicate tabs
                 const newTabs = [...prevTabs, tab]
                 localStorage.setItem('openedTabs', JSON.stringify(newTabs))
 
-                if (active) navigateToTab(tab.id)
-
                 return newTabs
+            } else {
+                return prevTabs
             }
-            return prevTabs
         })
     }
 
     const goToHomeTab = () => {
         navigate('/')
         setCurrentTab('/')
+        localStorage.setItem('currentTab', '/')
     }
 
     const navigateToTab = (tabId: string) => {
         setCurrentTab(tabId)
         localStorage.setItem('currentTab', tabId)
         navigate(tabId)
-        removeNotification(tabId)
+
+        const tab = tabs.find(t => t.id === tabId)
+        if (tab?.hasNotification) {
+            removeNotification(tabId)
+        }
     }
 
     const removeTab = (tabId: string) => {
@@ -86,7 +92,7 @@ export const TabProvider = ({ children }: TabProviderProps) => {
 
     const clearTabs = () => {
         setTabs([defaultTab])
-        localStorage.removeItem('openedTabs')
+        localStorage.setItem('openedTabs', JSON.stringify([defaultTab]))
         goToHomeTab()
     }
 

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import chatSchema from './chats.schema'
 import contactSchema from './contacts.schema'
 
 const userSchema = new mongoose.Schema({
@@ -7,7 +6,6 @@ const userSchema = new mongoose.Schema({
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
     status: { type: String, required: true },
-    chats: [chatSchema],
     contacts: [contactSchema],
     contactRequests: {
         sent: [{ type: mongoose.Schema.Types.ObjectId }],

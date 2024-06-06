@@ -8,7 +8,7 @@ import MessageForm from '../components/MessageForm/MessageForm'
 import chatIcon from '../assets/icons/start-chat.png'
 import blockedUser from '../assets/icons/avatar-blocked.png'
 import userIcon from '../assets/icons/user-avatar.png'
-import { chatBoxText } from '../utils/constants'
+import { chatBoxText, offlineContactText } from '../utils/constants'
 import WindowTitleBar from '../components/WindowTitleBar/WindowTitleBar'
 import '../styles/views/Chat.scss'
 
@@ -89,6 +89,12 @@ const Chat = () => {
                         <p className="chat-box__warning-text">{chatBoxText}</p>
                     </div>
                     <div className="chat-box__separator" />
+                    {
+                        contactData?.status === 'Offline' &&
+                        <div className="chat-box__offline-contact">
+                            <p className="chat-box__offline-contact-text">{offlineContactText}</p>
+                        </div>
+                    }
                     <div className="chat-box__messages">
                         {chatData?.messages && chatData.messages.map((messageData: ChatMessageType, index) => {
                             const { text, timestamp, sender } = messageData

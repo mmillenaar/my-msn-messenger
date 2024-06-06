@@ -25,6 +25,7 @@
         padding: 5px 0 5px 5px;
         display: flex;
         flex-direction: column;
+        gap: 2px;
         flex-grow: 1;
         overflow-y: auto;
         background: $color-white;
@@ -45,12 +46,21 @@
                 }
             }
             &__separator {
-                margin: 5px 0 10px;
-                height: 1px;
+                padding: 1px 0 0;
                 width: 10%;
                 background: $color-grey-1;
             }
+            &__offline-contact {
+                background-color: $color-yellow-1;
+                border: 1px solid $color-grey-2;
+                color: $color-blue-4;
+
+                &-text {
+                    font-size: 12px;
+                }
+            }
             &__messages {
+                margin-top: 2px;
                 flex-grow: 1;
                 overflow-y: auto;
             }
