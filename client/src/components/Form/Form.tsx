@@ -38,19 +38,22 @@ const Form = ({ action, method }: FormProps) => {
             return
         }
 
-        const res = await fetch(`/user/${action}`, {
-            method: method,
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: emailRef.current?.value,
-                password: passwordRef.current?.value,
-                username: usernameRef.current?.value,
-                confirmPassword: confirmPasswordRef.current?.value,
-            })
-        })
+        const res = await fetch(
+            `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/${action}`,
+            {
+                method: method,
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: emailRef.current?.value,
+                    password: passwordRef.current?.value,
+                    username: usernameRef.current?.value,
+                    confirmPassword: confirmPasswordRef.current?.value,
+                })
+            }
+        )
         const data = await res.json()
 
         if (res.status === 200) {

@@ -44,13 +44,16 @@ const NewConversation = () => {
     }
 
     const fetchSearchResults = async (searchTerm: string) => {
-        const result = await fetch('/user/search-contact', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ searchTerm: searchTerm })
-        })
+        const result = await fetch(
+            `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/search-contact`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ searchTerm: searchTerm })
+            }
+        )
         const data = await result.json()
         setPopoverOptions(data)
     }

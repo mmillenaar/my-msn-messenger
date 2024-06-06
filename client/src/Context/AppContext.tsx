@@ -62,7 +62,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
     const checkUserLogin = async () => {
         try {
-            const response = await fetch('/user/auth')
+            const response = await fetch(
+                `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/auth`
+            )
             const data: AuthDataType = await response.json()
             setIsUserLoggedIn(data.isAuthenticated)
 
@@ -85,7 +87,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
     const logout = async () => {
         try {
-            const response = await fetch('/user/logout')
+            const response = await fetch(
+                `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/logout`
+            )
             const data = await response.json()
 
             if (response.status === 200) {
@@ -109,15 +113,18 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
     const fetchContactRequest = async (contactEmail: string, action: ContactRequestActions) => {
         try {
-            const response = await fetch(`/user/contact-request/${action}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contactEmail: contactEmail
-                })
-            })
+            const response = await fetch(
+                `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/contact-request/${action}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contactEmail: contactEmail
+                    })
+                }
+            )
             const data = await response.json()
 
             if (data.user) {

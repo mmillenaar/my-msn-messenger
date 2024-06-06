@@ -3,5 +3,6 @@
 .DS_Store
 
 /client/node_modules
+/client/.env
 
 TODO.txt
