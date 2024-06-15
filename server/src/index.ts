@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // Cors setup
 const allowedOrigins = ['http://localhost:3000']
-if (process.env.CLIENT_ORIGIN && !allowedOrigins.find(origin => origin === process.env.CLIENT_ORIGIN)) {
+if (process.env.CLIENT_ORIGIN && !allowedOrigins.includes(process.env.CLIENT_ORIGIN)) {
     allowedOrigins.push(process.env.CLIENT_ORIGIN)
 }
 const corsOptions: CorsOptions = {
@@ -58,11 +58,7 @@ app.use(passportMiddleware)
 app.use(passportSessionHandler)
 
 const httpServer = new HttpServer(app)
-const io = new Socket(httpServer, {
-    cors: {
-        origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000'
-    }
-})
+const io = new Socket(httpServer, {cors: corsOptions})
 handleSocketConnection(io)
 
 app.use('/user', userRouter)

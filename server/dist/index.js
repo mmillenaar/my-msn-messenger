@@ -56,11 +56,7 @@ app.use((0, express_session_1.default)({
 app.use(passport_middleware_1.passportMiddleware);
 app.use(passport_middleware_1.passportSessionHandler);
 const httpServer = new http_1.Server(app);
-const io = new socket_io_1.Server(httpServer, {
-    cors: {
-        origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000'
-    }
-});
+const io = new socket_io_1.Server(httpServer, { cors: corsOptions });
 (0, socketHandler_1.handleSocketConnection)(io);
 app.use('/user', user_route_1.default);
 const PORT = JSON.parse(process.env.PORT) || 3030;
