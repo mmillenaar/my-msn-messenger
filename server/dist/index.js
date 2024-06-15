@@ -63,7 +63,7 @@ const io = new socket_io_1.Server(httpServer, {
 });
 (0, socketHandler_1.handleSocketConnection)(io);
 app.use('/user', user_route_1.default);
-const PORT = process.env.PORT || 3030;
+const PORT = JSON.parse(process.env.PORT) || 3030;
 const server = httpServer.listen(PORT, () => {
     logger_config_1.default.info(`Server listening at port: ${PORT}`);
 });

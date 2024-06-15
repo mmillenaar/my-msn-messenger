@@ -67,7 +67,7 @@ handleSocketConnection(io)
 
 app.use('/user', userRouter)
 
-const PORT: string | number = process.env.PORT || 3030
+const PORT: number = JSON.parse(process.env.PORT) || 3030
 const server = httpServer.listen(PORT, () => {
     logger.info(`Server listening at port: ${PORT}`);
 })
