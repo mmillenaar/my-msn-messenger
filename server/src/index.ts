@@ -51,7 +51,7 @@ app.use(session({
     store: MongoStore.create({mongoUrl: process.env.MONGOURL}),
     cookie: {
         maxAge: 600000,
-        secure: process.env.NODE_ENV === 'production'
+        secure: false
     }
 }))
 

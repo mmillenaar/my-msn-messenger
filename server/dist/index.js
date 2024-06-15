@@ -51,7 +51,7 @@ app.use((0, express_session_1.default)({
     store: connect_mongo_1.default.create({ mongoUrl: process.env.MONGOURL }),
     cookie: {
         maxAge: 600000,
-        secure: process.env.NODE_ENV === 'production'
+        secure: false
     }
 }));
 // Passport middleware
