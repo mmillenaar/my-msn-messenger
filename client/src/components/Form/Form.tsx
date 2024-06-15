@@ -39,7 +39,7 @@ const Form = ({ action, method }: FormProps) => {
         }
 
         const res = await fetch(
-            `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/${action}`,
+            `${process.env.REACT_APP_BACKEND_URL}/user/${action}`,
             {
                 method: method,
                 credentials: "include",

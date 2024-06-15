@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from 'dotenv'
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import session from 'express-session'
 import { Server as HttpServer } from 'http'
 import { Server as Socket } from 'socket.io'
@@ -16,10 +16,32 @@ const app = express()
 app.use(helmet())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors({
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000'
-}))
 
+// Trust proxy setup for deployment reverse proxy
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1)
+}
+
+// Cors setup
+const allowedOrigins = ['http://localhost:3000']
+if (process.env.CLIENT_ORIGIN && !allowedOrigins.find(origin => origin === process.env.CLIENT_ORIGIN)) {
+    allowedOrigins.push(process.env.CLIENT_ORIGIN)
+}
+const corsOptions: CorsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true)
+        }
+        else {
+            console.log('origin:', origin, 'not allowed')
+            callback(new Error('Not allowed by CORS'))
+        }
+    },
+    credentials: true
+}
+app.use(cors(corsOptions))
+
+// Session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET || 'default_secret',
     resave: false,
@@ -30,6 +52,8 @@ app.use(session({
         secure: process.env.NODE_ENV === 'production'
     }
 }))
+
+// Passport middleware
 app.use(passportMiddleware)
 app.use(passportSessionHandler)
 

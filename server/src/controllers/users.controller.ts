@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import passport from 'passport'
 import logger from '../config/logger.config'
 import { usersApi } from '../services/users.api'
@@ -7,8 +7,8 @@ import { ContactErrorType, ContactRequestActions, UserUpdateFields } from '../ut
 import { ContactResponseType, UserType } from '../utils/types'
 
 
-export const postLogin = (req, res, next) => {
-    passport.authenticate('login', (err, user, info) => {
+const handleAuthentication = (strategy: string, req: any, res: Response, next: NextFunction) => {
+    passport.authenticate(strategy, (err, user, info) => {
         if (err) {
             return next(err)
         }
@@ -19,28 +19,48 @@ export const postLogin = (req, res, next) => {
             if (loginErr) {
                 return next(loginErr)
             }
-
-            return checkUserAuth(req, res)
+            sendAuthResponse(req, res)
         })
     })(req, res, next)
+};
+
+const sendAuthResponse = async (req: any, res: Response) => {
+    if (req.isAuthenticated()) {
+        try {
+            const user: UserType = await usersApi.getById(req.user._id)
+            const userForClient = await usersApi.setupUserForClient(user)
+
+            return res.status(200).send({
+                isAuthenticated: true,
+                user: userForClient,
+                sessionExpiration: req.session.cookie.maxAge
+            })
+        } catch (error) {
+            return res.status(500).send({
+                isAuthenticated: false,
+                message: 'Internal server error',
+                sessionExpiration: null
+            })
+        }
+    } else {
+        return res.status(401).send({
+            isAuthenticated: false,
+            message: 'Please login',
+            sessionExpiration: null
+        })
+    }
 }
 
-export const postRegister = (req, res, next) => {
-    passport.authenticate('register', (err, user, info) => {
-        if (err) {
-            return next(err)
-        }
-        if (!user) {
-            return res.status(401).json({ message: info?.message }) // TODO: explain why
-        }
-        req.login(user, loginErr => {
-            if (loginErr) {
-                return next(loginErr)
-            }
+export const postLogin = (req: Request, res: Response, next: NextFunction) => {
+    handleAuthentication('login', req, res, next)
+}
 
-            return checkUserAuth(req, res)
-        })
-    })(req, res, next)
+export const postRegister = (req: Request, res: Response, next: NextFunction) => {
+    handleAuthentication('register', req, res, next)
+}
+
+export const checkUserAuth = (req: Request, res: Response) => {
+    sendAuthResponse(req, res)
 }
 
 export const getLogout = (req, res) => {
@@ -54,26 +74,6 @@ export const getLogout = (req, res) => {
             return res.status(200).send({ message: 'Logged out successfully' })
         }
     });
-}
-
-export const checkUserAuth = async (req: any, res: Response) => {
-    if (req.isAuthenticated()) {
-        const user: UserType = await usersApi.getById(req.user._id)
-        const userForClient = await usersApi.setupUserForClient(user)
-
-        return res.status(200).send({
-            isAuthenticated: true,
-            user: userForClient,
-            sessionExpiration: req.session.cookie.maxAge
-        })
-    }
-    else {
-        return res.status(401).send({
-            isAuthenticated: false,
-            message: 'Please login',
-            sessionExpiration: null
-        })
-    }
 }
 
 export const sendContactRequest = async (req, res) => {
