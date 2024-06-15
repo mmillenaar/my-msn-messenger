@@ -9,6 +9,7 @@ import { handleSocketConnection } from "./utils/socketHandler";
 import { passportMiddleware, passportSessionHandler } from "./middlewares/passport.middleware";
 import userRouter from "./routes/users/user.route";
 import helmet from "helmet";
+import MongoStore from "connect-mongo";
 
 dotenv.config()
 
@@ -47,6 +48,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     rolling: true,
+    store: MongoStore.create({mongoUrl: process.env.MONGOURL}),
     cookie: {
         maxAge: 600000,
         secure: process.env.NODE_ENV === 'production'
