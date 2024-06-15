@@ -44,21 +44,7 @@ passport_1.default.serializeUser((user, done) => {
 });
 passport_1.default.deserializeUser(async (id, done) => {
     console.log('Deserializing user with id:', id);
-    try {
-        const user = await users_api_1.usersApi.getById(id);
-        if (user) {
-            console.log('User found');
-            done(null, user);
-        }
-        else {
-            console.log('User not found');
-            done(null, false);
-        }
-    }
-    catch (err) {
-        console.error('Error during deserialization:', err);
-        done(err);
-    }
+    done(null, id);
 });
 exports.passportMiddleware = passport_1.default.initialize();
 exports.passportSessionHandler = passport_1.default.session();
