@@ -63,7 +63,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const checkUserLogin = async () => {
         try {
             const response = await fetch(
-                `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/auth`
+                `${process.env.REACT_APP_BACKEND_URL}/user/auth`,
+                {
+                    credentials: 'include'
+                }
             )
             const data: AuthDataType = await response.json()
             setIsUserLoggedIn(data.isAuthenticated)
@@ -88,7 +91,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const logout = async () => {
         try {
             const response = await fetch(
-                `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/logout`
+                `${process.env.REACT_APP_BACKEND_URL}/user/logout`,
+                {
+                    credentials: 'include'
+                }
             )
             const data = await response.json()
 
@@ -97,10 +103,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
                 closeSocketConnection(userData?.id)
                 setUserData(null)
                 setIsSocketConnected(null)
-
-                // manage tabs
-                localStorage.removeItem('openedTabs')
-                localStorage.removeItem('currentTab')
             } else {
                 console.error(data.message)
             }
@@ -114,12 +116,13 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const fetchContactRequest = async (contactEmail: string, action: ContactRequestActions) => {
         try {
             const response = await fetch(
-                `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/contact-request/${action}`,
+                `${process.env.REACT_APP_BACKEND_URL}/user/contact-request/${action}`,
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         contactEmail: contactEmail
                     })

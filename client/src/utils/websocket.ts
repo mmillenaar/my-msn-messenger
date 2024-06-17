@@ -4,7 +4,7 @@ import { ChatMessageForServer, ChatType, NotificationType, UserType } from './ty
 let socket: Socket | null = null;
 
 export const initializeSocketConnection = (userId: string) => {
-    socket = io('http://localhost:3030')
+    socket = io(process.env.REACT_APP_BACKEND_URL!)
     console.log('Socket connection established')
 
     socket.emit('register-user', userId)

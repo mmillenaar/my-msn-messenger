@@ -27,12 +27,13 @@ const StatusHeader = ({username, status, id}: StatusHeaderProps) => {
     const updateUsernameInDb = async (newUsername: string) => {
         try {
             const response = await fetch(
-                `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/update/username`,
+                `${process.env.REACT_APP_BACKEND_URL}/user/update/username`,
                 {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ newUsername: newUsername })
                 }
             );

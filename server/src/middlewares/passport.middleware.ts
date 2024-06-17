@@ -48,11 +48,21 @@ passport.use('register', new Strategy(
 ))
 
 passport.serializeUser((user: UserType, done) => {
-    done(null, user)
+    done(null, user._id)
 })
 
-passport.deserializeUser((user: UserType, done) => {
-    done(null, user)
+passport.deserializeUser(async (id: string, done) => {
+    try {
+        const user = await usersApi.getById(id)
+        if (user) {
+            done(null, user)
+        } else {
+            done(null, false)
+        }
+    } catch (err) {
+        console.error('Error during deserialization:', err)
+        done(err)
+    }
 })
 
 export const passportMiddleware = passport.initialize()

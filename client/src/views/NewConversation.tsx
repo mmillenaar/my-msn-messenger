@@ -51,6 +51,7 @@ const NewConversation = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({ searchTerm: searchTerm })
             }
         )

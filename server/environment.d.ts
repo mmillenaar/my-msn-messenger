@@ -1,7 +1,7 @@
 declare global {
     namespace NodeJS {
         interface ProcessEnv {
-            PORT: number
+            PORT: string
             MONGOURL: string
             CLIENT_ORIGIN: string
             SESSION_SECRET: string
