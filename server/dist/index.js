@@ -24,7 +24,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 // Trust proxy setup for deployment reverse proxy
 if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', true);
+    app.set('trust proxy', 1);
 }
 // Cors setup
 const allowedOrigins = ['http://localhost:3000'];
@@ -56,7 +56,9 @@ app.use((0, express_session_1.default)({
     }),
     cookie: {
         maxAge: 600000,
-        secure: false
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        httpOnly: true, // Helps mitigate XSS
     }
 }));
 // Passport middleware

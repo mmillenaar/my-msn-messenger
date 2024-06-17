@@ -23,7 +23,7 @@ app.use(cookieParser())
 
 // Trust proxy setup for deployment reverse proxy
 if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', true)
+    app.set('trust proxy', 1)
 }
 
 // Cors setup
@@ -34,7 +34,7 @@ if (process.env.CLIENT_ORIGIN && !allowedOrigins.includes(process.env.CLIENT_ORI
 const corsOptions: CorsOptions = {
     origin: function (origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true)
+            callback(null, true);
         }
         else {
             console.log('origin:', origin, 'not allowed')
@@ -58,7 +58,9 @@ app.use(session({
     }),
     cookie: {
         maxAge: 600000,
-        secure: false
+        secure: process.env.NODE_ENV === 'production', // Secure cookies in production
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // SameSite setting for CSRF protection
+        httpOnly: true, // Helps mitigate XSS
     }
 }))
 
@@ -67,7 +69,7 @@ app.use(passportMiddleware)
 app.use(passportSessionHandler)
 
 const httpServer = new HttpServer(app)
-const io = new Socket(httpServer, {cors: corsOptions})
+const io = new Socket(httpServer, { cors: corsOptions })
 handleSocketConnection(io)
 
 app.use('/user', passportMiddleware, userRouter)
@@ -76,4 +78,4 @@ const PORT: number = JSON.parse(process.env.PORT) || 3030
 const server = httpServer.listen(PORT, () => {
     logger.info(`Server listening at port: ${PORT}`);
 })
-server.on("error", error  => logger.error(`Error in server: ${error}`))
+server.on("error", error => logger.error(`Error in server: ${error}`))
