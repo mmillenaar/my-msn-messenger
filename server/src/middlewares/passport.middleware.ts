@@ -48,19 +48,15 @@ passport.use('register', new Strategy(
 ))
 
 passport.serializeUser((user: UserType, done) => {
-    console.log('Serializing user with id:', user._id)
     done(null, user._id)
 })
 
 passport.deserializeUser(async (id: string, done) => {
     try {
-        console.log('Deserializing user with id:', id)
         const user = await usersApi.getById(id)
         if (user) {
-            console.log('User found')
             done(null, user)
         } else {
-            console.log('User not found')
             done(null, false)
         }
     } catch (err) {

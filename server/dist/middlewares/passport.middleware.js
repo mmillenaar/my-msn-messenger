@@ -39,19 +39,15 @@ passport_1.default.use('register', new passport_local_1.Strategy({
     }
 }));
 passport_1.default.serializeUser((user, done) => {
-    console.log('Serializing user with id:', user._id);
     done(null, user._id);
 });
 passport_1.default.deserializeUser(async (id, done) => {
     try {
-        console.log('Deserializing user with id:', id);
         const user = await users_api_1.usersApi.getById(id);
         if (user) {
-            console.log('User found');
             done(null, user);
         }
         else {
-            console.log('User not found');
             done(null, false);
         }
     }

@@ -10,20 +10,18 @@ import { passportMiddleware, passportSessionHandler } from "./middlewares/passpo
 import userRouter from "./routes/users/user.route";
 import helmet from "helmet";
 import MongoStore from "connect-mongo";
-import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 
 dotenv.config()
 
 const app = express()
-// app.use(helmet())
+app.use(helmet())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cookieParser())
 
 // Trust proxy setup for deployment reverse proxy
 if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1)
+    app.set('trust proxy', 1) // Trust only first proxy
 }
 
 // Cors setup
@@ -37,15 +35,13 @@ const corsOptions: CorsOptions = {
             callback(null, true);
         }
         else {
-            console.log('origin:', origin, 'not allowed')
+            console.error('origin:', origin, 'not allowed')
             callback(new Error('Not allowed by CORS'))
         }
     },
     credentials: true
 }
 app.use(cors(corsOptions))
-
-console.log('secret: ', process.env.SESSION_SECRET)
 
 // Session configuration
 app.use(session({
@@ -72,7 +68,7 @@ const httpServer = new HttpServer(app)
 const io = new Socket(httpServer, { cors: corsOptions })
 handleSocketConnection(io)
 
-app.use('/user', passportMiddleware, userRouter)
+app.use('/user', userRouter)
 
 const PORT: number = JSON.parse(process.env.PORT) || 3030
 const server = httpServer.listen(PORT, () => {

@@ -10,7 +10,7 @@ const users_api_1 = require("../services/users.api");
 const sockets_controller_1 = require("./sockets.controller");
 const constants_1 = require("../utils/constants");
 const handleAuthentication = (strategy, req, res, next) => {
-    passport_1.default.authenticate(strategy, { keepSessionInfo: true }, (err, user, info) => {
+    passport_1.default.authenticate(strategy, (err, user, info) => {
         if (err) {
             return next(err);
         }
@@ -26,8 +26,6 @@ const handleAuthentication = (strategy, req, res, next) => {
     })(req, res, next);
 };
 const sendAuthResponse = async (req, res) => {
-    console.log('sessionId: ', req.sessionID);
-    console.log('req session: ', req.session);
     if (req.isAuthenticated()) {
         try {
             const user = await users_api_1.usersApi.getById(req.user._id);

@@ -8,7 +8,7 @@ import { ContactResponseType, UserType } from '../utils/types'
 
 
 const handleAuthentication = (strategy: string, req: any, res: Response, next: NextFunction) => {
-    passport.authenticate(strategy, {keepSessionInfo: true}, (err, user, info) => {
+    passport.authenticate(strategy, (err, user, info) => {
         if (err) {
             return next(err)
         }
@@ -25,8 +25,6 @@ const handleAuthentication = (strategy: string, req: any, res: Response, next: N
 };
 
 const sendAuthResponse = async (req: any, res: Response) => {
-    console.log('sessionId: ', req.sessionID)
-    console.log('req session: ', req.session)
     if (req.isAuthenticated()) {
         try {
             const user: UserType = await usersApi.getById(req.user._id)
