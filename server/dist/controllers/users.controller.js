@@ -10,7 +10,7 @@ const users_api_1 = require("../services/users.api");
 const sockets_controller_1 = require("./sockets.controller");
 const constants_1 = require("../utils/constants");
 const handleAuthentication = (strategy, req, res, next) => {
-    passport_1.default.authenticate(strategy, (err, user, info) => {
+    passport_1.default.authenticate(strategy, { keepSessionInfo: true }, (err, user, info) => {
         if (err) {
             return next(err);
         }

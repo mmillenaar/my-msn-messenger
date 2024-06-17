@@ -8,7 +8,7 @@ import { ContactResponseType, UserType } from '../utils/types'
 
 
 const handleAuthentication = (strategy: string, req: any, res: Response, next: NextFunction) => {
-    passport.authenticate(strategy, (err, user, info) => {
+    passport.authenticate(strategy, {keepSessionInfo: true}, (err, user, info) => {
         if (err) {
             return next(err)
         }
