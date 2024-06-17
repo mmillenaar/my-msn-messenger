@@ -53,8 +53,20 @@ passport.serializeUser((user: UserType, done) => {
 })
 
 passport.deserializeUser(async (id: string, done) => {
-    console.log('Deserializing user with id:', id)
-    done(null, id)
+    try {
+        console.log('Deserializing user with id:', id)
+        const user = await usersApi.getById(id)
+        if (user) {
+            console.log('User found')
+            done(null, user)
+        } else {
+            console.log('User not found')
+            done(null, false)
+        }
+    } catch (err) {
+        console.error('Error during deserialization:', err)
+        done(err)
+    }
 })
 
 export const passportMiddleware = passport.initialize()

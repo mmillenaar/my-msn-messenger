@@ -10,6 +10,7 @@ import { passportMiddleware, passportSessionHandler } from "./middlewares/passpo
 import userRouter from "./routes/users/user.route";
 import helmet from "helmet";
 import MongoStore from "connect-mongo";
+import cookieParser from "cookie-parser";
 
 dotenv.config()
 
@@ -17,6 +18,7 @@ const app = express()
 app.use(helmet())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
 // Trust proxy setup for deployment reverse proxy
 if (process.env.NODE_ENV === 'production') {

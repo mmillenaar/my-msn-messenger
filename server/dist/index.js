@@ -15,11 +15,13 @@ const passport_middleware_1 = require("./middlewares/passport.middleware");
 const user_route_1 = __importDefault(require("./routes/users/user.route"));
 const helmet_1 = __importDefault(require("helmet"));
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, cookie_parser_1.default)());
 // Trust proxy setup for deployment reverse proxy
 if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', true);
