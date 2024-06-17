@@ -16,6 +16,7 @@ const user_route_1 = __importDefault(require("./routes/users/user.route"));
 const helmet_1 = __importDefault(require("helmet"));
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const mongoose_1 = __importDefault(require("mongoose"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
@@ -51,7 +52,9 @@ app.use((0, express_session_1.default)({
     resave: false,
     saveUninitialized: false,
     rolling: true,
-    store: connect_mongo_1.default.create({ mongoUrl: process.env.MONGOURL }),
+    store: connect_mongo_1.default.create({
+        client: mongoose_1.default.connection.getClient()
+    }),
     cookie: {
         maxAge: 600000,
         secure: false

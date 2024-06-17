@@ -11,6 +11,7 @@ import userRouter from "./routes/users/user.route";
 import helmet from "helmet";
 import MongoStore from "connect-mongo";
 import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
 
 dotenv.config()
 
@@ -52,7 +53,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     rolling: true,
-    store: MongoStore.create({mongoUrl: process.env.MONGOURL}),
+    store: MongoStore.create({
+        client: mongoose.connection.getClient()
+    }),
     cookie: {
         maxAge: 600000,
         secure: false
