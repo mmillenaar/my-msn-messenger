@@ -63,7 +63,7 @@ app.use(passport_middleware_1.passportSessionHandler);
 const httpServer = new http_1.Server(app);
 const io = new socket_io_1.Server(httpServer, { cors: corsOptions });
 (0, socketHandler_1.handleSocketConnection)(io);
-app.use('/user', user_route_1.default);
+app.use('/user', passport_middleware_1.passportMiddleware, user_route_1.default);
 const PORT = JSON.parse(process.env.PORT) || 3030;
 const server = httpServer.listen(PORT, () => {
     logger_config_1.default.info(`Server listening at port: ${PORT}`);

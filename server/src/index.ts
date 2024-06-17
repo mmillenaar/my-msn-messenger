@@ -67,7 +67,7 @@ const httpServer = new HttpServer(app)
 const io = new Socket(httpServer, {cors: corsOptions})
 handleSocketConnection(io)
 
-app.use('/user', userRouter)
+app.use('/user', passportMiddleware, userRouter)
 
 const PORT: number = JSON.parse(process.env.PORT) || 3030
 const server = httpServer.listen(PORT, () => {

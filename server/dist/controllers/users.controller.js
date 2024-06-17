@@ -26,6 +26,7 @@ const handleAuthentication = (strategy, req, res, next) => {
     })(req, res, next);
 };
 const sendAuthResponse = async (req, res) => {
+    console.log('req session: ', req.session);
     if (req.isAuthenticated()) {
         try {
             const user = await users_api_1.usersApi.getById(req.user._id);
