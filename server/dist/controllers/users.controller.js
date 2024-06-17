@@ -26,7 +26,7 @@ const handleAuthentication = (strategy, req, res, next) => {
     })(req, res, next);
 };
 const sendAuthResponse = async (req, res) => {
-    console.log('sessionId: ', req.sessionId);
+    console.log('sessionId: ', req.sessionID);
     console.log('req session: ', req.session);
     if (req.isAuthenticated()) {
         try {
