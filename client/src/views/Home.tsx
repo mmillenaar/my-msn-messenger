@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import Context from "../context/AppContext"
 import msnLogo from '../assets/icons/MSN-messenger-icon.webp'
 import ContactRequestsBar from "../components/ContactRequestsBar/ContactRequestsBar"
@@ -15,15 +15,15 @@ const Home = () => {
     const { userData, logout } = useContext(Context)
     const { clearTabs, addTab } = useTabs()
 
-
     const handleLinkClick = (newTab: TabType) => {
         addTab(newTab, true)
     }
 
-    const handleLogoutClick = () => {
-        logout()
+    const handleLogoutClick = async () => {
+        await logout()
         clearTabs()
     }
+
 
     if (!userData) {
         return <div>Loading user data...</div>

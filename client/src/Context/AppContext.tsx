@@ -103,10 +103,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
                 closeSocketConnection(userData?.id)
                 setUserData(null)
                 setIsSocketConnected(null)
-
-                // manage tabs
-                localStorage.removeItem('openedTabs')
-                localStorage.removeItem('currentTab')
             } else {
                 console.error(data.message)
             }
