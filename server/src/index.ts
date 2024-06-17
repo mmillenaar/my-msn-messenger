@@ -42,6 +42,8 @@ const corsOptions: CorsOptions = {
 }
 app.use(cors(corsOptions))
 
+console.log('secret: ', process.env.SESSION_SECRET)
+
 // Session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET || 'default_secret',

@@ -42,6 +42,7 @@ const corsOptions = {
     credentials: true
 };
 app.use((0, cors_1.default)(corsOptions));
+console.log('secret: ', process.env.SESSION_SECRET);
 // Session configuration
 app.use((0, express_session_1.default)({
     secret: process.env.SESSION_SECRET || 'default_secret',
