@@ -109,7 +109,7 @@ export enum ContactErrorType {
 
 export const addContactFirstStepSubtitle = "Please type your contact's complete e-mail address"
 export const getAddContactSuccessSubtitle = (contactEmail: string) => {
-    return `Success! ${contactEmail} wass added to your list!`
+    return `Success! ${contactEmail} was added to your list!`
 }
 export const getAddContactErrorSubtitle = (contactEmail: string) => {
     return `Error! ${contactEmail} could not be added to your list`
