@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import Form, { FormAction, FormMethod } from "../components/Form/Form"
 import msnLogo from '../assets/icons/MSN-messenger-icon.webp'
 import { registerText } from "../utils/constants"
@@ -27,7 +28,7 @@ const Register = () => {
                         <MicrosoftNetIcon />
                     </div>
                     <div className="register__back-button">
-                        <a href="/">Back to login</a>
+                        <Link to="/login">Back to login</Link>
                     </div>
                 </div>
             </div>

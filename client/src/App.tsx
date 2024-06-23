@@ -10,13 +10,15 @@ import { TabProvider } from './context/TabContext';
 import AddContactView from './views/AddContact';
 import NewConversation from './views/NewConversation';
 import ContactRequestView from './views/ContactRequestView';
+import RedirectHandler from './components/RedirectHandler/RedirectHandler';
 
 
 const App = () => {
 
     return (
         <div className="App">
-            <BrowserRouter>
+            <BrowserRouter basename="/my-msn-messenger">
+                <RedirectHandler />
                 <AppContextProvider>
                     <TabProvider>
                         <Routes>

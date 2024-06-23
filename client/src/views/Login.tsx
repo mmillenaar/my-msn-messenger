@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import Form, { FormAction, FormMethod } from "../components/Form/Form"
 import { loginText } from "../utils/constants"
 import msnLogo from '../assets/icons/MSN-messenger-icon.webp'
@@ -28,8 +29,8 @@ const Login = () => {
                     </div>
                     <div className="login__helpers">
                         <div className="login__helpers-link-wrapper">
-                            <a className="login__helpers-link" href="/register">Get a .NET Passport</a>
-                            <a className="login__helpers-link" href="/help">Help</a>
+                            <Link to="/register" className="login__helpers-link">Get a .NET Passport</Link>
+                            {/* <Link to="/help" className="login__helpers-link">Help</Link> */}
                         </div>
                     </div>
                 </div>
