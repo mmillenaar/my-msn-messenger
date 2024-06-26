@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a99931fe.css",
+    "main.js": "/static/js/main.b3732366.js",
+    "static/media/PerfectDOSVGA437Win.woff": "/static/media/PerfectDOSVGA437Win.86368cc9dec15d71c965.woff",
+    "static/media/microsoft-net.png": "/static/media/microsoft-net.22e713fd37e9975bce6d.png",
+    "static/media/online.mp3": "/static/media/online.6f9d688403c58add9f32.mp3",
+    "static/media/PerfectDOSVGA437Win.woff2": "/static/media/PerfectDOSVGA437Win.7dc718899b215fa16aa7.woff2",
+    "static/media/microsoft-net.svg": "/static/media/microsoft-net.79f5aefc736968d1d37aa28624d3849d.svg",
+    "static/media/newMessage.mp3": "/static/media/newMessage.0b7218de986b9189bcbe.mp3",
+    "static/media/MSN-messenger-icon.webp": "/static/media/MSN-messenger-icon.3a12abbd614b1d04e23c.webp",
+    "static/media/ms_sans_serif.woff": "/static/media/ms_sans_serif.aac84aa6de42b83d1a62.woff",
+    "static/media/ms_sans_serif_bold.woff": "/static/media/ms_sans_serif_bold.9fbe71248995f1c639d4.woff",
+    "static/media/ms_sans_serif.woff2": "/static/media/ms_sans_serif.0348082abb503fb6a8c2.woff2",
+    "static/media/ms_sans_serif_bold.woff2": "/static/media/ms_sans_serif_bold.7fcf57cc6e87ecddbf64.woff2",
+    "static/media/double-chevron-right.svg": "/static/media/double-chevron-right.bd6db258ef966d9469428d4ea6247be6.svg",
+    "index.html": "/index.html",
+    "main.a99931fe.css.map": "/static/css/main.a99931fe.css.map",
+    "main.b3732366.js.map": "/static/js/main.b3732366.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a99931fe.css",
+    "static/js/main.b3732366.js"
+  ]
+}
