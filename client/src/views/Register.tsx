@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
-import Form, { FormAction, FormMethod } from "../components/Form/Form"
+import Form from "../components/Form/Form"
 import msnLogo from '../assets/icons/MSN-messenger-icon.webp'
-import { registerText } from "../utils/constants"
+import { FormAction, FormMethod, registerText } from "../utils/constants"
 import { ReactComponent as MicrosoftNetIcon } from '../assets/icons/microsoft-net.svg'
 import '../styles/views/Register.scss'
 
