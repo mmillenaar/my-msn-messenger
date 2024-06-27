@@ -1,11 +1,12 @@
 import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthDataType, ContactRequestResponseType, UserType } from "../utils/types";
+import { AuthDataType, ContactRequestResponseType, FormUserType, UserType } from "../utils/types";
 import { closeSocketConnection } from "../utils/websocket";
 import { ContactRequestActions } from "../utils/constants";
 
 
 interface ContextTypes {
+    userFormHandler: (action: string, method: string, user: FormUserType) => Promise<null | undefined>;
     checkUserLogin: () => Promise<boolean | null>;
     isUserLoggedIn: boolean | null;
     setIsUserLoggedIn: (value: boolean | null) => void;
@@ -22,6 +23,7 @@ interface AppContextProviderProps {
 }
 
 const defaultContext: ContextTypes = {
+    userFormHandler: async () => null,
     checkUserLogin: async () => null,
     isUserLoggedIn: null,
     setIsUserLoggedIn: () => {},
@@ -59,6 +61,32 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             }
         }
     }, [sessionExpiration])
+
+    const userFormHandler = async (action: string, method: string, user: FormUserType) => {
+        const res = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/user/${action}`,
+            {
+                method: method,
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            }
+        )
+        const data = await res.json()
+
+        if (res.status === 200) {
+            setIsUserLoggedIn(true)
+            setUserData(data.user)
+            navigate('/')
+        }
+        else {
+            alert(data.message)
+
+            return null
+        }
+    }
 
     const checkUserLogin = async () => {
         try {
@@ -143,6 +171,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
     return (
         <Context.Provider value={{
+            userFormHandler,
             checkUserLogin,
             isUserLoggedIn,
             setIsUserLoggedIn,

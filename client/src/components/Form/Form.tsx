@@ -2,17 +2,9 @@ import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FormGroup from './FormGroup/FormGroup';
 import Context from '../../context/AppContext';
-import { formConfirmPasswordGroup, formEmailGroup, formPasswordGroup, formUsernameGroup } from '../../utils/constants';
+import { FormAction, FormMethod, formConfirmPasswordGroup, formEmailGroup, formPasswordGroup, formUsernameGroup } from '../../utils/constants';
 import './Form.scss'
 
-export enum FormMethod {
-    GET = 'GET',
-    POST = 'POST',
-}
-export enum FormAction {
-    LOGIN = 'login',
-    REGISTER = 'register',
-}
 
 interface FormProps {
     action: string;
@@ -27,7 +19,7 @@ const Form = ({ action, method }: FormProps) => {
     const usernameRef = useRef<HTMLInputElement>(null)
     const confirmPasswordRef = useRef<HTMLInputElement>(null)
 
-    const { setIsUserLoggedIn, setUserData } = useContext(Context)
+    const { userFormHandler } = useContext(Context)
 
     const navigate = useNavigate()
 
@@ -38,33 +30,16 @@ const Form = ({ action, method }: FormProps) => {
             return
         }
 
-        const res = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/user/${action}`,
-            {
-                method: method,
-                credentials: "include",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: emailRef.current?.value,
-                    password: passwordRef.current?.value,
+        if (emailRef.current && passwordRef.current) {
+            userFormHandler(
+                action,
+                method,
+                {
+                    email: emailRef.current.value,
+                    password: passwordRef.current.value,
                     username: usernameRef.current?.value,
-                    confirmPassword: confirmPasswordRef.current?.value,
-                })
-            }
-        )
-        const data = await res.json()
-
-        if (res.status === 200) {
-            setIsUserLoggedIn(true)
-            setUserData(data.user)
-            navigate('/')
-        }
-        else {
-            alert(data.message)
-
-            return null
+                }
+            )
         }
     }
 

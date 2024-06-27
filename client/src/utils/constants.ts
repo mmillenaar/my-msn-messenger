@@ -26,6 +26,15 @@ export const formConfirmPasswordGroup = {
     label: "Confirm Password"
 }
 
+export enum FormMethod {
+    GET = 'GET',
+    POST = 'POST',
+}
+export enum FormAction {
+    LOGIN = 'login',
+    REGISTER = 'register',
+}
+
 export enum ContactRequestActions {
     SEND = 'send',
     ACCEPT = 'accept',

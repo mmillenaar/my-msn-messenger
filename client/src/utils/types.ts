@@ -81,3 +81,9 @@ export interface NotificationType {
     };
     message?: string;
 }
+
+export interface FormUserType {
+    email: string;
+    password: string;
+    username?: string;
+}
