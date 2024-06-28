@@ -1,79 +1,76 @@
-import { NextFunction, Request, Response } from 'express'
-import passport from 'passport'
+import { Request, Response } from 'express'
 import logger from '../config/logger.config'
 import { usersApi } from '../services/users.api'
 import { userSockets } from './sockets.controller'
 import { ContactErrorType, ContactRequestActions, UserUpdateFields } from '../utils/constants'
-import { ContactResponseType, UserType } from '../utils/types'
+import { ContactResponseType, UserAuthResult, UserType } from '../utils/types'
+import { generateToken } from '../utils/jwt'
 
+interface AuthenticatedRequest extends Request {
+    user?: { _id: string };
+}
 
-const handleAuthentication = (strategy: string, req: any, res: Response, next: NextFunction) => {
-    passport.authenticate(strategy, (err, user, info) => {
-        if (err) {
-            return next(err)
+const handleUserAuthentication = async (strategy: string, req: AuthenticatedRequest, res: Response) => {
+    try {
+        let result: UserAuthResult
+        if (strategy === 'login') {
+            result = await usersApi.authenticateUser(req.body.email, req.body.password)
+        } else if (strategy === 'register') {
+            result = await usersApi.registerUser(req.body)
         }
-        if (!user) {
-            return res.status(401).json({ message: info?.message })
+
+        if (result.error) {
+            return { message: result.error, status: result.status }
+        } else {
+            const token = generateToken(result.user._id)
+            req.user = { _id: result.user._id }
+
+            return await sendAuthResponse(req, res, token)
         }
-        req.login(user, loginErr => {
-            if (loginErr) {
-                return next(loginErr)
-            }
-            sendAuthResponse(req, res)
-        })
-    })(req, res, next)
+    } catch (error) {
+        logger.error(error)
+        return res.status(500).send({ message: 'Internal server error' })
+    }
 };
 
-const sendAuthResponse = async (req: any, res: Response) => {
-    if (req.isAuthenticated()) {
-        try {
-            const user: UserType = await usersApi.getById(req.user._id)
-            const userForClient = await usersApi.setupUserForClient(user)
+const sendAuthResponse = async (req: AuthenticatedRequest, res: Response, token: string) => {
+    try {
+        const user: UserType = await usersApi.getById(req.user!._id)
+        const userForClient = await usersApi.setupUserForClient(user)
+        return res.status(200).send({
+            isAuthenticated: true,
+            user: userForClient,
+            token: token
+        })
+    } catch (error) {
+        logger.error(error)
 
-            return res.status(200).send({
-                isAuthenticated: true,
-                user: userForClient,
-                sessionExpiration: req.session.cookie.maxAge
-            })
-        } catch (error) {
-            return res.status(500).send({
-                isAuthenticated: false,
-                message: 'Internal server error',
-                sessionExpiration: null
-            })
-        }
-    } else {
-        return res.status(401).send({
+        return res.status(500).send({
             isAuthenticated: false,
-            message: 'Please login',
-            sessionExpiration: null
+            message: 'Internal server error'
         })
     }
 }
 
-export const postLogin = (req: Request, res: Response, next: NextFunction) => {
-    handleAuthentication('login', req, res, next)
+export const postLogin = (req: Request, res: Response) => {
+    handleUserAuthentication('login', req as AuthenticatedRequest, res)
 }
 
-export const postRegister = (req: Request, res: Response, next: NextFunction) => {
-    handleAuthentication('register', req, res, next)
+export const postRegister = (req: Request, res: Response) => {
+    handleUserAuthentication('register', req as AuthenticatedRequest, res)
 }
 
-export const checkUserAuth = (req: Request, res: Response) => {
-    sendAuthResponse(req, res)
+export const checkUserAuth = (req: AuthenticatedRequest, res: Response) => {
+    if (req.user?._id) {
+        const token = req.headers.authorization?.split(' ')[1]
+
+        return sendAuthResponse(req, res, token!)
+    }
 }
 
 export const getLogout = (req, res) => {
-    req.logout(err => {
-        if (err) {
-            logger.error(err)
-
-            return res.status(500).json({ message: 'Error logging out' })
-        }
-        else {
-            return res.status(200).send({ message: 'Logged out successfully' })
-        }
-    });
+    // No server-side action needed for JWT logout
+    return res.status(200).send({ message: 'Logged out successfully' });
 }
 
 export const sendContactRequest = async (req, res) => {

@@ -4,76 +4,70 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.searchContacts = exports.updateUsername = exports.rejectContactRequest = exports.acceptContactRequest = exports.sendContactRequest = exports.getLogout = exports.checkUserAuth = exports.postRegister = exports.postLogin = void 0;
-const passport_1 = __importDefault(require("passport"));
 const logger_config_1 = __importDefault(require("../config/logger.config"));
 const users_api_1 = require("../services/users.api");
 const sockets_controller_1 = require("./sockets.controller");
 const constants_1 = require("../utils/constants");
-const handleAuthentication = (strategy, req, res, next) => {
-    passport_1.default.authenticate(strategy, (err, user, info) => {
-        if (err) {
-            return next(err);
+const jwt_1 = require("../utils/jwt");
+const handleUserAuthentication = async (strategy, req, res) => {
+    try {
+        let result;
+        if (strategy === 'login') {
+            result = await users_api_1.usersApi.authenticateUser(req.body.email, req.body.password);
         }
-        if (!user) {
-            return res.status(401).json({ message: info?.message });
+        else if (strategy === 'register') {
+            result = await users_api_1.usersApi.registerUser(req.body);
         }
-        req.login(user, loginErr => {
-            if (loginErr) {
-                return next(loginErr);
-            }
-            sendAuthResponse(req, res);
-        });
-    })(req, res, next);
-};
-const sendAuthResponse = async (req, res) => {
-    if (req.isAuthenticated()) {
-        try {
-            const user = await users_api_1.usersApi.getById(req.user._id);
-            const userForClient = await users_api_1.usersApi.setupUserForClient(user);
-            return res.status(200).send({
-                isAuthenticated: true,
-                user: userForClient,
-                sessionExpiration: req.session.cookie.maxAge
-            });
+        if (result.error) {
+            return { message: result.error, status: result.status };
         }
-        catch (error) {
-            return res.status(500).send({
-                isAuthenticated: false,
-                message: 'Internal server error',
-                sessionExpiration: null
-            });
+        else {
+            const token = (0, jwt_1.generateToken)(result.user._id);
+            req.user = { _id: result.user._id };
+            return await sendAuthResponse(req, res, token);
         }
     }
-    else {
-        return res.status(401).send({
+    catch (error) {
+        logger_config_1.default.error(error);
+        return res.status(500).send({ message: 'Internal server error' });
+    }
+};
+const sendAuthResponse = async (req, res, token) => {
+    try {
+        const user = await users_api_1.usersApi.getById(req.user._id);
+        const userForClient = await users_api_1.usersApi.setupUserForClient(user);
+        return res.status(200).send({
+            isAuthenticated: true,
+            user: userForClient,
+            token: token
+        });
+    }
+    catch (error) {
+        logger_config_1.default.error(error);
+        return res.status(500).send({
             isAuthenticated: false,
-            message: 'Please login',
-            sessionExpiration: null
+            message: 'Internal server error'
         });
     }
 };
-const postLogin = (req, res, next) => {
-    handleAuthentication('login', req, res, next);
+const postLogin = (req, res) => {
+    handleUserAuthentication('login', req, res);
 };
 exports.postLogin = postLogin;
-const postRegister = (req, res, next) => {
-    handleAuthentication('register', req, res, next);
+const postRegister = (req, res) => {
+    handleUserAuthentication('register', req, res);
 };
 exports.postRegister = postRegister;
 const checkUserAuth = (req, res) => {
-    sendAuthResponse(req, res);
+    if (req.user?._id) {
+        const token = req.headers.authorization?.split(' ')[1];
+        return sendAuthResponse(req, res, token);
+    }
 };
 exports.checkUserAuth = checkUserAuth;
 const getLogout = (req, res) => {
-    req.logout(err => {
-        if (err) {
-            logger_config_1.default.error(err);
-            return res.status(500).json({ message: 'Error logging out' });
-        }
-        else {
-            return res.status(200).send({ message: 'Logged out successfully' });
-        }
-    });
+    // No server-side action needed for JWT logout
+    return res.status(200).send({ message: 'Logged out successfully' });
 };
 exports.getLogout = getLogout;
 const sendContactRequest = async (req, res) => {

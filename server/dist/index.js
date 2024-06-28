@@ -6,16 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
-const express_session_1 = __importDefault(require("express-session"));
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const logger_config_1 = __importDefault(require("./config/logger.config"));
 const socketHandler_1 = require("./utils/socketHandler");
-const passport_middleware_1 = require("./middlewares/passport.middleware");
 const user_route_1 = __importDefault(require("./routes/users/user.route"));
 const helmet_1 = __importDefault(require("helmet"));
-const connect_mongo_1 = __importDefault(require("connect-mongo"));
-const mongoose_1 = __importDefault(require("mongoose"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
@@ -43,25 +39,6 @@ const corsOptions = {
     credentials: true
 };
 app.use((0, cors_1.default)(corsOptions));
-// Session configuration
-app.use((0, express_session_1.default)({
-    secret: process.env.SESSION_SECRET || 'default_secret',
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
-    store: connect_mongo_1.default.create({
-        client: mongoose_1.default.connection.getClient()
-    }),
-    cookie: {
-        maxAge: 600000,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        httpOnly: true, // Helps mitigate XSS
-    }
-}));
-// Passport middleware
-app.use(passport_middleware_1.passportMiddleware);
-app.use(passport_middleware_1.passportSessionHandler);
 const httpServer = new http_1.Server(app);
 const io = new socket_io_1.Server(httpServer, { cors: corsOptions });
 (0, socketHandler_1.handleSocketConnection)(io);

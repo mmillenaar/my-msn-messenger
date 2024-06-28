@@ -10,7 +10,7 @@ userRouter.route("/logout").get(ensureAuthenticated ,getLogout)
 
 userRouter.route("/register").post(postRegister)
 
-userRouter.route("/auth").get(checkUserAuth)
+userRouter.route("/auth").get(ensureAuthenticated, checkUserAuth)
 
 userRouter.route("/contact-request/send").post(ensureAuthenticated, sendContactRequest)
 

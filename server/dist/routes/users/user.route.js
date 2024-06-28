@@ -10,7 +10,7 @@ const userRouter = (0, express_1.Router)();
 userRouter.route("/login").post(users_controller_1.postLogin);
 userRouter.route("/logout").get(ensureAuth_middleware_1.default, users_controller_1.getLogout);
 userRouter.route("/register").post(users_controller_1.postRegister);
-userRouter.route("/auth").get(users_controller_1.checkUserAuth);
+userRouter.route("/auth").get(ensureAuth_middleware_1.default, users_controller_1.checkUserAuth);
 userRouter.route("/contact-request/send").post(ensureAuth_middleware_1.default, users_controller_1.sendContactRequest);
 userRouter.route("/contact-request/accept").post(ensureAuth_middleware_1.default, users_controller_1.acceptContactRequest);
 userRouter.route("/contact-request/reject").post(ensureAuth_middleware_1.default, users_controller_1.rejectContactRequest);

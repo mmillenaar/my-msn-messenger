@@ -1,8 +1,9 @@
-import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthDataType, ContactRequestResponseType, FormUserType, UserType } from "../utils/types";
 import { closeSocketConnection } from "../utils/websocket";
-import { ContactRequestActions } from "../utils/constants";
+import { ContactRequestActions, tokenExpiration } from "../utils/constants";
+import { fetchWithAuth } from "../utils/utilityFunctions";
 
 
 interface ContextTypes {
@@ -41,33 +42,46 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
     const [userData, setUserData] = useState<UserType | null>(null)
     const [isSocketConnected, setIsSocketConnected] = useState<boolean | null>(null)
-    const [sessionExpiration, setSessionExpiration] = useState<number | null>(null)
+    const timeoutIdRef = useRef<number | null>(null)
 
     const navigate = useNavigate()
 
+    // manage session persistence with setTimeout
+    // TODO: change to jwt exp with refreshToken
     useEffect(() => {
-        let timeoutId: ReturnType<typeof setTimeout> | null = null
-
-        if (sessionExpiration) {
-            timeoutId = setTimeout(async () => {
+        const setNewTimeout = () => {
+            if (timeoutIdRef.current) {
+                clearTimeout(timeoutIdRef.current)
+            }
+            const newTimeoutId = setTimeout(async () => {
                 await logout()
                 navigate('/')
-            }, sessionExpiration)
+            }, tokenExpiration) as unknown as number
+
+            timeoutIdRef.current = newTimeoutId
+        }
+
+        if (isUserLoggedIn) {
+            setNewTimeout()
+
+            window.addEventListener('click', setNewTimeout)
+            window.addEventListener('keydown', setNewTimeout)
         }
 
         return () => {
-            if (timeoutId) {
-                clearTimeout(timeoutId)
+            if (timeoutIdRef.current) {
+                clearTimeout(timeoutIdRef.current)
             }
+            window.removeEventListener('click', setNewTimeout)
+            window.removeEventListener('keydown', setNewTimeout)
         }
-    }, [sessionExpiration])
+    }, [isUserLoggedIn])
 
     const userFormHandler = async (action: string, method: string, user: FormUserType) => {
         const res = await fetch(
             `${process.env.REACT_APP_BACKEND_URL}/user/${action}`,
             {
                 method: method,
-                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -79,6 +93,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         if (res.status === 200) {
             setIsUserLoggedIn(true)
             setUserData(data.user)
+            sessionStorage.setItem('token', data.token)
             navigate('/')
         }
         else {
@@ -90,21 +105,15 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
     const checkUserLogin = async () => {
         try {
-            const response = await fetch(
-                `${process.env.REACT_APP_BACKEND_URL}/user/auth`,
-                {
-                    credentials: 'include'
-                }
-            )
+            const response = await fetchWithAuth(`${process.env.REACT_APP_BACKEND_URL}/user/auth`)
             const data: AuthDataType = await response.json()
+
             setIsUserLoggedIn(data.isAuthenticated)
 
             if (data.isAuthenticated && data.user) {
                 setUserData(data.user)
-                setSessionExpiration(data.sessionExpiration)
             } else {
                 setUserData(null)
-                setSessionExpiration(null)
             }
 
             return data.isAuthenticated
@@ -118,15 +127,11 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
     const logout = async () => {
         try {
-            const response = await fetch(
-                `${process.env.REACT_APP_BACKEND_URL}/user/logout`,
-                {
-                    credentials: 'include'
-                }
-            )
+            const response = await fetchWithAuth(`${process.env.REACT_APP_BACKEND_URL}/user/logout`)
             const data = await response.json()
 
             if (response.status === 200) {
+                sessionStorage.removeItem('token')
                 setIsUserLoggedIn(null)
                 closeSocketConnection(userData?.id)
                 setUserData(null)
@@ -143,14 +148,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
     const fetchContactRequest = async (contactEmail: string, action: ContactRequestActions) => {
         try {
-            const response = await fetch(
+            const response = await fetchWithAuth(
                 `${process.env.REACT_APP_BACKEND_URL}/user/contact-request/${action}`,
                 {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
                     body: JSON.stringify({
                         contactEmail: contactEmail
                     })
