@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,12 +22,18 @@ const ProtectedRoutes = () => {
         setIsSocketConnected
     } = useContext(Context)
     const { tabs, addTab, addNotification } = useTabs()
+    const tabsRef = useRef(tabs)
 
     const location = useLocation()
 
     useEffect(() => {
         checkUserLogin()
     }, [location]);
+
+    // UseEffect + useRef to ensure tabs are always up-to-date for notifications
+    useEffect(() => {
+        tabsRef.current = tabs
+    }, [tabs])
 
     useEffect(() => {
         if (userData && !isSocketConnected && isUserLoggedIn) {
@@ -82,7 +88,7 @@ const ProtectedRoutes = () => {
         }
 
         // message notification in tabs
-        const conversationTab = tabs.find(tab => tab.id === `/chat/${notification.user.id}`)
+        const conversationTab = tabsRef.current.find(tab => tab.id === `/chat/${notification.user.id}`)
         if (!conversationTab) {
             const newTab: TabType = {
                 id: `/chat/${notification.user.id}`,
