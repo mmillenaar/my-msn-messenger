@@ -4,6 +4,9 @@ body {
 p {
     font-size: 16px;
 }
+button {
+    color: $color-black;
+}
 .App {
     // Use dynamic viewport height for mobile compatibility
     height: 100svh;
@@ -29,6 +32,8 @@ p {
 // Override notification library styles
 .Toastify__toast-container {
     max-width: 100px;
+    left: unset;
+    right: env(safe-area-inset-right);
 
     @include media('>=phone') {
         max-width: 200px;

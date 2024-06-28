@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
+import React, { ReactNode, createContext, useContext, useEffect, useRef, useState } from 'react'
 import { TabType } from '../utils/types'
 import { defaultTab } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
@@ -48,7 +48,6 @@ export const TabProvider = ({ children }: TabProviderProps) => {
 
     const addTab = (tab: TabType, active: boolean) => {
         setTabs(prevTabs => {
-            if (active) navigateToTab(tab.id)
 
             if (!prevTabs.find(t => t.id === tab.id)) { // Prevent adding duplicate tabs
                 const newTabs = [...prevTabs, tab]
@@ -58,6 +57,8 @@ export const TabProvider = ({ children }: TabProviderProps) => {
                 return prevTabs
             }
         })
+
+        if (active) navigateToTab(tab.id)
     }
 
     const goToHomeTab = () => {
