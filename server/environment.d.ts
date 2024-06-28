@@ -4,7 +4,7 @@ declare global {
             PORT: string
             MONGOURL: string
             CLIENT_ORIGIN: string
-            SESSION_SECRET: string
+            JWT_SECRET: string
             NODE_ENV: string
         }
     }

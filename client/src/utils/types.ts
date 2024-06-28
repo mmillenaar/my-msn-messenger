@@ -44,7 +44,7 @@ export interface ContactType {
 export interface AuthDataType {
     isAuthenticated: boolean
     user: UserType
-    sessionExpiration: number | null
+    token: string
 }
 
 export interface ContactRequestActionType {

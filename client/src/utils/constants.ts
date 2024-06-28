@@ -152,3 +152,5 @@ export const contactRequestViewCheckboxOptions = [
         name: 'reject',
     }
 ]
+
+export const tokenExpiration = 600000

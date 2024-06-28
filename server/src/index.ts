@@ -1,16 +1,12 @@
 import express from "express";
 import dotenv from 'dotenv'
 import cors, { CorsOptions } from 'cors'
-import session from 'express-session'
 import { Server as HttpServer } from 'http'
 import { Server as Socket } from 'socket.io'
 import logger from "./config/logger.config";
 import { handleSocketConnection } from "./utils/socketHandler";
-import { passportMiddleware, passportSessionHandler } from "./middlewares/passport.middleware";
 import userRouter from "./routes/users/user.route";
 import helmet from "helmet";
-import MongoStore from "connect-mongo";
-import mongoose from "mongoose";
 
 dotenv.config()
 
@@ -42,27 +38,6 @@ const corsOptions: CorsOptions = {
     credentials: true
 }
 app.use(cors(corsOptions))
-
-// Session configuration
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'default_secret',
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
-    store: MongoStore.create({
-        client: mongoose.connection.getClient()
-    }),
-    cookie: {
-        maxAge: 600000,
-        secure: process.env.NODE_ENV === 'production', // Secure cookies in production
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // SameSite setting for CSRF protection
-        httpOnly: true, // Helps mitigate XSS
-    }
-}))
-
-// Passport middleware
-app.use(passportMiddleware)
-app.use(passportSessionHandler)
 
 const httpServer = new HttpServer(app)
 const io = new Socket(httpServer, { cors: corsOptions })

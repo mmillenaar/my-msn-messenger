@@ -65,3 +65,9 @@ export interface ContactResponseType {
     errorType?: ContactErrorType;
     user?: UserForClientType;
 }
+
+export interface UserAuthResult {
+    user?: UserType;
+    error?: string;
+    status?: number;
+}
