@@ -17,6 +17,7 @@ interface ContextTypes {
     isSocketConnected: boolean | null;
     setIsSocketConnected: Dispatch<SetStateAction<boolean | null>>;
     fetchContactRequest: (contactEmail: string, action: ContactRequestActions) => Promise<ContactRequestResponseType>;
+    isPageLoading: boolean;
 }
 
 interface AppContextProviderProps {
@@ -33,7 +34,8 @@ const defaultContext: ContextTypes = {
     setUserData: () => { },
     isSocketConnected: null,
     setIsSocketConnected: () => { },
-    fetchContactRequest: async () => ({} as ContactRequestResponseType)
+    fetchContactRequest: async () => ({} as ContactRequestResponseType),
+    isPageLoading: true
 }
 
 const Context = createContext<ContextTypes>(defaultContext)
@@ -42,6 +44,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
     const [userData, setUserData] = useState<UserType | null>(null)
     const [isSocketConnected, setIsSocketConnected] = useState<boolean | null>(null)
+    const [isPageLoading, setIsPageLoading] = useState<boolean>(true)
     const timeoutIdRef = useRef<number | null>(null)
 
     const navigate = useNavigate()
@@ -78,35 +81,45 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     }, [isUserLoggedIn])
 
     const userFormHandler = async (action: string, method: string, user: FormUserType) => {
-        const res = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/user/${action}`,
-            {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            }
-        )
-        const data = await res.json()
+        setIsPageLoading(true)
+        try {
+            const res = await fetch(
+                `${process.env.REACT_APP_BACKEND_URL}/user/${action}`,
+                {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                }
+            )
+            const data = await res.json()
 
-        if (res.status === 200) {
-            setIsUserLoggedIn(true)
-            setUserData(data.user)
-            sessionStorage.setItem('token', data.token)
-            navigate('/')
+            if (res.status === 200) {
+                setIsUserLoggedIn(true)
+                setUserData(data.user)
+                sessionStorage.setItem('token', data.token)
+                navigate('/')
+            }
+            else {
+                alert(data.message)
+
+                return null
+            }
         }
-        else {
-            alert(data.message)
+        catch (err) {
+            console.error(err)
 
             return null
         }
+        // No need to use a 'finally' statement with 'setIsPageLoaing(false)' because the 'checkUserLogin' function protecting the routes will do it
     }
 
     const checkUserLogin = async () => {
+        setIsPageLoading(true)
         try {
             const response = await fetchWithAuth(`${process.env.REACT_APP_BACKEND_URL}/user/auth`)
-            const data: AuthDataType = await response.json()
+            const data: AuthDataType = await response?.json()
 
             setIsUserLoggedIn(data.isAuthenticated)
 
@@ -123,15 +136,20 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
             return null
         }
+        finally {
+            setIsPageLoading(false)
+        }
     }
 
     const logout = async () => {
+        setIsPageLoading(true)
         try {
             const response = await fetchWithAuth(`${process.env.REACT_APP_BACKEND_URL}/user/logout`)
-            const data = await response.json()
+            const data = await response?.json()
 
-            if (response.status === 200) {
+            if (response?.status === 200) {
                 sessionStorage.removeItem('token')
+                sessionStorage.removeItem('isServerLoaded')
                 setIsUserLoggedIn(null)
                 closeSocketConnection(userData?.id)
                 setUserData(null)
@@ -139,14 +157,19 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             } else {
                 console.error(data.message)
             }
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Error during logout', error)
 
             return null
         }
+        finally {
+            setIsPageLoading(false)
+        }
     };
 
     const fetchContactRequest = async (contactEmail: string, action: ContactRequestActions) => {
+        setIsPageLoading(true)
         try {
             const response = await fetchWithAuth(
                 `${process.env.REACT_APP_BACKEND_URL}/user/contact-request/${action}`,
@@ -157,7 +180,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
                     })
                 }
             )
-            const data = await response.json()
+            const data = await response?.json()
 
             if (data.user) {
                 setUserData(data.user)
@@ -167,6 +190,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         }
         catch (err) {
             console.error(err)
+        }
+        finally {
+            setIsPageLoading(false)
         }
     }
 
@@ -182,6 +208,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             isSocketConnected,
             setIsSocketConnected,
             fetchContactRequest,
+            isPageLoading
         }}>
             {children}
         </Context.Provider>

@@ -4,7 +4,7 @@ import { usersApi } from '../services/users.api'
 import { userSockets } from './sockets.controller'
 import { ContactErrorType, ContactRequestActions, UserUpdateFields } from '../utils/constants'
 import { ContactResponseType, UserAuthResult, UserType } from '../utils/types'
-import { generateToken } from '../utils/jwt'
+import { generateToken, verifyToken } from '../utils/jwt'
 
 interface AuthenticatedRequest extends Request {
     user?: { _id: string };
@@ -61,10 +61,33 @@ export const postRegister = (req: Request, res: Response) => {
 }
 
 export const checkUserAuth = (req: AuthenticatedRequest, res: Response) => {
-    if (req.user?._id) {
-        const token = req.headers.authorization?.split(' ')[1]
+    const authHeader = req.headers.authorization
+    if (authHeader) {
+        const token = authHeader.split(' ')[1]
 
-        return sendAuthResponse(req, res, token!)
+        try {
+            const userToken = verifyToken(token)
+            if (userToken) {
+                req.user = { _id: userToken._id }
+
+                return sendAuthResponse(req, res, token)
+            } else {
+                throw new Error('Invalid token')
+            }
+        }
+        catch (error) {
+            logger.error(error)
+            return res.status(401).send({
+                isAuthenticated: false,
+                message: 'Invalid token'
+            })
+        }
+    }
+    else {
+        return res.status(401).send({
+            isAuthenticated: false,
+            message: 'Please login'
+        })
     }
 }
 

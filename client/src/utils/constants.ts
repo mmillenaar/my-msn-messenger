@@ -154,3 +154,5 @@ export const contactRequestViewCheckboxOptions = [
 ]
 
 export const tokenExpiration = 600000
+
+export const firstLoadingMessage = 'Welcome to My MSN Messenger App, thank you for visiting!\nRight now the server is being started up, this can take up to a minute. Once started you will be automatically redirected.\nThank you for your patience, hope you enjoy the app!!'
