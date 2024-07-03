@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.42232747.css",
-    "main.js": "/static/js/main.619a75db.js",
+    "main.css": "/static/css/main.d4819e4c.css",
+    "main.js": "/static/js/main.c8152e8f.js",
     "static/media/PerfectDOSVGA437Win.woff": "/static/media/PerfectDOSVGA437Win.86368cc9dec15d71c965.woff",
     "static/media/microsoft-net.png": "/static/media/microsoft-net.22e713fd37e9975bce6d.png",
     "static/media/online.mp3": "/static/media/online.6f9d688403c58add9f32.mp3",
@@ -15,11 +15,11 @@
     "static/media/ms_sans_serif_bold.woff2": "/static/media/ms_sans_serif_bold.7fcf57cc6e87ecddbf64.woff2",
     "static/media/double-chevron-right.svg": "/static/media/double-chevron-right.bd6db258ef966d9469428d4ea6247be6.svg",
     "index.html": "/index.html",
-    "main.42232747.css.map": "/static/css/main.42232747.css.map",
-    "main.619a75db.js.map": "/static/js/main.619a75db.js.map"
+    "main.d4819e4c.css.map": "/static/css/main.d4819e4c.css.map",
+    "main.c8152e8f.js.map": "/static/js/main.c8152e8f.js.map"
   },
   "entrypoints": [
-    "static/css/main.42232747.css",
-    "static/js/main.619a75db.js"
+    "static/css/main.d4819e4c.css",
+    "static/js/main.c8152e8f.js"
   ]
 }
