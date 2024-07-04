@@ -19,7 +19,7 @@ const handleUserAuthentication = async (strategy, req, res) => {
             result = await users_api_1.usersApi.registerUser(req.body);
         }
         if (result.error) {
-            return { message: result.error, status: result.status };
+            return res.status(result.status).send({ message: result.error });
         }
         else {
             const token = (0, jwt_1.generateToken)(result.user._id);
@@ -59,9 +59,32 @@ const postRegister = (req, res) => {
 };
 exports.postRegister = postRegister;
 const checkUserAuth = (req, res) => {
-    if (req.user?._id) {
-        const token = req.headers.authorization?.split(' ')[1];
-        return sendAuthResponse(req, res, token);
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+        try {
+            const userToken = (0, jwt_1.verifyToken)(token);
+            if (userToken) {
+                req.user = { _id: userToken._id };
+                return sendAuthResponse(req, res, token);
+            }
+            else {
+                throw new Error('Invalid token');
+            }
+        }
+        catch (error) {
+            logger_config_1.default.error(error);
+            return res.status(401).send({
+                isAuthenticated: false,
+                message: 'Invalid token'
+            });
+        }
+    }
+    else {
+        return res.status(401).send({
+            isAuthenticated: false,
+            message: 'Please login'
+        });
     }
 };
 exports.checkUserAuth = checkUserAuth;

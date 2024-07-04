@@ -11,6 +11,7 @@ import NotificationPopup from "../NotificationPopup/NotificationPopup";
 import newConversationIcon from '../../assets/icons/start-chat.png'
 import newMessageAudio from '../../assets/audio/newMessage.mp3'
 import onlineAudio from '../../assets/audio/online.mp3'
+import Loading from "../Loading/Loading";
 
 const ProtectedRoutes = () => {
     const [ areSocketListenersActive, setAreSocketListenersActive ] = useState<boolean>(false)
@@ -19,7 +20,8 @@ const ProtectedRoutes = () => {
         setUserData,
         isSocketConnected,
         checkUserLogin,
-        setIsSocketConnected
+        setIsSocketConnected,
+        isPageLoading
     } = useContext(Context)
     const { tabs, addTab, addNotification } = useTabs()
     const tabsRef = useRef(tabs)
@@ -104,8 +106,8 @@ const ProtectedRoutes = () => {
         }
     }
 
-    if (isUserLoggedIn === null) {
-        return <div>Loading...</div>;
+    if (isUserLoggedIn === null || isPageLoading) {
+        return <Loading />
     }
 
     return isUserLoggedIn && userData ?

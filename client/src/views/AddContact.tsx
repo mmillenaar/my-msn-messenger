@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import SearchBar from '../components/SearchBar/SearchBar'
 import Context from '../context/AppContext'
 import { ContactRequestActions, addContactEmailExamples, getAddContactErrorText, addContactFirstStepSubtitle, addContactSuccessText, getAddContactErrorSubtitle, getAddContactSuccessSubtitle, ContactErrorType, addContactTab } from '../utils/constants'
@@ -31,6 +30,12 @@ const AddContactView = () => {
         } else {
             setIsResponseSuccessful(true)
         }
+    }
+
+    const backToFirstStep = () => {
+        setIsProcessFirstStep(true)
+        setIsResponseSuccessful(null)
+        setResponseErrorCode(undefined)
     }
 
     const backToHome = () => {
@@ -88,11 +93,12 @@ const AddContactView = () => {
                         onClick={
                             isProcessFirstStep
                                 ? sendContactRequest
-                                : backToHome
+                                : isResponseSuccessful
+                                    ? backToHome
+                                    : backToFirstStep
                         }
-                        disabled={contactEmail === '' || isResponseSuccessful === false}
                     >
-                        { isProcessFirstStep ? 'Next' : 'Finish' }
+                        { isProcessFirstStep ? 'Next' : 'Back' }
                     </button>
                     <button
                         className="add-contact-view__footer-button add-contact-view__footer-button--cancel"

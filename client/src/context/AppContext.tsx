@@ -1,6 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthDataType, ContactRequestResponseType, FormUserType, UserType } from "../utils/types";
+import { AuthDataType, ContactRequestResponseType, ContactType, FormUserType, UserType } from "../utils/types";
 import { closeSocketConnection } from "../utils/websocket";
 import { ContactRequestActions, tokenExpiration } from "../utils/constants";
 import { fetchWithAuth } from "../utils/utilityFunctions";
@@ -17,6 +17,9 @@ interface ContextTypes {
     isSocketConnected: boolean | null;
     setIsSocketConnected: Dispatch<SetStateAction<boolean | null>>;
     fetchContactRequest: (contactEmail: string, action: ContactRequestActions) => Promise<ContactRequestResponseType>;
+    isPageLoading: boolean;
+    updateUsernameInDb: (newUsername: string) => Promise<void>;
+    fetchContactSearch: (query: string) => Promise<ContactType[]>;
 }
 
 interface AppContextProviderProps {
@@ -33,7 +36,10 @@ const defaultContext: ContextTypes = {
     setUserData: () => { },
     isSocketConnected: null,
     setIsSocketConnected: () => { },
-    fetchContactRequest: async () => ({} as ContactRequestResponseType)
+    fetchContactRequest: async () => ({} as ContactRequestResponseType),
+    isPageLoading: true,
+    updateUsernameInDb: async () => { },
+    fetchContactSearch: async () => ({ } as ContactType[])
 }
 
 const Context = createContext<ContextTypes>(defaultContext)
@@ -42,6 +48,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
     const [userData, setUserData] = useState<UserType | null>(null)
     const [isSocketConnected, setIsSocketConnected] = useState<boolean | null>(null)
+    const [isPageLoading, setIsPageLoading] = useState<boolean>(true)
     const timeoutIdRef = useRef<number | null>(null)
 
     const navigate = useNavigate()
@@ -78,35 +85,46 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     }, [isUserLoggedIn])
 
     const userFormHandler = async (action: string, method: string, user: FormUserType) => {
-        const res = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/user/${action}`,
-            {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            }
-        )
-        const data = await res.json()
+        setIsPageLoading(true)
+        try {
+            const res = await fetch(
+                `${process.env.REACT_APP_BACKEND_URL}/user/${action}`,
+                {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                }
+            )
+            const data = await res.json()
 
-        if (res.status === 200) {
-            setIsUserLoggedIn(true)
-            setUserData(data.user)
-            sessionStorage.setItem('token', data.token)
-            navigate('/')
+            if (res.status === 200) {
+                setIsUserLoggedIn(true)
+                setUserData(data.user)
+                sessionStorage.setItem('token', data.token)
+                navigate('/')
+            }
+            else {
+                alert(data.message)
+
+                return null
+            }
         }
-        else {
-            alert(data.message)
+        catch (err) {
+            console.error(err)
 
             return null
+        }
+        finally {
+            setIsPageLoading(false)
         }
     }
 
     const checkUserLogin = async () => {
         try {
             const response = await fetchWithAuth(`${process.env.REACT_APP_BACKEND_URL}/user/auth`)
-            const data: AuthDataType = await response.json()
+            const data: AuthDataType = await response?.json()
 
             setIsUserLoggedIn(data.isAuthenticated)
 
@@ -123,15 +141,19 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
             return null
         }
+        finally {
+            setIsPageLoading(false)
+        }
     }
 
     const logout = async () => {
         try {
             const response = await fetchWithAuth(`${process.env.REACT_APP_BACKEND_URL}/user/logout`)
-            const data = await response.json()
+            const data = await response?.json()
 
-            if (response.status === 200) {
+            if (response?.status === 200) {
                 sessionStorage.removeItem('token')
+                sessionStorage.removeItem('isServerLoaded')
                 setIsUserLoggedIn(null)
                 closeSocketConnection(userData?.id)
                 setUserData(null)
@@ -139,7 +161,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             } else {
                 console.error(data.message)
             }
-        } catch (error) {
+        }
+        catch (error) {
             console.error('Error during logout', error)
 
             return null
@@ -157,11 +180,47 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
                     })
                 }
             )
-            const data = await response.json()
+            const data = await response?.json()
 
             if (data.user) {
                 setUserData(data.user)
             }
+
+            return data
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+
+    const updateUsernameInDb = async (newUsername: string) => {
+        try {
+            const response = await fetchWithAuth(
+                `${process.env.REACT_APP_BACKEND_URL}/user/update/username`,
+                {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        newUsername: newUsername
+                    })
+                }
+            )
+            const data = await response.json()
+            console.log(data)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const fetchContactSearch = async (searchTerm: string) => {
+        try {
+            const result = await fetchWithAuth(
+                `${process.env.REACT_APP_BACKEND_URL}/user//search-contact`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({ searchTerm: searchTerm })
+                }
+            )
+            const data = await result.json()
 
             return data
         }
@@ -182,6 +241,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             isSocketConnected,
             setIsSocketConnected,
             fetchContactRequest,
+            isPageLoading,
+            updateUsernameInDb,
+            fetchContactSearch
         }}>
             {children}
         </Context.Provider>

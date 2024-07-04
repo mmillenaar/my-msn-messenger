@@ -5,7 +5,7 @@ interface AuthenticatedRequest extends Request {
     user?: { _id: string };
 }
 
-const ensureAuthenticated = async (req: any, res: Response, next: NextFunction) => {
+const ensureAuthenticated = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
     if (authHeader) {
         const token = authHeader.split(' ')[1]
