@@ -42,12 +42,8 @@ class UsersApi extends mongoDb_container_1.default {
     async registerUser(userData) {
         try {
             const isDuplicateEmail = await super.checkIsDuplicate('email', userData.email);
-            const isDuplicateUsername = await super.checkIsDuplicate('username', userData.username);
             if (isDuplicateEmail) {
                 return { error: 'Email already exists', status: 409 };
-            }
-            else if (isDuplicateUsername) {
-                return { error: 'Username already exists', status: 409 };
             }
             const saltRounds = 10;
             const hashedPassword = await bcrypt_1.default.hash(userData.password, saltRounds);

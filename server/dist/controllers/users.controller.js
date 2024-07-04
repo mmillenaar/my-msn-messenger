@@ -19,7 +19,7 @@ const handleUserAuthentication = async (strategy, req, res) => {
             result = await users_api_1.usersApi.registerUser(req.body);
         }
         if (result.error) {
-            return { message: result.error, status: result.status };
+            return res.status(result.status).send({ message: result.error });
         }
         else {
             const token = (0, jwt_1.generateToken)(result.user._id);

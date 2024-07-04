@@ -41,12 +41,9 @@ class UsersApi extends MongoDbContainer {
     async registerUser(userData: any) { // TODO: sepecify USERDATA TYPE
         try {
             const isDuplicateEmail: boolean = await super.checkIsDuplicate('email', userData.email)
-            const isDuplicateUsername: boolean = await super.checkIsDuplicate('username', userData.username)
 
             if (isDuplicateEmail) {
                 return { error: 'Email already exists', status: 409 }
-            } else if (isDuplicateUsername) {
-                return { error: 'Username already exists', status: 409 }
             }
 
             const saltRounds = 10

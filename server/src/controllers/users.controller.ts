@@ -20,7 +20,7 @@ const handleUserAuthentication = async (strategy: string, req: AuthenticatedRequ
         }
 
         if (result.error) {
-            return { message: result.error, status: result.status }
+            return res.status(result.status).send({ message: result.error })
         } else {
             const token = generateToken(result.user._id)
             req.user = { _id: result.user._id }
