@@ -1,6 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthDataType, ContactRequestResponseType, FormUserType, UserType } from "../utils/types";
+import { AuthDataType, ContactRequestResponseType, ContactType, FormUserType, UserType } from "../utils/types";
 import { closeSocketConnection } from "../utils/websocket";
 import { ContactRequestActions, tokenExpiration } from "../utils/constants";
 import { fetchWithAuth } from "../utils/utilityFunctions";
@@ -18,6 +18,8 @@ interface ContextTypes {
     setIsSocketConnected: Dispatch<SetStateAction<boolean | null>>;
     fetchContactRequest: (contactEmail: string, action: ContactRequestActions) => Promise<ContactRequestResponseType>;
     isPageLoading: boolean;
+    updateUsernameInDb: (newUsername: string) => Promise<void>;
+    fetchContactSearch: (query: string) => Promise<ContactType[]>;
 }
 
 interface AppContextProviderProps {
@@ -35,7 +37,9 @@ const defaultContext: ContextTypes = {
     isSocketConnected: null,
     setIsSocketConnected: () => { },
     fetchContactRequest: async () => ({} as ContactRequestResponseType),
-    isPageLoading: true
+    isPageLoading: true,
+    updateUsernameInDb: async () => { },
+    fetchContactSearch: async () => ({ } as ContactType[])
 }
 
 const Context = createContext<ContextTypes>(defaultContext)
@@ -196,6 +200,42 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         }
     }
 
+    const updateUsernameInDb = async (newUsername: string) => {
+        try {
+            const response = await fetchWithAuth(
+                `${process.env.REACT_APP_BACKEND_URL}/user/update/username`,
+                {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        newUsername: newUsername
+                    })
+                }
+            )
+            const data = await response.json()
+            console.log(data)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const fetchContactSearch = async (searchTerm: string) => {
+        try {
+            const result = await fetchWithAuth(
+                `${process.env.REACT_APP_BACKEND_URL}/user//search-contact`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({ searchTerm: searchTerm })
+                }
+            )
+            const data = await result.json()
+
+            return data
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+
     return (
         <Context.Provider value={{
             userFormHandler,
@@ -208,7 +248,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             isSocketConnected,
             setIsSocketConnected,
             fetchContactRequest,
-            isPageLoading
+            isPageLoading,
+            updateUsernameInDb,
+            fetchContactSearch
         }}>
             {children}
         </Context.Provider>

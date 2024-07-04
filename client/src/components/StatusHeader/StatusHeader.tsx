@@ -1,4 +1,5 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
+import Context from "../../context/AppContext";
 import arrowDown from '../../assets/icons/arrow-down.png'
 import { ReactComponent as MicrosoftNetIcon } from '../../assets/icons/microsoft-net.svg'
 import SelectionPopover from "../SelectionPopover/SelectionPopover";
@@ -19,29 +20,11 @@ const StatusHeader = ({username, status, id}: StatusHeaderProps) => {
     const popoverRef = useRef<HTMLDivElement>(null)
     const statusImageRef = useRef<HTMLDivElement>(null)
 
+    const { updateUsernameInDb } = useContext(Context)
+
     const handleInputBlur = (e: ChangeEvent<HTMLSpanElement>) => {
         setUsernameInputValue(e.currentTarget.textContent!);
         updateUsernameInDb(e.currentTarget.textContent!);
-    }
-
-    const updateUsernameInDb = async (newUsername: string) => {
-        try {
-            const response = await fetch(
-                `${process.env.REACT_APP_BACKEND_URL}/user/update/username`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({ newUsername: newUsername })
-                }
-            );
-            const data = await response.json();
-            console.log(data);
-        } catch (error) {
-            console.error(error);
-        }
     }
 
     const handlePopoverItemClick = (status: string) => {

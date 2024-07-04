@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useTabs } from '../context/TabContext'
+import Context from '../context/AppContext'
 import SelectionPopover from '../components/SelectionPopover/SelectionPopover'
 import newConversationIcon from '../assets/icons/start-chat.png'
 import microsoftDotNetImage from '../assets/images/microsoft-net.png'
@@ -14,6 +15,7 @@ const NewConversation = () => {
     const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
     const [popoverOptions, setPopoverOptions] = useState<ContactType[]>([])
 
+    const { fetchContactSearch } = useContext(Context)
     const { removeTab, addTab } = useTabs()
 
     const handleSearchBarValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,6 +24,7 @@ const NewConversation = () => {
             fetchSearchResults(e.target.value)
         } else {
             setIsPopoverOpen(false)
+            setPopoverOptions([])
         }
         setQuery(e.target.value)
     }
@@ -44,18 +47,7 @@ const NewConversation = () => {
     }
 
     const fetchSearchResults = async (searchTerm: string) => {
-        const result = await fetch(
-            `${process.env.NODE_ENV === 'production' ? process.env.REACT_APP_BACKEND_URL : ''}/user/search-contact`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({ searchTerm: searchTerm })
-            }
-        )
-        const data = await result.json()
+        const data: ContactType[] = await fetchContactSearch(searchTerm)
         setPopoverOptions(data)
     }
 
