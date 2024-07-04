@@ -93,7 +93,9 @@ const AddContactView = () => {
                         onClick={
                             isProcessFirstStep
                                 ? sendContactRequest
-                                : backToFirstStep
+                                : isResponseSuccessful
+                                    ? backToHome
+                                    : backToFirstStep
                         }
                     >
                         { isProcessFirstStep ? 'Next' : 'Back' }
