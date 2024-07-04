@@ -127,7 +127,7 @@ export const addContactSuccessText = 'An invitation was sent. You will have to w
 export const getAddContactErrorText = (errorCode?: ContactErrorType) => {
     switch (errorCode) {
         case ContactErrorType.ALREADY_EXISTS:
-            return 'This contact is already in your contact list or you have already sent them an invitation. Please go back to Home page to start a conversation.'
+            return 'This contact is already in your contact list or you have already sent them an invitation. Please go to Home page to start a conversation.'
 
         case ContactErrorType.NOT_FOUND:
             return 'The contact you are trying to reach does not exist. Please check for spelling mistakes or ask them to join MSN Messenger.'

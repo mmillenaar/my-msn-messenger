@@ -85,10 +85,10 @@ class UsersApi extends MongoDbContainer {
                 )
             }
             const checkContactRequestValidity = () => {
-                if (user.contacts.filter(contact => JSON.stringify(contact._id) === contactId).length > 0 ||
-                    user.contactRequests.sent.includes(contactId) ||
-                    user.contactRequests.received.includes(contactId)) {
-
+                if (user.contacts.filter(contact => contact._id == contactId).length > 0
+                    || user.contactRequests.sent.includes(contactId)
+                    || user.contactRequests.received.includes(contactId)
+                ) {
                     return false
                 } else {
                     return true

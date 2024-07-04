@@ -116,11 +116,12 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
             return null
         }
-        // No need to use a 'finally' statement with 'setIsPageLoaing(false)' because the 'checkUserLogin' function protecting the routes will do it
+        finally {
+            setIsPageLoading(false)
+        }
     }
 
     const checkUserLogin = async () => {
-        setIsPageLoading(true)
         try {
             const response = await fetchWithAuth(`${process.env.REACT_APP_BACKEND_URL}/user/auth`)
             const data: AuthDataType = await response?.json()
@@ -146,7 +147,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     }
 
     const logout = async () => {
-        setIsPageLoading(true)
         try {
             const response = await fetchWithAuth(`${process.env.REACT_APP_BACKEND_URL}/user/logout`)
             const data = await response?.json()
@@ -167,13 +167,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
             return null
         }
-        finally {
-            setIsPageLoading(false)
-        }
     };
 
     const fetchContactRequest = async (contactEmail: string, action: ContactRequestActions) => {
-        setIsPageLoading(true)
         try {
             const response = await fetchWithAuth(
                 `${process.env.REACT_APP_BACKEND_URL}/user/contact-request/${action}`,
@@ -194,9 +190,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         }
         catch (err) {
             console.error(err)
-        }
-        finally {
-            setIsPageLoading(false)
         }
     }
 
