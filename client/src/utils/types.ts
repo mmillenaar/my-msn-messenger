@@ -5,6 +5,8 @@ export interface ChatMessageType {
     sender: ContactType;
     timestamp: number;
     recipient: ContactType;
+    fontStyle?: string;
+    isNudgeMessage?: boolean;
 }
 
 export interface ChatMessageForServer {
@@ -12,6 +14,8 @@ export interface ChatMessageForServer {
     senderId: string;
     timestamp: number;
     recipientId: string;
+    fontStyle?: string;
+    isNudgeMessage?: boolean;
 }
 
 export interface ChatType {
@@ -39,6 +43,8 @@ export interface ContactType {
     id: string;
     status: string;
     chatId?: string;
+    isBlocked?: boolean;
+    hasBlockedMe?: boolean;
 }
 
 export interface AuthDataType {
@@ -80,6 +86,7 @@ export interface NotificationType {
         id?: string;
     };
     message?: string;
+    nudge?: boolean;
 }
 
 export interface FormUserType {

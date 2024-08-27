@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import logger from '../config/logger.config'
 import { usersApi } from '../services/users.api'
 import { userSockets } from './sockets.controller'
-import { ContactErrorType, ContactRequestActions, UserUpdateFields } from '../utils/constants'
+import { ContactErrorType, ContactRequestActions, UserBlockActions, UserUpdateFields } from '../utils/constants'
 import { ContactResponseType, UserAuthResult, UserType } from '../utils/types'
 import { generateToken, verifyToken } from '../utils/jwt'
 
@@ -234,4 +234,29 @@ export const searchContacts = async (req, res) => {
     const matches = await usersApi.findContactMatches(userId, searchTerm)
 
     return res.status(200).json(matches)
+}
+
+export const handleUserBlockage = async (req, res, action: UserBlockActions) => {
+    const userId = req.user._id
+    const { contactId } = req.body
+
+    const shouldBlock = action === 'block'
+
+    const updatedUser = await usersApi.setUserBlockageStatus(userId, contactId, shouldBlock)
+    if (!updatedUser) {
+        const errorMessage = shouldBlock ? 'Error blocking user' : 'Error unblocking user'
+        return res.status(500).json({ message: errorMessage })
+    }
+    const updatedUserForClient = await usersApi.setupUserForClient(updatedUser)
+
+    const updatedContact = await usersApi.getById(contactId)
+    const updatedContactForClient = await usersApi.setupUserForClient(updatedContact)
+    const contactSocket = userSockets.get(contactId)
+    if (contactSocket) {
+        contactSocket.emit('new-blocked-status', updatedContactForClient)
+    }
+
+    const successMessage = shouldBlock ? 'User blocked successfully' : 'User unblocked successfully'
+
+    return res.status(200).json({ message: successMessage, user: updatedUserForClient })
 }

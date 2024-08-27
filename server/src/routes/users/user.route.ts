@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { acceptContactRequest, checkUserAuth, getLogout, postLogin, postRegister, rejectContactRequest, searchContacts, sendContactRequest, updateUsername } from "../../controllers/users.controller";
+import { acceptContactRequest, checkUserAuth, getLogout, handleUserBlockage, postLogin, postRegister, rejectContactRequest, searchContacts, sendContactRequest, updateUsername } from "../../controllers/users.controller";
 import ensureAuthenticated from "../../middlewares/ensureAuth.middleware";
+import { UserBlockActions } from "../../utils/constants";
 
 const userRouter = Router();
 
@@ -21,5 +22,11 @@ userRouter.route("/contact-request/reject").post(ensureAuthenticated, rejectCont
 userRouter.route("/update/username").put(ensureAuthenticated, updateUsername)
 
 userRouter.route("/search-contact").post(ensureAuthenticated, searchContacts)
+
+const blockUserHandler = (req, res) => handleUserBlockage(req, res, UserBlockActions.BLOCK);
+userRouter.route("/block").post(ensureAuthenticated, blockUserHandler)
+
+const unblockUserHandler = (req, res) => handleUserBlockage(req, res, UserBlockActions.UNBLOCK);
+userRouter.route("/unblock").post(ensureAuthenticated, unblockUserHandler)
 
 export default userRouter;

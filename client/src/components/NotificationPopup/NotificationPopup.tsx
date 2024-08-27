@@ -5,9 +5,10 @@ import './NotificationPopup.scss'
 interface NotificationPopupProps {
     username: string;
     message?: string;
+    isNudge?: boolean;
 }
 
-const NotificationPopup = ({ username, message}: NotificationPopupProps) => {
+const NotificationPopup = ({ username, message, isNudge}: NotificationPopupProps) => {
 
     return (
         <div className="notification-popup">
@@ -18,7 +19,9 @@ const NotificationPopup = ({ username, message}: NotificationPopupProps) => {
                         { username } { message ? 'says:' : '' }
                     </p>
                     <p className="notification-popup__content-text">
-                        { message ? message : 'has just signed in.'}
+                        {message ? message
+                            : isNudge ? 'sent you a nudge.'
+                            : 'has just signed in.'}
                     </p>
                 </div>
                 <img src={dotNetImage} alt="" className="notification-popup__image" />

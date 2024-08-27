@@ -33,8 +33,12 @@ const handleUserStatusChange = async (userId, newStatus, socket) => {
     // emit change to other users
     exports.userSockets.forEach(async (userSocket) => {
         const contactId = socketIdUsers.get(userSocket.id);
+        const userContact = updatedUser.contacts.find(contact => contact._id === contactId);
         // check if user exists in contacts
-        if (!updatedUser.contacts.find(contact => contact._id === contactId))
+        if (!userContact)
+            return;
+        // check if contact is blocked or has blocked me
+        if (userContact.isBlocked || userContact.hasBlockedMe)
             return;
         // get contact with updated user status
         const updatedContact = await users_api_1.usersApi.getById(contactId);
@@ -81,7 +85,8 @@ const handleNewMessage = async (message, chatId) => {
                 username: senderUsername,
                 id: senderId
             },
-            message: message.text
+            ...(!message.isNudgeMessage && { message: message.text }),
+            ...(message.isNudgeMessage && { nudge: true })
         });
     }
 };

@@ -152,7 +152,9 @@ class UsersApi extends MongoDbContainer {
                 email: searchedContact.email,
                 id: contact._id,
                 chatId: contact.chatId,
-                status: searchedContact.status
+                status: contact.hasBlockedMe? UserStatus.OFFLINE : searchedContact.status,
+                isBlocked: contact.isBlocked,
+                hasBlockedMe: contact.hasBlockedMe
             }
         })
         const populatedContacts: ContactForClientType[] = await Promise.all(contactPromises)
@@ -238,6 +240,29 @@ class UsersApi extends MongoDbContainer {
             const matches = populatedUserContacts.filter(contact => contact.username.includes(query) || contact.email.includes(query))
 
             return matches
+        }
+        catch (err) {
+            logger.error(err)
+
+            return { error: 'ServerError, please try again', status: 500 }
+        }
+    }
+    async setUserBlockageStatus (userId: string, contactId: string, isBlocked: boolean) {
+        try {
+            const user: UserType = await super.getById(userId)
+            const contact: UserType = await super.getById(contactId)
+
+            const modifiedUser = {
+                ...user,
+                contacts: user.contacts.map(contact => contact._id.toString() === contactId ? { ...contact, isBlocked: isBlocked } : contact)
+            }
+            const modifiedContact = {
+                ...contact,
+                contacts: contact.contacts.map(contact => contact._id.toString() === userId ? { ...contact, hasBlockedMe: isBlocked } : contact)
+            }
+
+            await super.update(modifiedContact, contactId)
+            return await super.update(modifiedUser, userId)
         }
         catch (err) {
             logger.error(err)

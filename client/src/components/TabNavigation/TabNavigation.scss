@@ -1,20 +1,5 @@
 @import '../../styles/index';
 
-@keyframes tiltingNotificationTab {
-    0% {
-        background-color: unset;
-    }
-    50% {
-        background-color: unset;
-    }
-    51% {
-        background-color: $color-orange-1;
-    }
-    100% {
-        background-color: $color-orange-1;
-    }
-}
-
 .tab-navigation {
     &.title-bar {
         padding: 0;
@@ -74,5 +59,4 @@
             text-wrap: nowrap;
         }
     }
-
 }

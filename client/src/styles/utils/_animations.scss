@@ -1,0 +1,21 @@
+@keyframes tiltingNotificationTab {
+    0% {
+        background-color: unset;
+    }
+    50% {
+        background-color: unset;
+    }
+    51% {
+        background-color: $color-orange-1;
+    }
+    100% {
+        background-color: $color-orange-1;
+    }
+}
+
+@keyframes shake {
+    0% { transform: translate(0, 0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate(-10px, -10px); }
+    20%, 40%, 60%, 80% { transform: translate(10px, 10px); }
+    100% { transform: translate(0, 0); }
+}

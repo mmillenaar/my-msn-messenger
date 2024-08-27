@@ -132,7 +132,9 @@ class UsersApi extends mongoDb_container_1.default {
                 email: searchedContact.email,
                 id: contact._id,
                 chatId: contact.chatId,
-                status: searchedContact.status
+                status: contact.hasBlockedMe ? constants_1.UserStatus.OFFLINE : searchedContact.status,
+                isBlocked: contact.isBlocked,
+                hasBlockedMe: contact.hasBlockedMe
             };
         });
         const populatedContacts = await Promise.all(contactPromises);
@@ -206,6 +208,26 @@ class UsersApi extends mongoDb_container_1.default {
             const populatedUserContacts = await this.populateContacts(user);
             const matches = populatedUserContacts.filter(contact => contact.username.includes(query) || contact.email.includes(query));
             return matches;
+        }
+        catch (err) {
+            logger_config_1.default.error(err);
+            return { error: 'ServerError, please try again', status: 500 };
+        }
+    }
+    async setUserBlockageStatus(userId, contactId, isBlocked) {
+        try {
+            const user = await super.getById(userId);
+            const contact = await super.getById(contactId);
+            const modifiedUser = {
+                ...user,
+                contacts: user.contacts.map(contact => contact._id.toString() === contactId ? { ...contact, isBlocked: isBlocked } : contact)
+            };
+            const modifiedContact = {
+                ...contact,
+                contacts: contact.contacts.map(contact => contact._id.toString() === userId ? { ...contact, hasBlockedMe: isBlocked } : contact)
+            };
+            await super.update(modifiedContact, contactId);
+            return await super.update(modifiedUser, userId);
         }
         catch (err) {
             logger_config_1.default.error(err);

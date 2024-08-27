@@ -1,15 +1,15 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { CSSProperties, useContext, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { openChat, setupChatListener, setupTypingListener } from '../utils/websocket'
-import { ChatMessageType, ChatType, ContactType } from '../utils/types'
+import { openChat, sendMessage, setupChatListener, setupTypingListener } from '../utils/websocket'
+import { ChatMessageForServer, ChatMessageType, ChatType, ContactType } from '../utils/types'
 import ChatMessage from '../components/ChatMessage/ChatMessage'
 import Context from '../context/AppContext'
 import MessageForm from '../components/MessageForm/MessageForm'
 import chatIcon from '../assets/icons/start-chat.png'
-import blockedUser from '../assets/icons/avatar-blocked.png'
 import userIcon from '../assets/icons/user-avatar.png'
-import { chatBoxText, offlineContactText } from '../utils/constants'
+import { chatBoxText, informationBoxHasBlockedMeText, informationBoxIsBlockedText, informationBoxOfflineText } from '../utils/constants'
 import WindowTitleBar from '../components/WindowTitleBar/WindowTitleBar'
+import ChatControls from '../components/ChatControls/ChatControls'
 import '../styles/views/Chat.scss'
 
 const Chat = () => {
@@ -17,7 +17,8 @@ const Chat = () => {
     const [chatId, setChatId] = useState<string | undefined>(undefined)
     const [contactData, setContactData] = useState<ContactType | undefined>(undefined)
     const [isContactTyping, setIsContactTyping] = useState<boolean>(false)
-    const { userData } = useContext(Context)
+    const [currentMessageFont, setCurrentMessageFont] = useState<CSSProperties | undefined>(undefined)
+    const { userData, handleUserBlockage } = useContext(Context)
     const { contactId } = useParams()
 
     const bottomRef = useRef<HTMLDivElement>(null)
@@ -68,6 +69,27 @@ const Chat = () => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
 
+    const sendNudge = () => {
+        const nudgeMessage: ChatMessageForServer = {
+            text: '',
+            timestamp: Date.now(),
+            senderId: userData?.id ? userData.id : '',
+            recipientId: contactId ? contactId : '',
+            isNudgeMessage: true
+        }
+
+        sendMessage(nudgeMessage, chatId)
+    }
+
+    const checkInformationBoxRender = () => {
+        return contactData?.status === 'Offline' || contactData?.hasBlockedMe || contactData?.isBlocked
+    }
+    const returnInformationBoxText = () => {
+        if (contactData?.isBlocked) return informationBoxIsBlockedText
+        if (contactData?.hasBlockedMe) return informationBoxHasBlockedMeText
+        if (contactData?.status === 'Offline') return informationBoxOfflineText
+    }
+
     return (
         <div className="chat">
             <div className="chat__wrapper window">
@@ -90,20 +112,27 @@ const Chat = () => {
                     </div>
                     <div className="chat-box__separator" />
                     {
-                        contactData?.status === 'Offline' &&
-                        <div className="chat-box__offline-contact">
-                            <p className="chat-box__offline-contact-text">{offlineContactText}</p>
+                        checkInformationBoxRender() &&
+                        <div className="chat-box__information-box">
+                            <p className="chat-box__information-box-text">
+                                { returnInformationBoxText() }
+                            </p>
                         </div>
                     }
                     <div className="chat-box__messages">
                         {chatData?.messages && chatData.messages.map((messageData: ChatMessageType, index) => {
-                            const { text, timestamp, sender } = messageData
+                            const { text, timestamp, sender, fontStyle, isNudgeMessage } = messageData
+
                             return (
                                 <div className="chat-box__chat-message" key={index}>
                                     <ChatMessage
-                                        username={sender.username}
+                                        userId={userData?.id ? userData.id : ''}
+                                        senderUsername={sender.username}
+                                        senderId={sender.id}
                                         text={text}
                                         timestamp={timestamp}
+                                        fontStyle={fontStyle}
+                                        isNudge={isNudgeMessage}
                                     />
                                 </div>
                             )
@@ -111,19 +140,30 @@ const Chat = () => {
                         <div ref={bottomRef} className="char-box__messages-bottom"  />
                     </div>
                 </div>
-                <div className="chat__controls chat-controls">
-                    <div className="chat-controls__block">
-                        <img src={blockedUser} alt="Block" className="chat-controls__block-image" />
-                        <p className="chat-controls__block-text">Block</p>
-                    </div>
-                    <div className="chat-controls__font chat-controls">
-                        <span className="chat-controls__font-icon">A</span>
-                        <p className="chat-controls__font-text">Font</p>
-                    </div>
+                <div className="chat__controls">
+                    <ChatControls
+                        messageFontStyle={currentMessageFont}
+                        onApplyMessageStyle={setCurrentMessageFont}
+                        onNudgeClick={sendNudge}
+                        isContactBlocked={contactData?.isBlocked || false}
+                        onBlockClick={() =>
+                            handleUserBlockage(
+                                contactId ? contactId : '',
+                                contactData?.isBlocked || false
+                            )
+                        }
+                        hasContactBlockedMe={contactData?.hasBlockedMe}
+                    />
                 </div>
                 <div className="chat__input">
                     {userData && contactId &&
-                        <MessageForm userId={userData.id} contactId={contactId} chatId={chatId} />
+                        <MessageForm
+                            userId={userData.id}
+                            contactId={contactId}
+                            chatId={chatId}
+                            currentFontStyle={currentMessageFont}
+                            disabled={contactData?.isBlocked || contactData?.hasBlockedMe}
+                        />
                     }
                 </div>
                 <div className="chat__status-bar status-bar">

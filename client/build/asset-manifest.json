@@ -1,8 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.d4819e4c.css",
-    "main.js": "/static/js/main.c9e1f478.js",
+    "main.css": "/static/css/main.c9fb0c1f.css",
+    "main.js": "/static/js/main.797fc906.js",
+    "static/media/nudge.png": "/static/media/nudge.fff4e6aa3ffca4b7422d.png",
     "static/media/PerfectDOSVGA437Win.woff": "/static/media/PerfectDOSVGA437Win.86368cc9dec15d71c965.woff",
+    "static/media/nudge.mp3": "/static/media/nudge.745da43c0dde139b5580.mp3",
     "static/media/microsoft-net.png": "/static/media/microsoft-net.22e713fd37e9975bce6d.png",
     "static/media/online.mp3": "/static/media/online.6f9d688403c58add9f32.mp3",
     "static/media/PerfectDOSVGA437Win.woff2": "/static/media/PerfectDOSVGA437Win.7dc718899b215fa16aa7.woff2",
@@ -15,11 +17,11 @@
     "static/media/ms_sans_serif_bold.woff2": "/static/media/ms_sans_serif_bold.7fcf57cc6e87ecddbf64.woff2",
     "static/media/double-chevron-right.svg": "/static/media/double-chevron-right.bd6db258ef966d9469428d4ea6247be6.svg",
     "index.html": "/index.html",
-    "main.d4819e4c.css.map": "/static/css/main.d4819e4c.css.map",
-    "main.c9e1f478.js.map": "/static/js/main.c9e1f478.js.map"
+    "main.c9fb0c1f.css.map": "/static/css/main.c9fb0c1f.css.map",
+    "main.797fc906.js.map": "/static/js/main.797fc906.js.map"
   },
   "entrypoints": [
-    "static/css/main.d4819e4c.css",
-    "static/js/main.c9e1f478.js"
+    "static/css/main.c9fb0c1f.css",
+    "static/js/main.797fc906.js"
   ]
 }

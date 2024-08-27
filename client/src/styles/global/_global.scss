@@ -15,6 +15,12 @@ button {
     display: flex;
     flex-direction: column;
 }
+.protected-route {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
 
 // Override xp.css library styles
 .window {
@@ -58,5 +64,8 @@ button {
             right: 5px;
         }
     }
+}
 
+.shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }

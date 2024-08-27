@@ -9,6 +9,8 @@ const messageSchema = new mongoose_1.default.Schema({
     senderId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User', required: true },
     recipientId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User', required: true },
     timestamp: { type: Date, default: Date.now, required: true },
+    fontStyle: { type: String },
+    isNudgeMessage: { type: Boolean, default: false }
 });
 exports.default = messageSchema;
 //# sourceMappingURL=messages.schema.js.map
