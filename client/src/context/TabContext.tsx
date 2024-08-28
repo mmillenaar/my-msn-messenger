@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useEffect, useRef, useState } from 'react'
+import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { TabType } from '../utils/types'
 import { defaultTab } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ interface TabContextType {
     clearTabs: () => void;
     navigateToTab: (tabId: string) => void;
     addNotification: (tabId: string) => void;
+    removeNotification: (tabId: string) => void;
 }
 
 interface TabProviderProps {
@@ -28,7 +29,8 @@ const defaultState: TabContextType = {
     goToHomeTab: () => { },
     clearTabs: () => { },
     navigateToTab: () => { },
-    addNotification: () => { }
+    addNotification: () => { },
+    removeNotification: () => { }
 }
 
 const TabContext = createContext<TabContextType>(defaultState)
@@ -45,6 +47,22 @@ export const TabProvider = ({ children }: TabProviderProps) => {
     useEffect(() => {
         navigate(defaultTab.path)
     }, [])
+
+    // Remove notification when user has tab opened and focuses on window
+    useEffect(() => {
+        const handleFocus = () => {
+            const tab = tabs.find(t => t.id === currentTab)
+            if (tab?.hasNotification) {
+                removeNotification(currentTab!)
+            }
+        }
+
+        window.addEventListener('focus', handleFocus)
+
+        return () => {
+            window.removeEventListener('focus', handleFocus)
+        }
+    }, [currentTab, tabs])
 
     const addTab = (tab: TabType, active: boolean) => {
         setTabs(prevTabs => {
@@ -108,7 +126,7 @@ export const TabProvider = ({ children }: TabProviderProps) => {
     const addNotification = (tabId: string) => {
         setTabs(prevTabs => {
             const newTabs = prevTabs.map(t => {
-                if (t.id === tabId) {
+                if (t.id === tabId && tabId !== currentTab) {
                     t.hasNotification = true
                 }
                 return t
@@ -128,7 +146,8 @@ export const TabProvider = ({ children }: TabProviderProps) => {
             goToHomeTab,
             clearTabs,
             navigateToTab,
-            addNotification
+            addNotification,
+            removeNotification
         }}>
             {children}
         </TabContext.Provider>

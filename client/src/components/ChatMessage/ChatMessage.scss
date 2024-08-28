@@ -1,3 +1,5 @@
+@import '../../styles//index';
+
 .chat-message {
     &__wrapper {
         padding: 2px;
@@ -9,5 +11,20 @@
     &__text {
         margin: 0;
         padding-left: 10px;
+    }
+    &__nudge {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        &-border{
+            height: 1px;
+            width: 50px;
+            background-color: $color-grey-1;
+        }
+        &-text {
+            color: $color-grey-1;
+            font-style: italic;
+        }
     }
 }

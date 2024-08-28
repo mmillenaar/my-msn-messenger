@@ -1,0 +1,83 @@
+@import '../../styles/index';
+
+.message-font-popover {
+    &__wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex-grow: 1;
+    }
+    &__font-settings {
+        width: 100%;
+        margin-top: 15px;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-around;
+        gap: 30px;
+
+        &-item {
+            width: 25%;
+        }
+    }
+    &__font-displays {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    &__grouped-display {
+        margin: 30px 20px;
+        padding: 10px;
+        border: 0.5px solid $color-grey-1;
+        border-radius: 5px;
+
+        &--sample {
+            min-width: 220px;
+            height: 100%;
+        }
+
+        &-title {
+            display: block;
+            width: fit-content;
+            margin-top: -20px;
+            padding: 0 5px;
+            background-color: #ece9d8;
+            color: $color-blue-1;
+        }
+
+        .grouped-display-item {
+            padding-top: 5px;
+
+            &__color-selection {
+                display: flex;
+                align-items: center;
+
+                & > * {
+                    height: 24px;
+                }
+            }
+            &__sample {
+                padding: 10px;
+
+                &-text {
+                    width: fit-content;
+                    min-width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    flex-grow: 1;
+                    margin: 0px;
+                    padding: 10px;
+                    box-shadow: inset 1px 1px 4px 0px $color-black;
+                    border-right: 1px solid white;
+                    border-bottom: 1px solid white;
+                }
+            }
+        }
+    }
+    &__buttons {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        gap: 20px;
+        padding: 10px;
+    }
+}

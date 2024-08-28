@@ -2,6 +2,7 @@ import onlineIcon from '../assets/icons/avatar-online.png'
 import offlineIcon from '../assets/icons/avatar-offline.png'
 import busyIcon from '../assets/icons/avatar-busy.png'
 import outIcon from '../assets/icons/avatar-out.png'
+import blockedIcon from '../assets/icons/avatar-blocked.png'
 import msnIcon from '../assets/icons/MSN-messenger-icon.webp'
 import { TabType } from './types'
 
@@ -88,7 +89,13 @@ export const userStatusItems = [
         text: 'Out to Lunch',
         icon: outIcon,
         priority: 5,
-    }
+    },
+    {
+        id: 'Blocked',
+        text: 'Blocked',
+        icon: blockedIcon,
+        priority: 8,
+    },
 ]
 
 export const defaultTab: TabType = {
@@ -156,3 +163,35 @@ export const contactRequestViewCheckboxOptions = [
 export const tokenExpiration = 600000
 
 export const firstLoadingMessage = 'Welcome to My MSN Messenger App, thank you for visiting!\nRight now the server is being started up, this can take up to a minute. Once started you will be automatically redirected.\nThank you for your patience, hope you enjoy the app!!'
+
+export const chatMessageFontFamilies = [ 'Arial', 'Century Gothic', 'Comic Sans MS', 'Courier New', 'Garamond', 'Georgia', 'Geneva', 'Helvetica', 'Impact', 'Lucida Console', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana'
+]
+export const chatMessageFontSizes = ['6', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '32', '48', '64', '72']
+export const chatMessageFontStyles = ['Normal', 'Bold', 'Italic', 'Bold Italic']
+export const chatMessageFontColors = [
+    { name: "Black", hex: "#000000" },
+    { name: "White", hex: "#FFFFFF" },
+    { name: "Red", hex: "#FF0000" },
+    { name: "Green", hex: "#00FF00" },
+    { name: "Blue", hex: "#0000FF" },
+    { name: "Yellow", hex: "#FFFF00" },
+    { name: "Cyan (Aqua)", hex: "#00FFFF" },
+    { name: "Magenta (Fuchsia)", hex: "#FF00FF" },
+    { name: "Silver", hex: "#C0C0C0" },
+    { name: "Gray", hex: "#808080" },
+    { name: "Maroon", hex: "#800000" },
+    { name: "Olive", hex: "#808000" },
+    { name: "Purple", hex: "#800080" },
+    { name: "Teal", hex: "#008080" },
+    { name: "Navy", hex: "#000080" },
+    { name: "Orange", hex: "#FFA500" },
+    { name: "Pink", hex: "#FFC0CB" },
+    { name: "Gold", hex: "#FFD700" },
+    { name: "Brown", hex: "#A52A2A" },
+    { name: "Indigo", hex: "#4B0082" },
+    { name: "Violet", hex: "#EE82EE" }
+]
+
+export const informationBoxIsBlockedText = 'You have blocked this user. You will need to unblock them for sending or receiving instant messages.'
+export const informationBoxHasBlockedMeText = 'This user has blocked you. They will need to unblock you for sending or receiving instant messages.'
+export const informationBoxOfflineText = 'This user is offline. They will not be notified about your new messages.'

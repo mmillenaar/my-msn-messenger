@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContactErrorType = exports.UserStatus = exports.UserUpdateFields = exports.ContactRequestActions = void 0;
+exports.UserBlockActions = exports.ContactErrorType = exports.UserStatus = exports.UserUpdateFields = exports.ContactRequestActions = void 0;
 var ContactRequestActions;
 (function (ContactRequestActions) {
     ContactRequestActions["ACCEPT"] = "accept";
@@ -30,4 +30,9 @@ var ContactErrorType;
     ContactErrorType["ALREADY_EXISTS"] = "already exists";
     ContactErrorType["OTHER_ERROR"] = "other error";
 })(ContactErrorType = exports.ContactErrorType || (exports.ContactErrorType = {}));
+var UserBlockActions;
+(function (UserBlockActions) {
+    UserBlockActions["BLOCK"] = "block";
+    UserBlockActions["UNBLOCK"] = "unblock";
+})(UserBlockActions = exports.UserBlockActions || (exports.UserBlockActions = {}));
 //# sourceMappingURL=constants.js.map

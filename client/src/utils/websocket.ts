@@ -84,6 +84,9 @@ export const setupUserEventsListener = (setUserData: (updatedUser: UserType) => 
     socket.on('accepted-contact-request', (updatedSender: UserType) => {
         setUserData(updatedSender)
     })
+    socket.on('new-blocked-status', (updatedUser: UserType) => {
+        setUserData(updatedUser)
+    })
 }
 
 export const setupNotificationListener = (callback: (notification: NotificationType) => void) => {

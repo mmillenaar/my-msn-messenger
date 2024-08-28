@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { CSSProperties, useRef, useState } from "react"
 import { ChatMessageForServer } from "../../utils/types"
 import { notifyTyping, sendMessage } from "../../utils/websocket"
 import './MessageForm.scss'
@@ -7,9 +7,11 @@ interface MessageFormProps {
     userId: string;
     contactId: string;
     chatId?: string;
+    currentFontStyle?: CSSProperties;
+    disabled?: boolean;
 }
 
-const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
+const MessageForm = ({ userId, contactId, chatId, currentFontStyle, disabled }: MessageFormProps) => {
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true)
     const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -38,6 +40,7 @@ const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
                 timestamp: Date.now(),
                 senderId: userId,
                 recipientId: contactId,
+                fontStyle: currentFontStyle ? JSON.stringify(currentFontStyle) : undefined
             }
 
             sendMessage(formMessage, chatId)
@@ -61,6 +64,8 @@ const MessageForm = ({ userId, contactId, chatId }: MessageFormProps) => {
                     id="message"
                     onChange={handleInputChange}
                     onKeyDown={(e) => handleEnterKeyPress(e)}
+                    style={currentFontStyle}
+                    disabled={disabled}
                 />
                 <button
                     className={`message-form__button ${isButtonDisabled ? 'message-form__button--disabled' : ''}`}

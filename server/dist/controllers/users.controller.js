@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchContacts = exports.updateUsername = exports.rejectContactRequest = exports.acceptContactRequest = exports.sendContactRequest = exports.getLogout = exports.checkUserAuth = exports.postRegister = exports.postLogin = void 0;
+exports.handleUserBlockage = exports.searchContacts = exports.updateUsername = exports.rejectContactRequest = exports.acceptContactRequest = exports.sendContactRequest = exports.getLogout = exports.checkUserAuth = exports.postRegister = exports.postLogin = void 0;
 const logger_config_1 = __importDefault(require("../config/logger.config"));
 const users_api_1 = require("../services/users.api");
 const sockets_controller_1 = require("./sockets.controller");
@@ -203,4 +203,24 @@ const searchContacts = async (req, res) => {
     return res.status(200).json(matches);
 };
 exports.searchContacts = searchContacts;
+const handleUserBlockage = async (req, res, action) => {
+    const userId = req.user._id;
+    const { contactId } = req.body;
+    const shouldBlock = action === 'block';
+    const updatedUser = await users_api_1.usersApi.setUserBlockageStatus(userId, contactId, shouldBlock);
+    if (!updatedUser) {
+        const errorMessage = shouldBlock ? 'Error blocking user' : 'Error unblocking user';
+        return res.status(500).json({ message: errorMessage });
+    }
+    const updatedUserForClient = await users_api_1.usersApi.setupUserForClient(updatedUser);
+    const updatedContact = await users_api_1.usersApi.getById(contactId);
+    const updatedContactForClient = await users_api_1.usersApi.setupUserForClient(updatedContact);
+    const contactSocket = sockets_controller_1.userSockets.get(contactId);
+    if (contactSocket) {
+        contactSocket.emit('new-blocked-status', updatedContactForClient);
+    }
+    const successMessage = shouldBlock ? 'User blocked successfully' : 'User unblocked successfully';
+    return res.status(200).json({ message: successMessage, user: updatedUserForClient });
+};
+exports.handleUserBlockage = handleUserBlockage;
 //# sourceMappingURL=users.controller.js.map

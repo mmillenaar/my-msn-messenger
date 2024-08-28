@@ -11,10 +11,12 @@ import NotificationPopup from "../NotificationPopup/NotificationPopup";
 import newConversationIcon from '../../assets/icons/start-chat.png'
 import newMessageAudio from '../../assets/audio/newMessage.mp3'
 import onlineAudio from '../../assets/audio/online.mp3'
+import nudgeAudio from '../../assets/audio/nudge.mp3'
 import Loading from "../Loading/Loading";
 
 const ProtectedRoutes = () => {
-    const [ areSocketListenersActive, setAreSocketListenersActive ] = useState<boolean>(false)
+    const [areSocketListenersActive, setAreSocketListenersActive] = useState<boolean>(false)
+    const [isWindowShaking, setIsWindowShaking] = useState<boolean>(false)
     const { isUserLoggedIn,
         userData,
         setUserData,
@@ -71,6 +73,7 @@ const ProtectedRoutes = () => {
         toast(<NotificationPopup
             username={notification.user.username}
             message={notification.message}
+            isNudge={notification.nudge}
         />, {
             position: "bottom-right",
             autoClose: 5000,
@@ -82,7 +85,14 @@ const ProtectedRoutes = () => {
         })
 
         // Play notification audio based on notification type
-        if (!notification.message) {
+        if (notification.nudge) {
+            playAudio(nudgeAudio)
+
+            // Apply moving window effect
+            setIsWindowShaking(true)
+            setTimeout(() => setIsWindowShaking(false), 1000)
+        }
+        else if (!notification.message) {
             return playAudio(onlineAudio)
         }
         else {
@@ -111,7 +121,7 @@ const ProtectedRoutes = () => {
     }
 
     return isUserLoggedIn && userData ?
-        <>
+        <div className={`protected-route ${isWindowShaking ? 'shake' : ''}`}>
             <Outlet />
             <TabNavigation />
             <ToastContainer
@@ -126,7 +136,7 @@ const ProtectedRoutes = () => {
                 theme="light"
                 transition={Slide}
             />
-        </>
+        </div>
         : <Navigate to='/login' />;
 };
 

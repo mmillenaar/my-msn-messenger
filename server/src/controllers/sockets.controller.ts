@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import AsyncLock from "async-lock"
 import { chatsApi } from "../services/chats.api";
-import { ChatMessageType, ChatType, UserForClientType, UserType } from "../utils/types";
+import { ChatMessageType, ChatType, ContactType, UserForClientType, UserType } from "../utils/types";
 import { usersApi } from "../services/users.api";
 import { UserStatus, UserUpdateFields } from "../utils/constants";
 import logger from "../config/logger.config";
@@ -35,9 +35,12 @@ export const handleUserStatusChange = async (userId: string, newStatus: string, 
     // emit change to other users
     userSockets.forEach(async userSocket => {
         const contactId = socketIdUsers.get(userSocket.id)
+        const userContact: ContactType = updatedUser.contacts.find(contact => contact._id === contactId)
 
         // check if user exists in contacts
-        if (!updatedUser.contacts.find(contact => contact._id === contactId)) return
+        if (!userContact) return
+        // check if contact is blocked or has blocked me
+        if (userContact.isBlocked || userContact.hasBlockedMe) return
 
         // get contact with updated user status
         const updatedContact = await usersApi.getById(contactId)
@@ -87,7 +90,8 @@ export const handleNewMessage = async (message: ChatMessageType, chatId?: string
                 username: senderUsername,
                 id: senderId
             },
-            message: message.text
+            ...(!message.isNudgeMessage && { message: message.text }),
+            ...(message.isNudgeMessage && { nudge: true })
         })
     }
 }

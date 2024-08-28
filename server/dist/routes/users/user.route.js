@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const users_controller_1 = require("../../controllers/users.controller");
 const ensureAuth_middleware_1 = __importDefault(require("../../middlewares/ensureAuth.middleware"));
+const constants_1 = require("../../utils/constants");
 const userRouter = (0, express_1.Router)();
 userRouter.route("/login").post(users_controller_1.postLogin);
 userRouter.route("/logout").get(ensureAuth_middleware_1.default, users_controller_1.getLogout);
@@ -16,5 +17,9 @@ userRouter.route("/contact-request/accept").post(ensureAuth_middleware_1.default
 userRouter.route("/contact-request/reject").post(ensureAuth_middleware_1.default, users_controller_1.rejectContactRequest);
 userRouter.route("/update/username").put(ensureAuth_middleware_1.default, users_controller_1.updateUsername);
 userRouter.route("/search-contact").post(ensureAuth_middleware_1.default, users_controller_1.searchContacts);
+const blockUserHandler = (req, res) => (0, users_controller_1.handleUserBlockage)(req, res, constants_1.UserBlockActions.BLOCK);
+userRouter.route("/block").post(ensureAuth_middleware_1.default, blockUserHandler);
+const unblockUserHandler = (req, res) => (0, users_controller_1.handleUserBlockage)(req, res, constants_1.UserBlockActions.UNBLOCK);
+userRouter.route("/unblock").post(ensureAuth_middleware_1.default, unblockUserHandler);
 exports.default = userRouter;
 //# sourceMappingURL=user.route.js.map

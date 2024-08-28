@@ -25,11 +25,15 @@ export interface ChatMessageType {
     senderId: string;
     recipientId: string;
     timestamp: number;
+    fontStyle?: string;
+    isNudgeMessage?: boolean;
 }
 
 export interface ContactType {
     _id: string;
     chatId?: string;
+    isBlocked?: boolean;
+    hasBlockedMe?: boolean;
 }
 
 export interface ContactRequestForClientType {
@@ -44,6 +48,8 @@ export interface ContactForClientType {
     id: string;
     chatId: string;
     status: UserStatus;
+    isBlocked?: boolean;
+    hasBlockedMe?: boolean;
 }
 
 export interface UserForClientType {

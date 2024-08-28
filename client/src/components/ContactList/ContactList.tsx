@@ -13,7 +13,7 @@ const ContactList = ({ contacts, handleContactClick }: ContactListProps) => {
         [key: string]: ContactType[];
     } = {}
     contacts.forEach(contact => {
-        const group = contact.status
+        const group = contact.isBlocked ? 'Blocked' : contact.status
         if (!contactStatusGroup[group]) {
             contactStatusGroup[group] = []
         }

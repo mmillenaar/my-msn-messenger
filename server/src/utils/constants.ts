@@ -26,3 +26,8 @@ export enum ContactErrorType {
     ALREADY_EXISTS = 'already exists',
     OTHER_ERROR = 'other error'
 }
+
+export enum UserBlockActions {
+    BLOCK = 'block',
+    UNBLOCK = 'unblock'
+}

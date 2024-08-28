@@ -20,6 +20,7 @@ interface ContextTypes {
     isPageLoading: boolean;
     updateUsernameInDb: (newUsername: string) => Promise<void>;
     fetchContactSearch: (query: string) => Promise<ContactType[]>;
+    handleUserBlockage: (contactId: string, isContactBlocked: boolean) => Promise<void>;
 }
 
 interface AppContextProviderProps {
@@ -39,7 +40,8 @@ const defaultContext: ContextTypes = {
     fetchContactRequest: async () => ({} as ContactRequestResponseType),
     isPageLoading: true,
     updateUsernameInDb: async () => { },
-    fetchContactSearch: async () => ({ } as ContactType[])
+    fetchContactSearch: async () => ({} as ContactType[]),
+    handleUserBlockage: async () => { }
 }
 
 const Context = createContext<ContextTypes>(defaultContext)
@@ -205,7 +207,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
                 }
             )
             const data = await response.json()
-            console.log(data)
         } catch (error) {
             console.error(error)
         }
@@ -229,6 +230,30 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         }
     }
 
+    const handleUserBlockage = async(contactId: string, isContactBlocked: boolean) => {
+        try {
+            const response = await fetchWithAuth(
+                `${process.env.REACT_APP_BACKEND_URL}/user/${isContactBlocked ? 'unblock' : 'block'}`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        contactId: contactId
+                    })
+                }
+            )
+            const data = await response?.json()
+
+            if (data.user) {
+                setUserData(data.user)
+            }
+
+            return data
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+
     return (
         <Context.Provider value={{
             userFormHandler,
@@ -243,7 +268,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             fetchContactRequest,
             isPageLoading,
             updateUsernameInDb,
-            fetchContactSearch
+            fetchContactSearch,
+            handleUserBlockage
         }}>
             {children}
         </Context.Provider>
