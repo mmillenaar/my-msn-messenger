@@ -164,7 +164,8 @@ export const tokenExpiration = 600000
 
 export const firstLoadingMessage = 'Welcome to My MSN Messenger App, thank you for visiting!\nRight now the server is being started up, this can take up to a minute. Once started you will be automatically redirected.\nThank you for your patience, hope you enjoy the app!!'
 
-export const chatMessageFontFamilies = ['Arial', 'Courier New', 'Georgia', 'Helvetica', 'Lato', 'Montserrat', 'Noto Sans', 'Open Sans', 'Oswald', 'PT Sans', 'Poppins', 'Roboto', 'Source Sans Pro', 'Tahoma', 'Times New Roman', 'Verdana']
+export const chatMessageFontFamilies = [ 'Arial', 'Century Gothic', 'Comic Sans MS', 'Courier New', 'Garamond', 'Georgia', 'Geneva', 'Helvetica', 'Impact', 'Lucida Console', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana'
+]
 export const chatMessageFontSizes = ['6', '7', '8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '32', '48', '64', '72']
 export const chatMessageFontStyles = ['Normal', 'Bold', 'Italic', 'Bold Italic']
 export const chatMessageFontColors = [

@@ -14,6 +14,19 @@ _A web-based clone of the classic MSN Messenger, built with TypeScript, React, N
 ![my-msn-messenger.gif](my-msn-messenger.gif)
 
 
+## What's New
+
+Exciting new features have been introduced to enhance your chat experience:
+
+- **Styled Chat Messages:** Customize the appearance of your chat messages with various styling options to make your conversations more personal and fun.
+- **Send Nudges:** Feeling ignored? Send a nudge to grab your friend's attention, just like in the classic MSN Messenger days.
+- **Block/Unblock Contacts:** Gain more control over your interactions by easily blocking or unblocking contacts from your list.
+
+These features are designed to make your experience even more engaging and reminiscent of the original MSN Messenger.
+
+![new-features.gif](new-features.gif)
+
+
 ## Usage
 
 ### Basic Instructions
@@ -37,15 +50,17 @@ _A web-based clone of the classic MSN Messenger, built with TypeScript, React, N
 
 The following API endpoints are available for interacting with the server:
 
-- POST ``/login``: Log in to the application.
-- GET ``/logout``: Log out of the application (requires authentication).
-- POST ``/register``: Register a new account.
-- GET ``/auth``: Check user authentication status. Used for client protected routes.
-- POST ``/contact-request/send``: Send a contact request (requires authentication).
-- POST ``/contact-request/accept``: Accept a contact request (requires authentication).
-- POST ``/contact-request/reject``: Reject a contact request (requires authentication).
-- PUT ``/update/username``: Update your username (requires authentication).
-- POST ``/search-contact``: Search for contacts (requires authentication).
+- POST ``/user/login``: Log in to the application.
+- GET ``/user/logout``: Log out of the application (requires authentication).
+- POST ``/user/register``: Register a new account.
+- GET ``/user/auth``: Check user authentication status. Used for client protected routes.
+- POST ``/user/contact-request/send``: Send a contact request (requires authentication).
+- POST ``/user/contact-request/accept``: Accept a contact request (requires authentication).
+- POST ``/user/contact-request/reject``: Reject a contact request (requires authentication).
+- PUT ``/user/update/username``: Update your username (requires authentication).
+- POST ``/user/search-contact``: Search for contacts (requires authentication).
+- POST ``/user/block``: Block contact (requires authentication).
+- POST ``/user/unblock``: Unblock contact (requires authentication).
 
 ### WebSocket Events
 
